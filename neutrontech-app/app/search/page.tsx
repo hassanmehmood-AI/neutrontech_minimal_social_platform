@@ -12,7 +12,7 @@ const FILTERS   = ['All', 'People', 'Posts', 'Topics', 'Events'];
 const SUGGESTED = ['Quantum Computing', 'AI Ethical Frameworks', 'Web3 Scalability', 'Rust Development', 'UI Design Systems'];
 
 const EVENTS: Event[] = [
-  { id: 1, title: 'The Future of Silicon: Keynotes from the 2024 Summit', organizer: 'NeutronTech Events',      date: 'Dec 15, 2024', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAu4hoySxNStg7t6v0omPnnQSIzL72KmlQ55xGEKI06lha_E1eT4DQT7D3l1Cu_t3gA7grZh_uNBQrzOE9UfdT6HAzJe9H-YPd2WYmJIPgU16XR7TRUmPnl5A7kK9xwQlWznYKWb3CQa4HPWbdUJgP7wFrWWj8YoA4AM1pjyJDTCzTYKbNKTq_ciwNGNZjYdeVanXi9FaBFrjl2wft1jVgiF-g5DGFSkx-BtC6bZ9MKpBLziWFrwE7AYGv-MtDwsbANTr8NdA2hyAc' },
+  { id: 1, title: 'The Future of Silicon: Keynotes from the 2024 Summit', organizer: 'Neutron Tech Events',      date: 'Dec 15, 2024', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAu4hoySxNStg7t6v0omPnnQSIzL72KmlQ55xGEKI06lha_E1eT4DQT7D3l1Cu_t3gA7grZh_uNBQrzOE9UfdT6HAzJe9H-YPd2WYmJIPgU16XR7TRUmPnl5A7kK9xwQlWznYKWb3CQa4HPWbdUJgP7wFrWWj8YoA4AM1pjyJDTCzTYKbNKTq_ciwNGNZjYdeVanXi9FaBFrjl2wft1jVgiF-g5DGFSkx-BtC6bZ9MKpBLziWFrwE7AYGv-MtDwsbANTr8NdA2hyAc' },
   { id: 2, title: 'Web3 Developer Conference 2025',                         organizer: 'Blockchain Alliance',    date: 'Jan 8, 2025'  },
   { id: 3, title: 'AI Ethics & Governance Workshop',                        organizer: 'Tech Policy Institute',  date: 'Dec 22, 2024' },
 ];
@@ -57,13 +57,18 @@ export default function SearchPage() {
 
       {/* ── TOP NAV ── */}
       <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm border-b border-outline-variant h-16">
-        <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
-          <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
-          <nav className="hidden lg:flex items-center space-x-lg">
-            <Link href="/feed"   className="text-secondary font-label-md text-label-md hover:text-primary transition-colors">Feed</Link>
-            <Link href="/search" className="text-primary font-bold border-b-2 border-primary font-label-md text-label-md">Search</Link>
-          </nav>
-          <div className="flex items-center gap-xs">
+        <div className="grid grid-cols-3 items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
+          {/* Left spacer */}
+          <div></div>
+          {/* Center: nav links */}
+          <div className="flex justify-center">
+            <nav className="hidden lg:flex items-center space-x-lg">
+              <Link href="/feed"   className="text-secondary font-label-md text-label-md hover:text-primary transition-colors">Feed</Link>
+              <Link href="/search" className="text-primary font-bold border-b-2 border-primary font-label-md text-label-md">Search</Link>
+            </nav>
+          </div>
+          {/* Right: actions */}
+          <div className="flex items-center justify-end gap-xs">
             <button className="lg:hidden p-xs active:scale-95 duration-150">
               <span className="material-symbols-outlined text-secondary">notifications</span>
             </button>
@@ -78,8 +83,10 @@ export default function SearchPage() {
       {/* ── LEFT SIDEBAR (lg+) ── */}
       <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md space-y-sm z-40">
         <div className="pt-xl pb-lg">
-          <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-14 w-auto drop-shadow-sm" /></Link>
-          <p className="font-label-md text-label-md text-on-surface-variant">Tech-Social Hub</p>
+          <Link href="/" className="inline-flex items-center gap-sm">
+            <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
+            <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
+          </Link>
         </div>
         <nav className="flex-grow space-y-xs">
           <Link className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/feed">
@@ -120,7 +127,7 @@ export default function SearchPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl py-4 pl-12 pr-4 md:pr-28 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary transition-all font-body-md text-on-surface shadow-sm"
-                placeholder="Search NeutronTech..."
+                placeholder="Search Neutron Tech..."
                 type="text"
               />
               {query && (

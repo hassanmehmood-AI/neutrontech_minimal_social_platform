@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -18,17 +20,31 @@ type Post = {
   comments: number;
 };
 
+type Comment = {
+  id: number;
+  userId: string;
+  author: string;
+  avatar: string;
+  content: string;
+  time: string;
+};
+
 type CurrentUser = { id: string; email: string; name: string; avatar: string };
 
 export default function FeedPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [posts, setPosts]             = useState<Post[]>([]);
-  const [liked, setLiked]             = useState<Record<number, boolean>>({});
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [liked, setLiked] = useState<Record<number, boolean>>({});
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [selectedVideo, setSelectedVideo]   = useState<File | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const composerRef  = useRef<HTMLTextAreaElement>(null);
+  const [posting, setPosting] = useState(false);
+  const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
+  const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
+  const [commentText, setCommentText] = useState<Record<number, string>>({});
+  const [sendingComment, setSendingComment] = useState<Record<number, boolean>>({});
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,12 +73,50 @@ export default function FeedPage() {
     });
   }, [router]);
 
+  const getToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token ?? '';
+  };
+
+  const toggleComments = async (postId: number) => {
+    if (openComments[postId]) {
+      setOpenComments((prev) => ({ ...prev, [postId]: false }));
+      return;
+    }
+    setOpenComments((prev) => ({ ...prev, [postId]: true }));
+    if (!postComments[postId]) {
+      const res = await fetch(`/api/posts/${postId}/comments`);
+      const data: Comment[] = await res.json();
+      setPostComments((prev) => ({ ...prev, [postId]: data }));
+    }
+  };
+
+  const submitComment = async (postId: number) => {
+    const text = commentText[postId]?.trim();
+    if (!text) return;
+    setSendingComment((prev) => ({ ...prev, [postId]: true }));
+    const token = await getToken();
+    const res = await fetch(`/api/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ content: text }),
+    });
+    if (res.ok) {
+      const newComment: Comment = await res.json();
+      setPostComments((prev) => ({ ...prev, [postId]: [...(prev[postId] || []), newComment] }));
+      setCommentText((prev) => ({ ...prev, [postId]: '' }));
+      setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, comments: p.comments + 1 } : p));
+    }
+    setSendingComment((prev) => ({ ...prev, [postId]: false }));
+  };
+
   const toggleLike = async (id: number) => {
     if (!currentUser) return;
+    const token = await getToken();
     const res = await fetch(`/api/posts/${id}/like`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: currentUser.id }),
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({}),
     });
     const { liked: isLiked, likes } = await res.json();
     setLiked((prev) => ({ ...prev, [id]: isLiked }));
@@ -81,16 +135,30 @@ export default function FeedPage() {
     const text = composerRef.current?.value.trim() ?? '';
     if (!text && selectedImages.length === 0 && !selectedVideo) return;
 
-    const imageUrls = selectedImages.map((f) => URL.createObjectURL(f));
+    setPosting(true);
+
+    const token = await getToken();
+
+    // Upload each image via the server-side API route to get a permanent public URL
+    const imageUrls: string[] = [];
+    for (const file of selectedImages) {
+      const form = new FormData();
+      form.append('file', file);
+      const up = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: form,
+      });
+      const { url } = await up.json();
+      imageUrls.push(url ?? URL.createObjectURL(file));
+    }
+
     const videoUrl = selectedVideo ? URL.createObjectURL(selectedVideo) : undefined;
 
     const res = await fetch('/api/posts', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({
-        userId: currentUser?.id,
-        author: currentUser?.name,
-        avatar: currentUser?.avatar,
         content: text,
         images: imageUrls,
         videoUrl,
@@ -105,6 +173,7 @@ export default function FeedPage() {
     setSelectedVideo(null);
     if (imageInputRef.current) imageInputRef.current.value = '';
     if (videoInputRef.current) videoInputRef.current.value = '';
+    setPosting(false);
   };
 
   const handleLogout = async () => {
@@ -126,23 +195,29 @@ export default function FeedPage() {
   }
 
   const composerAvatar = currentUser?.avatar || undefined;
-  const composerName   = currentUser?.name || 'You';
+  const composerName = currentUser?.name || 'You';
 
   return (
     <div className="font-body-md text-on-background">
 
       {/* ── TOP NAV ── */}
       <header className="fixed top-0 w-full z-50 glass-effect border-b border-outline-variant shadow-sm h-16">
-        <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full max-w-[1280px] mx-auto">
-          <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
-          <div className="hidden lg:flex items-center bg-surface-container-low rounded-full px-md py-xs border border-outline-variant w-1/3 cursor-pointer" onClick={() => window.location.href = '/search'}>
-            <span className="material-symbols-outlined text-outline">search</span>
-            <span className="font-label-md text-label-md text-outline ml-xs">Search...</span>
-          </div>
-          <div className="flex items-center gap-sm">
+        <div className="grid grid-cols-3 items-center px-margin-mobile md:px-margin-desktop h-full max-w-[1280px] mx-auto">
+          {/* Left spacer */}
+          <div className="flex items-center">
             <Link href="/search" className="lg:hidden p-xs rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
               <span className="material-symbols-outlined text-primary">search</span>
             </Link>
+          </div>
+          {/* Center: search bar */}
+          <div className="flex justify-center">
+            <div className="hidden lg:flex items-center bg-surface-container-low rounded-full px-md py-xs border border-outline-variant w-full cursor-pointer" onClick={() => window.location.href = '/search'}>
+              <span className="material-symbols-outlined text-outline">search</span>
+              <span className="font-label-md text-label-md text-outline ml-xs">Search...</span>
+            </div>
+          </div>
+          {/* Right: actions */}
+          <div className="flex items-center justify-end gap-sm">
             <div className="hidden lg:flex items-center gap-xs">
               <button className="p-xs rounded-full hover:bg-surface-container-high transition-colors">
                 <span className="material-symbols-outlined text-secondary">notifications</span>
@@ -163,8 +238,10 @@ export default function FeedPage() {
         {/* ── LEFT SIDEBAR (lg+) ── */}
         <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-20 space-y-sm z-40">
           <div className="mb-lg">
-            <img src="/logo.png" alt="NeutronTech" className="h-14 w-auto drop-shadow-sm mb-xs" />
-            <p className="font-body-md text-on-surface-variant text-label-sm">{currentUser?.email}</p>
+            <Link href="/" className="inline-flex items-center gap-sm">
+              <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
+              <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
+            </Link>
           </div>
           <nav className="flex-1 flex flex-col space-y-xs">
             <Link className="bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center gap-sm p-sm transition-all active:translate-x-1 duration-200" href="/feed">
@@ -229,7 +306,9 @@ export default function FeedPage() {
                         <span className="material-symbols-outlined text-[20px]">videocam</span>
                       </button>
                     </div>
-                    <button onClick={handlePost} className="bg-primary text-on-primary px-sm py-xs rounded-full font-label-md text-label-md active:scale-95 transition-transform">Post</button>
+                    <button onClick={handlePost} disabled={posting} className="bg-primary text-on-primary px-sm py-xs rounded-full font-label-md text-label-md active:scale-95 transition-transform disabled:opacity-60">
+                      {posting ? 'Posting...' : 'Post'}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -292,8 +371,11 @@ export default function FeedPage() {
                             <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                             <span className="text-label-sm">{post.likes}</span>
                           </button>
-                          <button className="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
-                            <span className="material-symbols-outlined text-[20px]">comment</span>
+                          <button
+                            className={`flex items-center gap-xs transition-colors ${openComments[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
+                            onClick={() => toggleComments(post.id)}
+                          >
+                            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: openComments[post.id] ? "'FILL' 1" : "'FILL' 0" }}>comment</span>
                             <span className="text-label-sm">{post.comments}</span>
                           </button>
                         </div>
@@ -301,6 +383,66 @@ export default function FeedPage() {
                           <span className="material-symbols-outlined text-[20px]">share</span>
                         </button>
                       </div>
+
+                      {/* ── COMMENTS SECTION ── */}
+                      {openComments[post.id] && (
+                        <div className="pt-sm space-y-sm border-t border-outline-variant mt-sm">
+
+                          {/* Comment list */}
+                          {!postComments[post.id] && (
+                            <div className="flex justify-center py-sm">
+                              <span className="material-symbols-outlined animate-spin text-primary text-[20px]">progress_activity</span>
+                            </div>
+                          )}
+                          {(postComments[post.id] || []).length === 0 && postComments[post.id] && (
+                            <p className="text-center font-label-sm text-label-sm text-on-surface-variant py-sm">No comments yet. Be the first!</p>
+                          )}
+                          {(postComments[post.id] || []).map((c) => (
+                            <div key={c.id} className="flex gap-sm">
+                              <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                                {c.avatar
+                                  ? <img src={c.avatar} className="w-full h-full object-cover" alt={c.author} />
+                                  : <span className="material-symbols-outlined text-primary" style={{ fontSize: '16px' }}>person</span>
+                                }
+                              </div>
+                              <div className="flex-1">
+                                <div className="bg-surface-container-low rounded-xl px-sm py-xs">
+                                  <p className="font-label-sm text-label-sm font-bold text-on-surface">{c.author}</p>
+                                  <p className="font-body-md text-on-surface" style={{ fontSize: '14px' }}>{c.content}</p>
+                                </div>
+                                <p className="font-label-sm text-label-sm text-on-surface-variant mt-xs ml-sm">{c.time}</p>
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* Comment input */}
+                          <div className="flex gap-sm items-center pt-xs">
+                            <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                              {composerAvatar
+                                ? <img src={composerAvatar} className="w-full h-full object-cover" alt="" />
+                                : <span className="material-symbols-outlined text-primary" style={{ fontSize: '16px' }}>person</span>
+                              }
+                            </div>
+                            <div className="flex-1 flex gap-xs">
+                              <input
+                                value={commentText[post.id] || ''}
+                                onChange={(e) => setCommentText((prev) => ({ ...prev, [post.id]: e.target.value }))}
+                                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitComment(post.id); } }}
+                                placeholder="Write a comment..."
+                                className="flex-1 bg-surface-container-low rounded-full px-md py-xs font-body-md outline-none border border-outline-variant focus:border-primary transition-colors"
+                                style={{ fontSize: '14px' }}
+                              />
+                              <button
+                                onClick={() => submitComment(post.id)}
+                                disabled={sendingComment[post.id] || !commentText[post.id]?.trim()}
+                                className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors disabled:opacity-40"
+                              >
+                                <span className="material-symbols-outlined text-[20px]">send</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </article>
 
@@ -353,7 +495,7 @@ export default function FeedPage() {
               <a className="hover:underline" href="#">About</a>
               <a className="hover:underline" href="#">Privacy</a>
               <a className="hover:underline" href="#">Terms</a>
-              <span>© 2024 NeutronTech Inc.</span>
+              <span>© 2024 Neutron Tech Inc.</span>
             </div>
           </footer>
         </aside>

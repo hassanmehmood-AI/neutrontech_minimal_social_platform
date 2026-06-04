@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NeutronTech | Innovation at its Forefront",
+  title: "Neutron Tech | Innovation at its Forefront",
   description: "The future of social innovation.",
 };
 

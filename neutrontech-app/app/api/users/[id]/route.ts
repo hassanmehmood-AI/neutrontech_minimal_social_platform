@@ -1,5 +1,6 @@
 import { type NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getAuthUser } from '@/lib/auth';
 import { timeAgo } from '@/lib/utils';
 
 export async function GET(
@@ -46,17 +47,24 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getAuthUser(request);
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { id } = await params;
+  if (user.id !== id) return Response.json({ error: 'Forbidden' }, { status: 403 });
+
   const body = await request.json();
+
+  const updateData: Record<string, unknown> = {};
+  if (body.name   !== undefined) updateData.full_name  = body.name;
+  if (body.bio    !== undefined) updateData.bio        = body.bio;
+  if (body.role   !== undefined) updateData.role       = body.role;
+  if (body.avatar !== undefined) updateData.avatar_url = body.avatar;
+  if (body.cover  !== undefined) updateData.cover_url  = body.cover;
 
   const { data, error } = await supabaseAdmin
     .from('profiles')
-    .update({
-      full_name: body.name,
-      bio: body.bio,
-      role: body.role,
-      avatar_url: body.avatar,
-    })
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();

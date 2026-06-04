@@ -1,15 +1,15 @@
 import { type NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getAuthUser } from '@/lib/auth';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const body = await request.json();
-  const userId: string = body.userId;
+  const user = await getAuthUser(request);
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  if (!userId) return Response.json({ error: 'userId required' }, { status: 400 });
+  const { id } = await params;
 
   const { data: post, error: postError } = await supabaseAdmin
     .from('posts')
@@ -23,7 +23,7 @@ export async function POST(
     .from('likes')
     .select('id')
     .eq('post_id', id)
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .maybeSingle();
 
   let newLikes: number;
@@ -34,7 +34,7 @@ export async function POST(
     newLikes = Math.max(0, (post.likes as number) - 1);
     liked = false;
   } else {
-    await supabaseAdmin.from('likes').insert({ post_id: Number(id), user_id: userId });
+    await supabaseAdmin.from('likes').insert({ post_id: Number(id), user_id: user.id });
     newLikes = (post.likes as number) + 1;
     liked = true;
   }

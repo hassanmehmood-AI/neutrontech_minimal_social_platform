@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -10,6 +10,7 @@ type Profile = {
   full_name: string | null;
   username: string | null;
   avatar_url: string | null;
+  cover_url: string | null;
   bio: string | null;
   role: string | null;
   followers: number;
@@ -38,6 +39,19 @@ export default function ProfilePage() {
   const [scrolled, setScrolled]     = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
+  // Edit modal
+  const [editOpen, setEditOpen]           = useState(false);
+  const [editName, setEditName]           = useState('');
+  const [editBio, setEditBio]             = useState('');
+  const [avatarFile, setAvatarFile]       = useState<File | null>(null);
+  const [coverFile, setCoverFile]         = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [coverPreview, setCoverPreview]   = useState<string | null>(null);
+  const [saving, setSaving]               = useState(false);
+  const [saveError, setSaveError]         = useState('');
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef  = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -47,7 +61,6 @@ export default function ProfilePage() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { router.replace('/login'); return; }
-
       const res = await fetch(`/api/users/${session.user.id}`);
       if (res.ok) {
         const { user, posts: userPosts } = await res.json();
@@ -66,12 +79,88 @@ export default function ProfilePage() {
     router.replace('/login');
   };
 
+  const openEdit = () => {
+    setEditName(profile?.full_name || '');
+    setEditBio(profile?.bio || '');
+    setAvatarFile(null);
+    setCoverFile(null);
+    setAvatarPreview(null);
+    setCoverPreview(null);
+    setSaveError('');
+    setEditOpen(true);
+  };
+
+  const pickFile = (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'cover') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    if (type === 'avatar') { setAvatarFile(file); setAvatarPreview(url); }
+    else                   { setCoverFile(file);  setCoverPreview(url);  }
+    e.target.value = '';
+  };
+
+  const handleSave = async () => {
+    if (!profile) return;
+    setSaving(true);
+    setSaveError('');
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token ?? '';
+    const authHeader = { 'Authorization': `Bearer ${token}` };
+
+    let newAvatarUrl = profile.avatar_url;
+    let newCoverUrl  = profile.cover_url;
+
+    // Upload via server-side route (service role key — no RLS issues)
+    if (avatarFile) {
+      const form = new FormData();
+      form.append('file', avatarFile);
+      const up = await fetch('/api/upload', { method: 'POST', headers: authHeader, body: form });
+      const { url } = await up.json();
+      if (url) newAvatarUrl = url;
+    }
+
+    if (coverFile) {
+      const form = new FormData();
+      form.append('file', coverFile);
+      const up = await fetch('/api/upload', { method: 'POST', headers: authHeader, body: form });
+      const { url } = await up.json();
+      if (url) newCoverUrl = url;
+    }
+
+    const res = await fetch(`/api/users/${profile.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...authHeader },
+      body: JSON.stringify({ name: editName, bio: editBio, avatar: newAvatarUrl }),
+    });
+
+    if (!res.ok) {
+      setSaveError('Failed to save. Please try again.');
+      setSaving(false);
+      return;
+    }
+
+    const updated = await res.json();
+
+    if (newCoverUrl !== profile.cover_url) {
+      await fetch(`/api/users/${profile.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...authHeader },
+        body: JSON.stringify({ cover: newCoverUrl }),
+      });
+    }
+
+    setProfile({ ...updated, cover_url: newCoverUrl });
+    setSaving(false);
+    setEditOpen(false);
+  };
+
   const displayName = profile?.full_name || profile?.username || 'Your Profile';
   const username    = profile?.username || '';
   const bio         = profile?.bio || 'No bio yet.';
   const avatarUrl   = profile?.avatar_url || undefined;
 
-  const mediaPosts  = posts.filter((p) => p.images.length > 0 || p.videoUrl);
+  const mediaPosts   = posts.filter((p) => p.images.length > 0 || p.videoUrl);
   const visiblePosts = activeTab === 'posts' ? posts : mediaPosts;
 
   if (authLoading) {
@@ -85,17 +174,179 @@ export default function ProfilePage() {
   return (
     <div className="font-body-md text-body-md overflow-x-hidden">
 
+      {/* ── EDIT PROFILE MODAL ── */}
+      {editOpen && (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setEditOpen(false); }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 100,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '16px',
+            background: 'rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div style={{
+            background: '#fff', borderRadius: '16px',
+            width: '100%', maxWidth: '512px',
+            maxHeight: '90vh', overflowY: 'auto',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)',
+          }}>
+            {/* Sticky header */}
+            <div style={{
+              position: 'sticky', top: 0, zIndex: 10, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '16px 24px', borderBottom: '1px solid #e5e7eb',
+            }}>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' }}>Edit Profile</h2>
+              <button
+                onClick={() => setEditOpen(false)}
+                className="material-symbols-outlined"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '24px', color: '#6b7280' }}
+              >close</button>
+            </div>
+
+            {/* Cover photo */}
+            <div
+              onClick={() => coverInputRef.current?.click()}
+              style={{
+                position: 'relative', height: '144px',
+                background: '#111', cursor: 'pointer', overflow: 'hidden',
+              }}
+            >
+              {(coverPreview || profile?.cover_url) ? (
+                <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={coverPreview || profile?.cover_url!} alt="Cover" />
+              ) : (
+                <div style={{
+                  position: 'absolute', inset: 0, opacity: 0.2,
+                  backgroundImage: 'radial-gradient(circle at 2px 2px,white 1px,transparent 0)',
+                  backgroundSize: '24px 24px',
+                }} />
+              )}
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px',
+              }}>
+                <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: '32px' }}>add_photo_alternate</span>
+                <span style={{ color: '#fff', fontSize: '13px', fontWeight: 500 }}>Change cover photo</span>
+              </div>
+              <input ref={coverInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => pickFile(e, 'cover')} />
+            </div>
+
+            {/* Fields */}
+            <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+              {/* Profile photo */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  onClick={() => avatarInputRef.current?.click()}
+                  style={{
+                    position: 'relative', width: '80px', height: '80px', borderRadius: '50%',
+                    background: '#f3f4f6', border: '2px solid #e5e7eb',
+                    cursor: 'pointer', overflow: 'hidden', flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  {(avatarPreview || avatarUrl) ? (
+                    <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={avatarPreview || avatarUrl} alt={displayName} />
+                  ) : (
+                    <span className="material-symbols-outlined" style={{ color: '#9ca3af', fontSize: '36px' }}>person</span>
+                  )}
+                  <div style={{
+                    position: 'absolute', inset: 0, borderRadius: '50%',
+                    background: 'rgba(0,0,0,0.4)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    opacity: 0, transition: 'opacity 0.15s',
+                  }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
+                  >
+                    <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: '20px' }}>photo_camera</span>
+                  </div>
+                  <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => pickFile(e, 'avatar')} />
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1f2937' }}>Profile Photo</p>
+                  <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#6b7280' }}>Click the circle to change</p>
+                </div>
+              </div>
+
+              {/* Name */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>Name</label>
+                <input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Your name"
+                  style={{
+                    width: '100%', padding: '10px 16px', boxSizing: 'border-box',
+                    border: '1px solid #d1d5db', borderRadius: '12px',
+                    fontSize: '14px', outline: 'none', background: '#fff',
+                  }}
+                />
+              </div>
+
+              {/* Bio */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>Bio</label>
+                <textarea
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  rows={3}
+                  maxLength={160}
+                  placeholder="Tell the world about yourself..."
+                  style={{
+                    width: '100%', padding: '10px 16px', boxSizing: 'border-box',
+                    border: '1px solid #d1d5db', borderRadius: '12px',
+                    fontSize: '14px', outline: 'none', resize: 'none', background: '#fff',
+                  }}
+                />
+                <p style={{ textAlign: 'right', margin: 0, fontSize: '12px', color: '#9ca3af' }}>{editBio.length}/160</p>
+              </div>
+
+              {saveError && <p style={{ margin: 0, fontSize: '14px', color: '#ef4444' }}>{saveError}</p>}
+            </div>
+
+            {/* Sticky footer */}
+            <div style={{
+              position: 'sticky', bottom: 0, zIndex: 10, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px',
+              padding: '16px 24px', borderTop: '1px solid #e5e7eb',
+            }}>
+              <button
+                onClick={() => setEditOpen(false)}
+                style={{
+                  padding: '8px 20px', borderRadius: '12px',
+                  border: '1px solid #d1d5db', fontSize: '14px', fontWeight: 500,
+                  color: '#374151', background: '#fff', cursor: 'pointer',
+                }}
+              >Cancel</button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                style={{
+                  padding: '8px 20px', borderRadius: '12px',
+                  background: 'var(--color-primary-container)', color: '#fff',
+                  fontSize: '14px', fontWeight: 700, border: 'none', cursor: 'pointer',
+                  opacity: saving ? 0.6 : 1,
+                }}
+              >{saving ? 'Saving...' : 'Save'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── TOP NAV ── */}
       <header className={`fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant h-16 flex items-center px-margin-mobile md:px-margin-desktop ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
-        <div className="flex justify-between items-center w-full max-w-[1280px] mx-auto">
-          <div className="flex items-center gap-xs">
-            <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
+        <div className="grid grid-cols-3 items-center w-full max-w-[1280px] mx-auto">
+          <div></div>
+          <div className="flex justify-center">
+            <nav className="hidden lg:flex items-center space-x-lg">
+              <Link href="/feed" className="font-label-md text-label-md text-secondary hover:text-primary transition-colors">Feed</Link>
+              <Link href="/search" className="font-label-md text-label-md text-secondary hover:text-primary transition-colors">Search</Link>
+            </nav>
           </div>
-          <nav className="hidden lg:flex items-center space-x-lg">
-            <Link href="/feed" className="font-label-md text-label-md text-secondary hover:text-primary transition-colors">Feed</Link>
-            <Link href="/search" className="font-label-md text-label-md text-secondary hover:text-primary transition-colors">Search</Link>
-          </nav>
-          <div className="flex items-center gap-sm">
+          <div className="flex items-center justify-end gap-sm">
             <button className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary" onClick={() => window.location.href = '/search'}>search</button>
             <button onClick={handleLogout} className="hidden lg:block font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low px-md py-xs rounded-lg transition-all active:scale-95">Logout</button>
           </div>
@@ -104,19 +355,11 @@ export default function ProfilePage() {
 
       {/* ── LEFT SIDEBAR (lg+) ── */}
       <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant pt-20 p-md space-y-sm">
-        <div className="flex flex-col space-y-xs pb-md border-b border-outline-variant">
-          <div className="flex items-center space-x-sm px-xs">
-            <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
-              {avatarUrl
-                ? <img alt="User" className="w-full h-full object-cover" src={avatarUrl} />
-                : <span className="material-symbols-outlined text-primary">person</span>
-              }
-            </div>
-            <div>
-              <p className="font-label-md text-label-md text-primary font-bold">{displayName}</p>
-              {username && <p className="font-label-sm text-label-sm text-on-surface-variant">@{username}</p>}
-            </div>
-          </div>
+        <div className="mb-sm">
+          <Link href="/" className="inline-flex items-center gap-sm">
+            <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
+            <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
+          </Link>
         </div>
         <nav className="flex-1 flex flex-col space-y-xs pt-md">
           <Link className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/feed">
@@ -145,8 +388,14 @@ export default function ProfilePage() {
 
         {/* ── PROFILE BANNER ── */}
         <div className="relative h-40 md:h-64 lg:h-80 w-full overflow-hidden">
-          <div className="absolute inset-0 bg-primary-container"></div>
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px,white 1px,transparent 0)', backgroundSize: '24px 24px' }}></div>
+          {profile?.cover_url ? (
+            <img className="w-full h-full object-cover" src={profile.cover_url} alt="Cover photo" />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-primary-container"></div>
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px,white 1px,transparent 0)', backgroundSize: '24px 24px' }}></div>
+            </>
+          )}
         </div>
 
         {/* ── MOBILE PROFILE HEADER ── */}
@@ -163,9 +412,10 @@ export default function ProfilePage() {
               {username && <p className="font-label-md text-label-md text-on-surface-variant">@{username}</p>}
             </div>
             <div className="flex gap-sm w-full max-w-[24rem] mt-md">
-              <button className="flex-1 bg-surface border border-outline-variant text-on-surface h-12 rounded-xl font-label-md text-label-md active:scale-95 transition-transform duration-150">
-                Edit Profile
-              </button>
+              <button
+                onClick={openEdit}
+                className="flex-1 bg-surface border border-outline-variant text-on-surface h-12 rounded-xl font-label-md text-label-md active:scale-95 transition-transform duration-150"
+              >Edit Profile</button>
             </div>
             <div className="w-full mt-lg">
               <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">{bio}</p>
@@ -204,7 +454,10 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="flex items-center gap-sm">
-                <button className="border border-outline-variant px-lg py-sm rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-all active:scale-95">Edit Profile</button>
+                <button
+                  onClick={openEdit}
+                  className="border border-outline-variant px-lg py-sm rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-all active:scale-95"
+                >Edit Profile</button>
               </div>
             </div>
             {bio && (
@@ -331,8 +584,8 @@ export default function ProfilePage() {
       <footer className="w-full py-xl bg-surface-container-lowest border-t border-outline-variant hidden lg:block">
         <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto gap-md lg:ml-64">
           <div className="flex items-center space-x-sm">
-            <img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" />
-            <span className="font-label-sm text-label-sm text-secondary">© 2024 NeutronTech Inc.</span>
+            <img src="/logo.png" alt="Neutron Tech" className="h-12 w-auto drop-shadow-sm" />
+            <span className="font-label-sm text-label-sm text-secondary">© 2024 Neutron Tech Inc.</span>
           </div>
           <div className="flex space-x-lg">
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">About</a>

@@ -1,4 +1,6 @@
+import { type NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getAuthUser } from '@/lib/auth';
 import { timeAgo } from '@/lib/utils';
 
 export async function GET(
@@ -31,10 +33,24 @@ export async function GET(
 }
 
 export async function DELETE(
-  _req: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getAuthUser(request);
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { id } = await params;
+
+  // Verify the post belongs to this user before deleting
+  const { data: post, error: fetchError } = await supabaseAdmin
+    .from('posts')
+    .select('user_id')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) return Response.json({ error: 'Post not found' }, { status: 404 });
+  if (post.user_id !== user.id) return Response.json({ error: 'Forbidden' }, { status: 403 });
+
   const { error } = await supabaseAdmin.from('posts').delete().eq('id', id);
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return Response.json({ success: true });

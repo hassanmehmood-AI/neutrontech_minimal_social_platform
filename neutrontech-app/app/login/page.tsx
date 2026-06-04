@@ -87,8 +87,9 @@ export default function LoginPage() {
         <div className="fixed -bottom-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
 
         <main className="w-full max-w-[28rem] mx-auto flex flex-col items-center space-y-md">
-          <header className="text-center">
-            <img src="/logo.png" alt="NeutronTech" className="h-28 w-auto mx-auto contrast-200" />
+          <header className="text-center flex items-center justify-center gap-xl">
+            <img src="/brand-logo.png" alt="Neutron Tech logo" className="h-10 w-10 object-contain brightness-0 invert opacity-80" />
+            <span className="font-display text-headline-lg text-on-surface tracking-tight font-bold">Neutron Tech</span>
           </header>
 
           <div className="w-full bg-surface-container-lowest rounded-2xl border border-outline-variant p-md auth-card space-y-sm">
@@ -149,7 +150,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center font-label-sm text-label-sm text-on-surface-variant px-md leading-relaxed">
-            By continuing, you agree to NeutronTech&apos;s{' '}
+            By continuing, you agree to Neutron Tech&apos;s{' '}
             <a className="text-primary hover:underline" href="#">Terms of Service</a> and{' '}
             <a className="text-primary hover:underline" href="#">Privacy Policy</a>.
           </p>
@@ -167,14 +168,15 @@ export default function LoginPage() {
             <img className="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000&auto=format&fit=crop" alt="Tech background" />
           </div>
           <div className="relative z-10 max-w-[32rem] text-left">
-            <Link href="/" className="inline-block mb-md">
-              <span className="font-display text-headline-lg text-white/80 tracking-tight">NeutronTech</span>
+            <Link href="/" className="inline-flex items-center gap-sm mb-md">
+              <img src="/brand-logo.png" alt="Neutron Tech logo" className="h-10 w-10 object-contain brightness-0 invert opacity-80" />
+              <span className="font-display text-headline-lg text-white/80 tracking-tight font-bold">Neutron Tech</span>
             </Link>
             <h1 className="font-display text-display text-on-primary mb-md leading-tight">
               Powering the next generation of Tech-Social.
             </h1>
             <p className="font-body-lg text-body-lg text-primary-fixed mb-lg opacity-90">
-              Connect, collaborate, and scale with NeutronTech&apos;s precision-engineered platform.
+              Connect, collaborate, and scale with Neutron Tech&apos;s precision-engineered platform.
             </p>
             <div className="flex flex-wrap gap-md">
               <div className="flex items-center gap-xs bg-white/10 backdrop-blur-md px-md py-sm rounded-xl border border-white/20">
@@ -201,7 +203,7 @@ export default function LoginPage() {
             {/* Desktop Login */}
             {desktopTab === 'login' && (
               <div className="space-y-sm">
-                <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold mb-md">Log in to NeutronTech</h2>
+                <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold mb-md">Log in to Neutron Tech</h2>
                 <form className="space-y-sm" onSubmit={handleLogin}>
                   {loginError && <p className="text-error font-label-sm text-label-sm">{loginError}</p>}
                   <input value={loginEmail} onChange={e => setLoginEmail(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Email address or mobile number" type="email" required />
@@ -259,7 +261,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <p className="text-center font-label-sm text-label-sm text-outline mt-lg">© 2024 NeutronTech Inc.</p>
+            <p className="text-center font-label-sm text-label-sm text-outline mt-lg">© 2024 Neutron Tech Inc.</p>
           </div>
         </section>
       </div>
