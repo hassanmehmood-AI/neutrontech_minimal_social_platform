@@ -164,7 +164,7 @@ export default function LoginPage() {
         {/* Left branding panel */}
         <section className="w-1/2 bg-primary-container relative overflow-hidden flex items-center justify-center p-xl">
           <div className="absolute inset-0 z-0">
-            <img className="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_mngc07qN1BwTUEn9wOMEvj5HquXKfx5XA47N7cSDy7GWAxYKvoZMa-ApNYkqa35hyIBmzCDfGDlgcCdhuUAOxQZCltQFYhKSGORyqCaXFJJa5xrWRGdqrzUTvjzfJk1p4fTWyJeE9JtmzpZfUw7BzixKevW4glRJNJyd1kMGvVqHf3pDODXYDR5_JcC4IeJRVJu30KF3q5EMvhPxwD9n0_x-UXxnusrtqdDue3O-rkaOjjntf_Usx927QuYkMfk3Uln5z8Ykbkc" alt="Tech background" />
+            <img className="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000&auto=format&fit=crop" alt="Tech background" />
           </div>
           <div className="relative z-10 max-w-[32rem] text-left">
             <Link href="/" className="inline-block mb-md">
