@@ -24,7 +24,7 @@ export default function LandingPage() {
       <header className={`fixed top-0 w-full z-50 bg-surface/90 blur-nav border-b border-outline-variant h-16 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
         <nav className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
           <div className="flex items-center gap-md">
-            <Link href="/" className="font-display text-headline-lg text-primary tracking-tight">NeutronTech</Link>
+            <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
             <div className="hidden lg:flex gap-sm ml-lg">
               <Link href="/feed" className="font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-base rounded-lg">Feed</Link>
               <Link href="/search" className="font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-base rounded-lg">Search</Link>
@@ -46,7 +46,7 @@ export default function LandingPage() {
       <div className={`fixed inset-0 z-[60] bg-surface transition-transform duration-300 ease-in-out lg:hidden ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex flex-col p-md h-full">
           <div className="flex justify-between items-center mb-xl">
-            <span className="font-display text-headline-md text-primary tracking-tight">NeutronTech</span>
+            <img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" />
             <button className="p-xs text-primary" onClick={() => setMenuOpen(false)}>
               <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>close</span>
             </button>
@@ -66,7 +66,7 @@ export default function LandingPage() {
 
         {/* ── HERO ── */}
         <section className="relative py-16 lg:py-40 bg-surface-bright">
-          <div className="absolute top-0 right-0 -z-10 w-1/2 h-full bg-[radial-gradient(circle_at_70%_30%,_#e0e0ff_0%,_transparent_60%)] opacity-40 hidden lg:block"></div>
+          <div className="absolute top-0 right-0 -z-10 w-1/2 h-full bg-[radial-gradient(circle_at_70%_30%,_#e0e0e0_0%,_transparent_60%)] opacity-40 hidden lg:block"></div>
           <div className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
             {/* Mobile */}
             <div className="flex flex-col items-center text-center lg:hidden">
@@ -294,7 +294,7 @@ export default function LandingPage() {
         <div className="max-w-[1280px] mx-auto">
           <div className="flex flex-col gap-lg lg:hidden">
             <div>
-              <div className="font-display text-headline-md text-primary tracking-tight mb-xs">NeutronTech</div>
+              <div className="mb-xs"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></div>
               <p className="font-body-md text-on-surface-variant">Pioneering the tech-social intersection.</p>
             </div>
             <div className="grid grid-cols-2 gap-md">
@@ -320,7 +320,7 @@ export default function LandingPage() {
           </div>
           <div className="hidden lg:flex flex-row justify-between items-center gap-xl">
             <div className="flex flex-col items-start gap-xs">
-              <span className="font-display text-headline-md font-bold text-primary-container">NeutronTech</span>
+              <img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" />
               <p className="font-body-md text-on-surface-variant font-label-sm">© 2024 NeutronTech Inc.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-lg">

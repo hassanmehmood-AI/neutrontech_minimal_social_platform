@@ -89,8 +89,7 @@ export default function ProfilePage() {
       <header className={`fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant h-16 flex items-center px-margin-mobile md:px-margin-desktop ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
         <div className="flex justify-between items-center w-full max-w-[1280px] mx-auto">
           <div className="flex items-center gap-xs">
-            <span className="material-symbols-outlined text-primary lg:hidden" style={{ fontSize: '24px' }}>bolt</span>
-            <Link href="/" className="font-display text-headline-md lg:text-headline-lg text-primary tracking-tight">NeutronTech</Link>
+            <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
           </div>
           <nav className="hidden lg:flex items-center space-x-lg">
             <Link href="/feed" className="font-label-md text-label-md text-secondary hover:text-primary transition-colors">Feed</Link>
@@ -332,7 +331,7 @@ export default function ProfilePage() {
       <footer className="w-full py-xl bg-surface-container-lowest border-t border-outline-variant hidden lg:block">
         <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto gap-md lg:ml-64">
           <div className="flex items-center space-x-sm">
-            <span className="font-display text-label-md font-bold text-primary">NeutronTech</span>
+            <img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" />
             <span className="font-label-sm text-label-sm text-secondary">© 2024 NeutronTech Inc.</span>
           </div>
           <div className="flex space-x-lg">

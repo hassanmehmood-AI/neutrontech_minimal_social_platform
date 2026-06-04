@@ -134,7 +134,7 @@ export default function FeedPage() {
       {/* ── TOP NAV ── */}
       <header className="fixed top-0 w-full z-50 glass-effect border-b border-outline-variant shadow-sm h-16">
         <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full max-w-[1280px] mx-auto">
-          <Link href="/" className="font-display text-headline-md lg:text-headline-lg text-primary tracking-tight">NeutronTech</Link>
+          <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
           <div className="hidden lg:flex items-center bg-surface-container-low rounded-full px-md py-xs border border-outline-variant w-1/3 cursor-pointer" onClick={() => window.location.href = '/search'}>
             <span className="material-symbols-outlined text-outline">search</span>
             <span className="font-label-md text-label-md text-outline ml-xs">Search...</span>
@@ -163,7 +163,7 @@ export default function FeedPage() {
         {/* ── LEFT SIDEBAR (lg+) ── */}
         <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-20 space-y-sm z-40">
           <div className="mb-lg">
-            <h2 className="font-display text-headline-md text-primary">NeutronTech</h2>
+            <img src="/logo.png" alt="NeutronTech" className="h-14 w-auto drop-shadow-sm mb-xs" />
             <p className="font-body-md text-on-surface-variant text-label-sm">{currentUser?.email}</p>
           </div>
           <nav className="flex-1 flex flex-col space-y-xs">

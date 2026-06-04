@@ -88,10 +88,7 @@ export default function LoginPage() {
 
         <main className="w-full max-w-[28rem] mx-auto flex flex-col items-center space-y-xl">
           <header className="text-center space-y-sm">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-container rounded-xl shadow-lg mb-md">
-              <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
-            </div>
-            <h1 className="font-display text-display text-primary tracking-tight">NeutronTech</h1>
+            <img src="/logo.png" alt="NeutronTech" className="h-32 w-auto mx-auto drop-shadow-sm" />
             <p className="font-label-md text-label-md text-on-surface-variant">The future of social innovation.</p>
           </header>
 
@@ -191,8 +188,8 @@ export default function LoginPage() {
       {/* ══════════════════════════════════
           DESKTOP LAYOUT (hidden on mobile)
       ══════════════════════════════════ */}
-      <div className="hidden lg:flex min-h-screen flex-col">
-        <main className="flex-grow flex flex-row h-screen overflow-hidden">
+      <div className="hidden lg:flex h-screen overflow-hidden flex-col">
+        <main className="flex-1 flex flex-row overflow-hidden">
 
           {/* Left branding panel */}
           <section className="hidden lg:flex w-1/2 bg-primary-container relative overflow-hidden items-center justify-center p-xl">
@@ -227,11 +224,10 @@ export default function LoginPage() {
           <section className="w-full lg:w-1/2 bg-surface-container-lowest flex items-center justify-center p-xl overflow-y-auto">
             <div className="w-full max-w-[28rem]">
 
-              <div className="mb-xl">
-                <div className="inline-flex items-center gap-xs mb-sm">
-                  <span className="material-symbols-outlined text-primary-container text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
-                  <Link href="/" className="font-display text-headline-lg text-primary tracking-tight">NeutronTech</Link>
-                </div>
+              <div className="mb-xl flex justify-center mt-lg">
+                <Link href="/">
+                  <img src="/logo.png" alt="NeutronTech" className="h-28 w-auto drop-shadow-sm" />
+                </Link>
               </div>
 
               {/* Desktop tab nav */}

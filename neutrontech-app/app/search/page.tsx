@@ -58,7 +58,7 @@ export default function SearchPage() {
       {/* ── TOP NAV ── */}
       <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm border-b border-outline-variant h-16">
         <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
-          <Link href="/" className="font-display text-headline-lg-mobile lg:text-headline-lg text-primary tracking-tight">NeutronTech</Link>
+          <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-12 w-auto drop-shadow-sm" /></Link>
           <nav className="hidden lg:flex items-center space-x-lg">
             <Link href="/feed"   className="text-secondary font-label-md text-label-md hover:text-primary transition-colors">Feed</Link>
             <Link href="/search" className="text-primary font-bold border-b-2 border-primary font-label-md text-label-md">Search</Link>
@@ -78,7 +78,7 @@ export default function SearchPage() {
       {/* ── LEFT SIDEBAR (lg+) ── */}
       <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md space-y-sm z-40">
         <div className="pt-xl pb-lg">
-          <Link href="/" className="font-display text-headline-md text-primary">NeutronTech</Link>
+          <Link href="/"><img src="/logo.png" alt="NeutronTech" className="h-14 w-auto drop-shadow-sm" /></Link>
           <p className="font-label-md text-label-md text-on-surface-variant">Tech-Social Hub</p>
         </div>
         <nav className="flex-grow space-y-xs">
