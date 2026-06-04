@@ -1,0 +1,405 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 2067px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Profile | NeutronTech</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f1efff",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#545f72",
+                        "inverse-surface": "#2f2f3b",
+                        "primary-fixed-dim": "#bec2ff",
+                        "on-tertiary-fixed-variant": "#900e00",
+                        "on-tertiary-fixed": "#3f0300",
+                        "surface-variant": "#e3e1f0",
+                        "inverse-primary": "#bec2ff",
+                        "on-primary-container": "#c1c5ff",
+                        "surface-tint": "#2f3eff",
+                        "surface-dim": "#dad8e8",
+                        "secondary-container": "#d5e0f7",
+                        "surface-bright": "#fbf8ff",
+                        "outline": "#757589",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#7e0b00",
+                        "surface-container-highest": "#e3e1f0",
+                        "on-tertiary-container": "#ffb8aa",
+                        "on-surface-variant": "#444557",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#111c2c",
+                        "surface-container-low": "#f4f2ff",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "primary-container": "#1929fe",
+                        "surface-container": "#eeecfc",
+                        "on-surface": "#1a1b25",
+                        "secondary-fixed": "#d8e3fa",
+                        "on-background": "#1a1b25",
+                        "on-primary-fixed-variant": "#0013e7",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#bcc7dd",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#ffdad4",
+                        "primary-fixed": "#e0e0ff",
+                        "background": "#fbf8ff",
+                        "on-secondary-container": "#586377",
+                        "surface-container-high": "#e8e6f6",
+                        "primary": "#0010cc",
+                        "surface": "#fbf8ff",
+                        "tertiary-container": "#a91300",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb4a6",
+                        "outline-variant": "#c5c5da",
+                        "on-primary-fixed": "#00046a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "1rem",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "base": "4px",
+                        "xs": "0.5rem",
+                        "xl": "4rem",
+                        "md": "1.5rem",
+                        "lg": "2rem",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "label-md": ["Geist"],
+                        "body-md": ["Inter"],
+                        "display": ["Geist"],
+                        "headline-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .soft-shadow {
+            box-shadow: 0px 4px 20px rgba(10, 17, 40, 0.05);
+        }
+        .tonal-layer {
+            border: 1px solid #E2E8F0;
+        }
+        body {
+            background-color: #fbf8ff;
+            color: #1a1b25;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm h-16">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
+<div class="font-display text-headline-lg text-primary tracking-tight">NeutronTech</div>
+<nav class="hidden md:flex items-center space-x-lg">
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">Feed</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">Search</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<div class="flex items-center space-x-sm">
+<button class="hidden md:block font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low px-md py-xs rounded-lg transition-all active:scale-95">Login</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-md py-xs rounded-lg shadow-sm hover:brightness-90 transition-all active:scale-95">Sign Up</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant pt-20 p-md space-y-sm">
+<div class="flex flex-col space-y-xs pb-md border-b border-outline-variant">
+<div class="flex items-center space-x-sm px-xs">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO-61ihP4WWtsYAaQCBa9IXYHkDGwRxuZR3bVGE-TNcIHQ1SDDplkeDjAcpILIEPjF4QvFEe8_IPXMjnvavcFGbe3xZIF8VoNqY5geg6tjq9tMRA5pFAaua4p4Wyqzo1Lm6_4U9EBLfyWCIWaH8omR-DU-mAeVyLR0n68uC7EDWcb0afmWoIVh4xnPjrwBVSAjgbDgqNn9j2i4MahTfz0-RIany4y2FUyVRylVGB5nEdyhPStsWYA-kOxWlTBn4wS3Uz-Mr4Rls2Q">
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary font-bold">NeutronTech</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tech-Social Hub</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col space-y-xs pt-md">
+<a class="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl active:translate-x-1" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center space-x-sm px-md py-sm bg-secondary-container text-on-secondary-container rounded-xl font-bold active:translate-x-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl active:translate-x-1" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-md text-label-md">Search</span>
+</a>
+
+</nav>
+<div class="pt-md border-t border-outline-variant flex flex-col space-y-xs">
+<a class="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl active:translate-x-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl active:translate-x-1" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-64 pt-16 min-h-screen">
+<!-- Profile Banner Section -->
+<section class="relative">
+<div class="h-48 md:h-64 lg:h-80 w-full bg-primary-container overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+<img class="w-full h-full object-cover mix-blend-overlay" data-alt="A high-energy, abstract digital landscape featuring flowing geometric lines and glowing tech patterns in shades of vibrant electric blue and deep navy. The scene captures a futuristic, professional corporate energy with crisp clarity and high-key highlights that create a sense of technological advancement and precision. The lighting is soft yet focused, enhancing the sense of scale and depth within the digital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE0hIae1VB0DvUV8sVTHqlAliH9KrrJpDUnQtrfItPhVFDLZi5y_Dj7fr6u3c89GxyFVCIvrC-gDrJrzWYl9d_Od6_D3IYJ-kVKbsC11JXBYgAuzbS3Si3meV6PogNLJXr6g3ERPrkjfO69UFM_QZRFxvbnZRzOLGEhvLMgkpTH1qSzph2FpIAyU37CLznxu6gnxIQL6Rhkzsco7c53dZQfeXjIVS6--hIrELQpkKsbLW7RS0OoyeFNMQ1aWWJdVqjE_Ue__7GvpQ">
+</div>
+<!-- Profile Header Container -->
+<div class="max-w-[1000px] mx-auto px-margin-mobile md:px-margin-desktop -mt-16 md:-mt-24 relative z-10 pb-xl">
+<div class="bg-surface-container-lowest rounded-xl tonal-layer soft-shadow p-lg md:p-xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<!-- Avatar & Identity -->
+<div class="flex flex-col md:flex-row items-start md:items-end gap-md">
+<div class="relative group">
+<div class="w-32 h-32 md:w-40 md:h-40 rounded-xl bg-surface border-4 border-surface-container-lowest soft-shadow overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional, high-resolution portrait of a tech-forward individual looking confidently into the camera. The setting is a minimalist, modern office environment with soft natural lighting and a shallow depth of field that keeps the focus on the subject. The overall aesthetic is clean, professional, and reflects a high-energy startup culture with a palette of soft grays and bright whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWD8WtKEVzah1-rNf084h_50fz1DzOGeWod8w92k9t--jMC7hLS2eJ1R_o2wyozFXqDSKTrg507OKZ6ugrBMn7Wq7BnrnY9prLgam5wiOb8pbXeBQVmm0paOwwYMunqZxFrLymKyQpTLkqCTwOSePG-rqYM2nKBXSdpR38-wyNxvc6jIZ3hp_Fbeo4Yw7cBkdk-DDAqBECyc7BDzkHNNe-LGjr_E68BCHZE-2ZBPiReGmcIBQ_2vQvBwJoj10Wzy8mp56IfktA3ko">
+</div>
+<button class="absolute bottom-2 right-2 bg-primary text-on-primary p-2 rounded-lg soft-shadow transition-transform hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</button>
+</div>
+<div class="mb-2">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Alex Rivera</h1>
+<p class="font-label-md text-label-md text-secondary">@alex_neutron_dev</p>
+<div class="flex items-center mt-2 space-x-base text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-label-sm text-label-sm">San Francisco, CA</span>
+<span class="mx-2 opacity-30">|</span>
+<span class="material-symbols-outlined text-[18px]">link</span>
+<a class="font-label-sm text-label-sm text-primary hover:underline" href="#">neutrontech.io</a>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-sm">
+<button class="flex-1 md:flex-none border border-outline-variant px-lg py-sm rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-all active:scale-95">
+                                Edit Profile
+                            </button>
+
+</div>
+</div>
+<!-- Bio -->
+<div class="mt-lg max-w-2xl">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                            Full-stack engineer and tech enthusiast exploring the frontiers of decentralized systems. Building the future of social connectivity at <span class="text-primary font-bold">@NeutronTech</span>. Passionate about clean UI, precision-engineered code, and generative art.
+                        </p>
+</div>
+<!-- Stats -->
+
+</div>
+</div>
+<!-- Bento Grid Content Section -->
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter pb-xl">
+<!-- Left Column: About & Skills -->
+<div class="md:col-span-4 space-y-gutter">
+<!-- About Card -->
+<div class="bg-surface-container-lowest rounded-xl tonal-layer soft-shadow p-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">About</h3>
+<ul class="space-y-md">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary">work</span>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                    Lead Product Architect at <span class="font-bold text-on-surface">NeutronTech Inc.</span>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary">school</span>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                    Studied Computer Science at <span class="font-bold text-on-surface">Stanford University</span>
+</div></li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                    Joined NeutronTech in <span class="font-bold text-on-surface">March 2021</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- Skills / Tags Card -->
+<div class="bg-surface-container-lowest rounded-xl tonal-layer soft-shadow p-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">Expertise</h3>
+<div class="flex flex-wrap gap-xs">
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-lg font-label-sm text-label-sm">React.js</span>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-lg font-label-sm text-label-sm">Tailwind CSS</span>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-lg font-label-sm text-label-sm">TypeScript</span>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-lg font-label-sm text-label-sm">System Design</span>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-lg font-label-sm text-label-sm">Web3</span>
+<span class="bg-primary/10 text-primary px-sm py-xs rounded-lg font-label-sm text-label-sm font-bold">Node.js</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Posts Feed -->
+<div class="md:col-span-8 space-y-gutter">
+<!-- Feed Header -->
+<div class="flex items-center justify-between">
+<div class="flex space-x-lg">
+<button class="font-label-md text-label-md text-primary border-b-2 border-primary pb-2 px-1" style="transform: scale(1);">Recent Posts</button>
+<button class="font-label-md text-label-md text-secondary hover:text-on-surface transition-colors pb-2 px-1">Media</button>
+
+</div>
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container rounded-full p-2 transition-all">filter_list</button>
+</div>
+<!-- Post Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl tonal-layer soft-shadow overflow-hidden group">
+<div class="p-lg">
+<div class="flex items-center justify-between mb-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoiVF68-zEFCzYnocodjeqURVS0Ln7lLzbGwIEC-sH6zufC6b72CNSz-EpOP6JrLM6bgp8_UHAiR9enok4Vvf-lsH1sjlA0jgQfIRNxL9iKFnvte53jtPhTKhNOmSuF5eHR27LUO943uEROgtUL0ZNqQ6Ct1uB51mYA0XfCN1ZfvSQJ_NyR9iLrwdImsG3xlJ2xBqfrECOv9lmRpBueyQGyOMbOc7rDDBddagvZxs0ykMZLRpjPDLa6jFwRPoUEdHR_A2oNUJoUBc">
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Alex Rivera</p>
+<p class="font-label-sm text-label-sm text-secondary">2 hours ago</p>
+</div>
+</div>
+<button class="material-symbols-outlined text-secondary">more_horiz</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-md">
+                                Just finished optimizing our core rendering engine. We've managed to shave off 120ms from the TTI! The performance gains in high-density data visualizations are incredible. ✨ #NeutronTech #PerfMatters
+                            </p>
+<div class="rounded-lg overflow-hidden border border-outline-variant">
+<img class="w-full h-auto aspect-video object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A clean, close-up shot of a high-resolution professional computer monitor displaying complex, glowing code and vibrant data visualization graphs. The room is dark, allowing the monitor's light to create a cool blue atmospheric glow on the surrounding minimalist workspace. The overall visual style is sleek and technical, emphasizing precision, modern high-tech aesthetics, and professional expertise in software development." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp1Yo72Lu3_FJzothmEDH1ewnohXXgWB83As4tDsTD5WxtZrkK6obVBgt4J_rh7xV0MqBwMhahe4l85JMOHCnpyBjXNtMw50SKZT0QkeLhMxZjAUfd4Rld5ree8ZlUWBVBuNSMw3dxHIYuUIgNJOMIL4NcVyo0pTaGLRuASM8JX25AsQs9yjBcLhVVrjKaMq0Kf4TJ4ScXl7lV4PCG6dYmujyYx1RvMCi8HGwBzyK-iGYR08eutSu90TinIf5egGXSDa-cK3-qmWM">
+</div>
+<div class="flex items-center justify-between mt-lg">
+<div class="flex items-center space-x-lg">
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+<span class="font-label-sm text-label-sm">4.2k</span>
+</button>
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+<span class="font-label-sm text-label-sm">128</span>
+</button>
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-all" style="transform: scale(1);">
+
+</button>
+</div>
+
+</div>
+</div>
+</div>
+<!-- Post Item 2 (Text Only) -->
+<div class="bg-surface-container-lowest rounded-xl tonal-layer soft-shadow p-lg">
+<div class="flex items-center justify-between mb-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqDV8BhfGljBRvdRAtzg-7TBwGGISgjtrqpnfeGfJIipYiddN0drTyS8UWYfqlhlE98sjKPsrJf8rhqb8fD3OxP3GIhvn7xfi5bvZGkMLX2pS3x_OaS-O1dTmVRWcDbELHdZMjvvWLtYGqCi7v-XmH4V6fXGjUa3PF4b7CnLkpB7JALC_w6lDG-AhnxL5mPD1B0n5lVWmSauNY6_bbWtNKNVAc9Qj0ocwapffRDYhDdJoJaVy0Fz-Uy0NUrE-ghOg045Z_5RDBaGM">
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Alex Rivera</p>
+<p class="font-label-sm text-label-sm text-secondary">Yesterday</p>
+</div>
+</div>
+<button class="material-symbols-outlined text-secondary">more_horiz</button>
+</div>
+<p class="font-headline-md text-headline-md text-on-surface mb-md italic">
+                            "The best way to predict the future is to invent it."
+                        </p>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Thinking a lot about Alan Kay’s philosophy today. We're not just building tools; we're building the environments in which humanity will think and collaborate for the next century.
+                        </p>
+<div class="flex items-center justify-between mt-lg">
+<div class="flex items-center space-x-lg">
+<button class="flex items-center gap-xs text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label-sm text-label-sm">842</span>
+</button>
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+<span class="font-label-sm text-label-sm">45</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section></main>
+<!-- Footer -->
+<footer class="w-full py-xl bg-surface-container-lowest border-t border-outline-variant mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto gap-md">
+<div class="flex items-center space-x-sm">
+<span class="font-display text-label-md font-bold text-primary">NeutronTech</span>
+<span class="font-label-sm text-label-sm text-secondary">© 2024 NeutronTech Inc.</span>
+</div>
+<div class="flex space-x-lg">
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">About</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Terms</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+<!-- FAB for Create Post (Mobile Only) -->
+<button class="md:hidden fixed bottom-8 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center transition-all active:scale-90 z-40">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.95)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Sticky Navbar background shift
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('header');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+                nav.classList.add('bg-surface/95');
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.classList.remove('bg-surface/95');
+            }
+        });
+    </script>
+
+
+
+
+</body></html>

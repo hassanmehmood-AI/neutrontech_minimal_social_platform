@@ -1,0 +1,345 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>NeutronTech - Home Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#00046a",
+                        "secondary-container": "#d5e0f7",
+                        "on-tertiary-container": "#ffb8aa",
+                        "on-primary-fixed-variant": "#0013e7",
+                        "surface": "#fbf8ff",
+                        "surface-variant": "#e3e1f0",
+                        "surface-tint": "#2f3eff",
+                        "inverse-surface": "#2f2f3b",
+                        "on-surface": "#1a1b25",
+                        "secondary": "#545f72",
+                        "surface-container-highest": "#e3e1f0",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "surface-container-low": "#f4f2ff",
+                        "background": "#fbf8ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb4a6",
+                        "primary-fixed-dim": "#bec2ff",
+                        "outline": "#757589",
+                        "on-primary-container": "#c1c5ff",
+                        "tertiary-container": "#a91300",
+                        "primary-container": "#1929fe",
+                        "on-surface-variant": "#444557",
+                        "on-secondary-fixed": "#111c2c",
+                        "tertiary": "#7e0b00",
+                        "surface-container-high": "#e8e6f6",
+                        "on-secondary-container": "#586377",
+                        "primary-fixed": "#e0e0ff",
+                        "outline-variant": "#c5c5da",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#3f0300",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eeecfc",
+                        "tertiary-fixed": "#ffdad4",
+                        "secondary-fixed": "#d8e3fa",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f1efff",
+                        "inverse-primary": "#bec2ff",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#bcc7dd",
+                        "on-tertiary-fixed-variant": "#900e00",
+                        "surface-dim": "#dad8e8",
+                        "surface-bright": "#fbf8ff",
+                        "primary": "#0010cc",
+                        "on-background": "#1a1b25"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "1.5rem",
+                        "margin-mobile": "16px",
+                        "lg": "2rem",
+                        "base": "4px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "xs": "0.5rem",
+                        "xl": "4rem",
+                        "sm": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Inter"],
+                        "display": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fbf8ff;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background-color: rgba(251, 248, 255, 0.8);
+        }
+        .feed-card {
+            border: 1px solid #e3e1f0;
+            transition: transform 0.15s ease-out;
+        }
+        .feed-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 glass-effect border-b border-outline-variant shadow-sm h-16">
+<div class="flex justify-between items-center px-margin-mobile h-full max-w-1280px mx-auto">
+<h1 class="font-display text-headline-md text-primary tracking-tight">NeutronTech</h1>
+<div class="flex items-center gap-sm">
+<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary" data-icon="search">search</span>
+</button>
+<div class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close-up high-quality portrait of a professional tech worker in a brightly lit modern office environment. The subject has a friendly expression and is looking directly at the camera. The background is softly blurred with hints of cool blue and white tones, matching a clean corporate tech aesthetic. The lighting is soft and even, highlighting modern features and a polished appearance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv0msWSUUZjnH6Qk3v0E0wl89S-xz7REHqtvWe4v-GnjNeFTzXyArpTd6_xS1mlXNd-gic1Ty4RPEEquouFfRSxcT3Xay0BeaZ6Hdgvtw73INMhDqkQQ6ipKJlKZzYXjgFLeQjGz475TGWYw0cvuHmJhZS0co7vxhSG4rE0nPn_P6ABjcWbEyDe-ZPEuZ3n82casbrGFqGdng8jcgvIOdnyEkWDv9qdWgilsmUZLKH5fpsZPfL9GhVWCnAiB2ggWxmM_NvPERyVzU">
+</div>
+</div>
+</div>
+</header>
+<!-- Side Navigation (Visible on Large Screens) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md space-y-sm z-40">
+<div class="mb-lg">
+<h2 class="font-display text-headline-md text-primary">NeutronTech</h2>
+<p class="font-body-md text-on-surface-variant text-label-sm">Tech-Social Hub</p>
+</div>
+<nav class="flex-1 flex flex-col space-y-xs">
+<a class="bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center gap-sm p-sm transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-md text-label-md">Search</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span class="font-label-md text-label-md">Contact</span>
+</a>
+</nav>
+<button class="bg-primary text-on-primary py-sm rounded-full font-bold shadow-sm active:scale-95 duration-150">
+            Share Something
+        </button>
+<div class="pt-md border-t border-outline-variant flex flex-col space-y-xs">
+<a class="text-on-surface-variant flex items-center gap-sm p-sm hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm p-sm hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<main class="pt-20 pb-24 px-margin-mobile md:px-margin-desktop max-w-[640px] mx-auto lg:ml-72">
+<!-- Composer -->
+<section class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant mb-md shadow-sm">
+<div class="flex gap-md">
+<img alt="Avatar" class="w-10 h-10 rounded-full" data-alt="Portrait of a modern technology worker." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDynBgWdSWK3cSHc18XlqIqP7jMPailVA20dmQBFIKQguH8rwBACcCBtHFCr0Pgps2pIpY_D86VHRZYFB6wN5ina0xe9Xcfzyw8IS2oUDGXEXZ80a59xIJJ-kmD-Gssn_9zvfC3CtgrMjWzjH_JnK-EucZfSgj-9rc2mzVczCqflSdtN00SGku_rd5hClIGKLcs7d_ciqQVhw5-GRef9m8ViZfPP03hU393RjYpmSJX4TKicbPcb3oF6nSmyPIhqCPxU2hbuoYqyWU">
+<div class="flex-1">
+<textarea class="w-full bg-transparent border-none focus:ring-0 font-body-md text-on-surface placeholder:text-on-surface-variant resize-none" placeholder="Share something..." rows="2"></textarea>
+<div class="flex justify-between items-center mt-sm pt-sm border-t border-outline-variant">
+<div class="flex gap-sm">
+<button class="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="image">image</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="gif">gif</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="poll">poll</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary px-sm py-xs rounded-full font-label-md text-label-md active:scale-95 transition-transform">
+                            Post
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Feed -->
+<div class="flex flex-col gap-md">
+<!-- Feed Card 1 -->
+<article class="feed-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex gap-sm items-center">
+<img alt="User" class="w-10 h-10 rounded-full" data-alt="High-resolution profile picture of a young female tech professional with a joyful expression, wearing smart casual attire. The lighting is vibrant and energetic, reflecting a bright, modern corporate startup office environment with subtle blue and orange accents in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjbt27whQ2x4LPBXz3jDeSADMCU3Yo45hTQa8gvoc7QhCcEvAvFkMSv4KLXTl0zLI9GabSVFlwnXJsCFUDHKTTrvFBZLkPYdAv3uhfF9m2lT4orwZcujlP6vJLkcZmPkb8OrCwB64P0FM39UI-DlTRF2OYYMviLyzv03LqwxZFU9UD-Jg1wBs7XolMDVF1X9xnWSdUfNkZ19TsbF7sIU5SSWL5EXiVekPBxE-AERp0PYUOknaibdgFbOMUo-iPNvtb-ksTA70tmQA">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">Alex Rivera</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">2h ago • Innovation Lab</p>
+</div>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span></button>
+</div>
+<p class="font-body-md text-on-surface mb-md">Just deployed the new Quantum Engine API to production. The latency drop is absolutely insane! 🚀 #neutrontech #futureofdev</p>
+<div class="rounded-xl overflow-hidden mb-md aspect-video">
+<img alt="Technology" class="w-full h-full object-cover" data-alt="A futuristic, high-tech server room with glowing blue and violet LED strips illuminating rows of sleek black server racks. The image captures a sense of advanced cloud computing and technological power. The aesthetic is clean, professional, and slightly cinematic, with soft light reflections on a polished floor. The mood is efficient, innovative, and deeply technological." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoCsR5NBU9P_TbUoggqgui5MgyBYOcUQKiOY0M78oAyr6CWsoT9WMTAv4N8UdtubyjcjkspcmUWBba7n2s9ucKwEQOD7UhPeisLagy6-8O_8lbTWg2WCFKmOvsFB__GnbNtaprUHD67A8zgs_Ld601xAyJavB5Ji8nACI80-QRRrE8NuqaBCXZ21uxeC-fRNsai_zNyYVlbBKgln6sgiDjWd6-1jxRh4JK5WfVJIV1pw6iWZrHGXQ6sQLpIZ5yWKlKBxfuQxmIu1Q">
+</div>
+<div class="flex justify-between items-center pt-sm border-t border-outline-variant">
+<div class="flex gap-md">
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+<span class="text-label-sm">2.4k</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="comment">comment</span>
+<span class="text-label-sm">128</span>
+</button>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Trending Section (Integrated for Mobile) -->
+<section class="bg-secondary-container/30 rounded-xl p-md border border-secondary-container">
+<div class="flex justify-between items-center mb-sm">
+<h2 class="font-label-md text-label-md text-on-secondary-container">Trending Topics</h2>
+<button class="text-primary font-label-sm text-label-sm">View More</button>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center p-sm bg-surface-container-lowest rounded-lg">
+<span class="font-label-md text-label-md">#Web3Sustainability</span>
+<span class="text-label-sm text-on-surface-variant">14k posts</span>
+</div>
+<div class="flex justify-between items-center p-sm bg-surface-container-lowest rounded-lg">
+<span class="font-label-md text-label-md">#NeutronConference24</span>
+<span class="text-label-sm text-on-surface-variant">8.2k posts</span>
+</div>
+</div>
+</section>
+<!-- Feed Card 2 -->
+<article class="feed-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<div class="p-md">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex gap-sm items-center">
+<img alt="User" class="w-10 h-10 rounded-full" data-alt="A portrait of a male senior software engineer with glasses, looking thoughtful and professional. He is in a brightly lit, minimalist workspace with indoor plants and soft natural light. The palette is dominated by whites and soft grays with vibrant green accents. The overall feeling is one of intellectual curiosity and professional stability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFetNZjgZWG6GPzlpMGMREf3qzS-GlZtbIoOsbb9TugA5MbR_04cVXaHxu8pasK-G6xXBFC09g-Ki6JC9OjdvNNSU2fKNJ7qUIU7NQvu-_2lX_E_LhebSWmQrtQQxYDzBaKzkqw229yws6DOZ85LQ8TTYd0YKTjlNwm6WLuE8hYKJlWwwAYcQK8_kpVpLaJZsno7baoS4DUl7cf75KLCzmw6QAPXIAMpHnULquWTCSsaWdWgjg4KJNbmmfgqY1GD0qtVlSvRX-Fik">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">Jordan Chen</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">5h ago • Product Design</p>
+</div>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span></button>
+</div>
+<p class="font-body-md text-on-surface mb-md">Working on the new design system for Neutron. We're prioritizing "technological calm" and accessibility. What do you think about the new electric blue accents? 💙</p>
+<div class="flex justify-between items-center pt-sm border-t border-outline-variant">
+<div class="flex gap-md">
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+<span class="text-label-sm">842</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="comment">comment</span>
+<span class="text-label-sm">56</span>
+</button>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full glass-effect border-t border-outline-variant md:hidden z-50">
+<div class="flex justify-around items-center h-16">
+<button class="flex flex-col items-center justify-center gap-1 text-primary">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-[10px]">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-sm text-[10px]">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-sm text-[10px]">Settings</span>
+</button>
+</div>
+</nav>
+<!-- Contextual Floating Action Button -->
+<button class="fixed bottom-20 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform md:hidden z-40">
+<span class="material-symbols-outlined text-[28px]" data-icon="add">add</span>
+</button>
+<script>
+        // Micro-interactions and atmospheric effects
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.95)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = '';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
+            });
+        });
+
+        // Add subtle scroll reveal logic
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('article').forEach(card => {
+            card.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

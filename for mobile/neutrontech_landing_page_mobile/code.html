@@ -1,0 +1,311 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#00046a",
+                        "secondary-container": "#d5e0f7",
+                        "on-tertiary-container": "#ffb8aa",
+                        "on-primary-fixed-variant": "#0013e7",
+                        "surface": "#fbf8ff",
+                        "surface-variant": "#e3e1f0",
+                        "surface-tint": "#2f3eff",
+                        "inverse-surface": "#2f2f3b",
+                        "on-surface": "#1a1b25",
+                        "secondary": "#545f72",
+                        "surface-container-highest": "#e3e1f0",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "surface-container-low": "#f4f2ff",
+                        "background": "#fbf8ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb4a6",
+                        "primary-fixed-dim": "#bec2ff",
+                        "outline": "#757589",
+                        "on-primary-container": "#c1c5ff",
+                        "tertiary-container": "#a91300",
+                        "primary-container": "#1929fe",
+                        "on-surface-variant": "#444557",
+                        "on-secondary-fixed": "#111c2c",
+                        "tertiary": "#7e0b00",
+                        "surface-container-high": "#e8e6f6",
+                        "on-secondary-container": "#586377",
+                        "primary-fixed": "#e0e0ff",
+                        "outline-variant": "#c5c5da",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#3f0300",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eeecfc",
+                        "tertiary-fixed": "#ffdad4",
+                        "secondary-fixed": "#d8e3fa",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f1efff",
+                        "inverse-primary": "#bec2ff",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#bcc7dd",
+                        "on-tertiary-fixed-variant": "#900e00",
+                        "surface-dim": "#dad8e8",
+                        "surface-bright": "#fbf8ff",
+                        "primary": "#0010cc",
+                        "on-background": "#1a1b25"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "1.5rem",
+                        "margin-mobile": "16px",
+                        "lg": "2rem",
+                        "base": "4px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "xs": "0.5rem",
+                        "xl": "4rem",
+                        "sm": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Inter"],
+                        "display": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8ff;
+            color: #1a1b25;
+        }
+        .bento-card {
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        .bento-card:active {
+            transform: scale(0.98);
+        }
+        .blur-nav {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 blur-nav border-b border-outline-variant shadow-sm h-16 flex justify-between items-center px-margin-mobile">
+<div class="font-display text-headline-md text-primary tracking-tight">NeutronTech</div>
+<div class="flex items-center gap-xs">
+<button class="p-xs text-primary transition-colors active:scale-95 duration-150" id="menu-toggle">
+<span class="material-symbols-outlined" style="font-size: 32px;">menu</span>
+</button>
+</div>
+</header>
+<!-- Mobile Menu Overlay (Hidden by default) -->
+<div class="fixed inset-0 z-[60] bg-surface translate-x-full transition-transform duration-300 ease-in-out lg:hidden" id="mobile-menu">
+<div class="flex flex-col p-md h-full">
+<div class="flex justify-between items-center mb-xl">
+<span class="font-display text-headline-md text-primary tracking-tight">NeutronTech</span>
+<button class="p-xs text-primary" id="menu-close">
+<span class="material-symbols-outlined" style="font-size: 32px;">close</span>
+</button>
+</div>
+<nav class="flex flex-col space-y-md">
+<a class="font-label-md text-headline-md text-primary font-bold border-b-2 border-primary pb-xs w-fit" href="#">Feed</a>
+<a class="font-label-md text-headline-md text-secondary hover:text-primary transition-colors" href="#">Search</a>
+<a class="font-label-md text-headline-md text-secondary hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<div class="mt-auto flex flex-col gap-sm pb-xl">
+<button class="w-full py-md bg-primary-container text-on-primary text-label-md font-bold rounded-xl active:scale-95 duration-150">Sign Up</button>
+<button class="w-full py-md border border-outline text-primary text-label-md font-bold rounded-xl active:scale-95 duration-150">Login</button>
+</div>
+</div>
+</div>
+<main class="pt-16">
+<!-- Hero Section -->
+<section class="px-margin-mobile pt-xl pb-lg flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-xs px-sm py-xs bg-secondary-container rounded-full mb-md">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-sm text-on-secondary-container">VERSION 2.0 IS LIVE</span>
+</div>
+<h1 class="font-display text-[42px] leading-[1.1] text-primary mb-md tracking-tight">INNOVATION AT ITS FOREFRONT</h1>
+<p class="font-body-md text-on-surface-variant mb-xl max-w-sm">
+                Empowering the next generation of creators through high-energy connectivity and professional precision.
+            </p>
+<div class="flex flex-col w-full gap-sm">
+<button class="w-full py-md bg-primary-container text-on-primary text-label-md font-bold rounded-xl shadow-lg active:scale-95 transition-all">Join NeutronTech</button>
+<button class="w-full py-md bg-surface text-primary border border-outline-variant text-label-md font-bold rounded-xl active:scale-95 transition-all">Explore</button>
+</div>
+</section>
+<!-- Visual Anchor (Hero Image) -->
+<div class="px-margin-mobile mb-xl">
+<div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A high-tech digital workspace illuminated by intense electric blue neon lighting accents against a clean minimalist architectural background. The scene features futuristic floating interface elements and glowing circuitry patterns that emphasize a modern corporate startup aesthetic. Soft ambient shadows and high-key lighting create a sense of technological calm and professional innovation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChvSUjRblG1KhR2Rc335vs-xGrD3lMxp8LrYlTe8luuT8GI2Ef7BsSETp1kTsTwAj6p51NaX6nqgs6F6B1MRGQUf0kp1LP20g-GrIMfbWfzVXafOfsKscRVEg-akgCA4CcRGOAcISyC9f7rB7aFkq1LmI0KCU_wBF0kCzXygWu8ObR5VLpYLS3nObBoTN3gafZAHX4qkyQCZh3GGv3KZLdo0EH-Wl7FpXzKdDwGv9DRLgAZRXV2kbWjLbVYAEDBHHmnKrYE_npVhw">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+</div>
+</div>
+<!-- Feed Preview -->
+<section class="px-margin-mobile mb-xl">
+<div class="flex justify-between items-end mb-md">
+<h2 class="font-headline-lg-mobile text-on-surface">Trending Feed</h2>
+<a class="text-primary font-label-md" href="#">View all</a>
+</div>
+<div class="flex flex-col gap-md">
+<!-- Post Item 1 -->
+<div class="bg-surface-container-lowest p-md rounded-2xl border border-outline-variant shadow-sm">
+<div class="flex items-center gap-sm mb-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close-up professional portrait of a tech innovator in a bright modern studio setting. The lighting is soft and high-key with subtle blue reflections on the subject's glasses, reinforcing the clean corporate startup brand identity. The background is a minimalist blurred white office space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQZIWLQde2lRUfQWsubY6StLCaMTmq89X_4gX3qjzGxHGVIZSJm7klH7wHynwu9_S4lro3nt_F62DqnVrycWbuwyd4cAlaRurw2CKP0HtLtsNRnYp-aA6Ah_pE7206zSPOKngd1m59ANbwHsVk_0gIADZy7SO-YE8oB7XNvPIdadrkknqSK0JhktfV9L0yMudpaLeRKtziGGzuIV6r4F4hjoia2bhSZ0FHTgozzASUymog1tb4dMfMZ0sW5liLDDmUJzvJNAALlGA">
+<div>
+<p class="font-label-md text-on-surface font-bold">Alex Rivera</p>
+<p class="font-label-sm text-on-surface-variant">2 hours ago</p>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant mb-md">Just pushed the final update to the Neutron core. The latency improvements are beyond expectations. ⚡️</p>
+<div class="aspect-video rounded-xl overflow-hidden mb-md border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Detailed close-up of futuristic holographic code structures floating in a dark, high-contrast environment. Glowing blue lines and data nodes form an intricate web of information, representing advanced software architecture and innovative technology. The visual style is crisp and professional with a cinematic focus on digital connectivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzKo5U4Cq8prtEjlZKrTovDiPGxd3IrWrmLGlMi0NAaX5ulC6ZB_W9ISEiNBIElWJs_HVviD0b7lqABqDy72LJGqBR5G9SI8cFedfbqePw4qswBQ73tfjo6cGxmeVRZvahz2sZdHJiA1GCl-KaAMO9zv3A9X3BsoiYof-GyNCVoNawUd3_ZleKGXqJSDZxEoOGe94gUxf_72_VSV79g4eWdCYzCpaCeV1V3f9obTgOO7oDqBRNREsxqrFaPxa9mj_apJqcou8uRKU">
+</div>
+<div class="flex gap-md">
+<button class="flex items-center gap-xs text-secondary"><span class="material-symbols-outlined text-[20px]">favorite</span> <span class="font-label-sm">2.4k</span></button>
+<button class="flex items-center gap-xs text-secondary"><span class="material-symbols-outlined text-[20px]">chat_bubble</span> <span class="font-label-sm">128</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature Cards Section (Asymmetric Stack) -->
+<section class="px-margin-mobile mb-xl flex flex-col gap-md">
+<h2 class="font-headline-lg-mobile text-on-surface mb-xs">The Ecosystem</h2>
+<!-- Search Feature -->
+<div class="bg-primary p-md rounded-3xl text-on-primary flex flex-col gap-md min-h-[240px] justify-between overflow-hidden relative">
+<div class="z-10">
+<span class="material-symbols-outlined text-[40px] mb-xs">search</span>
+<h3 class="font-headline-md mb-xs">Smart Search</h3>
+<p class="font-body-md opacity-80">Precision-engineered discovery for the tech-social hub.</p>
+</div>
+<div class="absolute -right-8 -bottom-8 opacity-20 transform rotate-12">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'FILL' 1;">manage_search</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<!-- Profile Card -->
+<div class="bg-surface-container p-md rounded-3xl border border-outline-variant flex flex-col gap-sm">
+<span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">person</span>
+<h3 class="font-label-md font-bold text-on-surface">Digital Profile</h3>
+<p class="font-label-sm text-on-surface-variant">Your identity, secured and polished.</p>
+</div>
+<!-- Community Card -->
+<div class="bg-secondary-container p-md rounded-3xl border border-outline-variant flex flex-col gap-sm">
+<span class="material-symbols-outlined text-on-secondary-container text-[32px]" style="font-variation-settings: 'FILL' 1;">groups</span>
+<h3 class="font-label-md font-bold text-on-secondary-container">Community</h3>
+<p class="font-label-sm text-on-secondary-container/80">Collaborate with fellow innovators.</p>
+</div>
+</div>
+</section>
+<!-- Creed Section -->
+<section class="px-margin-mobile mb-xl py-xl bg-surface-container-low rounded-[40px] mx-2">
+<div class="text-center max-w-xs mx-auto">
+<h2 class="font-display text-headline-lg text-primary mb-md">The Creed</h2>
+<div class="w-12 h-1 bg-primary mx-auto mb-lg rounded-full"></div>
+<p class="font-body-lg text-on-surface italic mb-lg leading-relaxed">
+                    "We believe that technology should be an accelerator of human connection, not a barrier. Our mission is to engineer spaces that foster radical transparency and high-octane innovation."
+                </p>
+<div class="flex flex-col items-center gap-xs">
+<p class="font-label-md font-bold text-primary">NEUTRONTECH LEADERSHIP</p>
+<p class="font-label-sm text-on-surface-variant tracking-widest">EST. 2024</p>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant py-xl px-margin-mobile">
+<div class="flex flex-col gap-lg">
+<div>
+<div class="font-display text-headline-md text-primary tracking-tight mb-xs">NeutronTech</div>
+<p class="font-body-md text-on-surface-variant">Pioneering the tech-social intersection.</p>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="flex flex-col gap-sm">
+<span class="font-label-sm text-primary uppercase tracking-wider">Company</span>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy</a>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-sm text-primary uppercase tracking-wider">Help</span>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+<div class="pt-md border-t border-outline-variant flex flex-col gap-md items-center">
+<div class="flex gap-md">
+<a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+<a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+<p class="font-label-sm text-on-surface-variant">© 2024 NeutronTech Inc.</p>
+</div>
+</div>
+</footer>
+</main>
+<script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden';
+        });
+
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        });
+
+        // Add subtle scroll reveal effect for cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.bento-card, .bg-surface-container-lowest').forEach(card => {
+            card.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-8');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

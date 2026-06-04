@@ -1,0 +1,345 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-on-surface": "#f1efff",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#545f72",
+                      "inverse-surface": "#2f2f3b",
+                      "primary-fixed-dim": "#bec2ff",
+                      "on-tertiary-fixed-variant": "#900e00",
+                      "on-tertiary-fixed": "#3f0300",
+                      "surface-variant": "#e3e1f0",
+                      "inverse-primary": "#bec2ff",
+                      "on-primary-container": "#c1c5ff",
+                      "surface-tint": "#2f3eff",
+                      "surface-dim": "#dad8e8",
+                      "secondary-container": "#d5e0f7",
+                      "surface-bright": "#fbf8ff",
+                      "outline": "#757589",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#7e0b00",
+                      "surface-container-highest": "#e3e1f0",
+                      "on-tertiary-container": "#ffb8aa",
+                      "on-surface-variant": "#444557",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed": "#111c2c",
+                      "surface-container-low": "#f4f2ff",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "primary-container": "#1929fe",
+                      "surface-container": "#eeecfc",
+                      "on-surface": "#1a1b25",
+                      "secondary-fixed": "#d8e3fa",
+                      "on-background": "#1a1b25",
+                      "on-primary-fixed-variant": "#0013e7",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#bcc7dd",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#ffdad4",
+                      "primary-fixed": "#e0e0ff",
+                      "background": "#fbf8ff",
+                      "on-secondary-container": "#586377",
+                      "surface-container-high": "#e8e6f6",
+                      "primary": "#0010cc",
+                      "surface": "#fbf8ff",
+                      "tertiary-container": "#a91300",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#ffb4a6",
+                      "outline-variant": "#c5c5da",
+                      "on-primary-fixed": "#00046a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "1rem",
+                      "margin-desktop": "32px",
+                      "margin-mobile": "16px",
+                      "base": "4px",
+                      "xs": "0.5rem",
+                      "xl": "4rem",
+                      "md": "1.5rem",
+                      "lg": "2rem",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "label-md": ["Geist"],
+                      "body-md": ["Inter"],
+                      "display": ["Geist"],
+                      "headline-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-1280px mx-auto">
+<div class="flex items-center gap-md">
+<span class="font-display text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight">NeutronTech</span>
+</div>
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-md py-xs border border-outline-variant w-1/3">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full font-label-md text-label-md ml-xs" placeholder="Search..." type="text">
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs">
+<button class="p-xs rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-secondary">notifications</span>
+</button>
+<button class="p-xs rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-secondary">settings</span>
+</button>
+</div>
+<div class="h-10 w-10 rounded-full border border-primary overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional portrait of a tech-savvy individual in a bright, modern studio. The lighting is clean and high-key, reflecting a minimalist and innovative vibe. The background is a soft, out-of-focus tech office with electric blue accents, matching a professional and futuristic corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyMIHAfzyrTjuq98JV3Jh-hg-t1Vq1gXTMBu-RUB3Aml3G4mrp_w5cjR8PswZ7U-n5O2fsX5Z1Sy7XA-KkBXAnrPjTrbPaQoT02tk8eFd66VdNkFMfrO9HkeCccogQugsoFcYPDQbifiGYJ_XgBUR6aNbSNpf4WIldWP6HQqoNWIH7y7C52MmxnhVjampUF7mRseCILhQM-O5Ek6OO0_qGSlvI4Mzl05BNUMqSTI24H7kJeQjn3slwNJRCX7v1h1tYAdqHrVRkDwU">
+</div>
+</div>
+</div>
+</header>
+<div class="flex max-w-1280px mx-auto pt-16">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface dark:bg-surface-container-low border-r border-outline-variant dark:border-outline p-md pt-20 space-y-sm">
+<nav class="flex flex-col gap-xs">
+<a class="flex items-center gap-md p-md bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-on-secondary-fixed rounded-xl font-bold transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-on-surface-variant/10 rounded-xl transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-on-surface-variant/10 rounded-xl transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-md text-label-md">Search</span>
+</a>
+
+</nav>
+<div class="mt-xl pt-lg border-t border-outline-variant">
+<button class="w-full bg-primary-container text-on-primary py-md rounded-xl font-bold shadow-sm hover:opacity-90 active:scale-95 transition-all">
+                    Share Something
+                </button>
+</div>
+<div class="mt-auto pb-lg space-y-xs">
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Feed Content -->
+<main class="flex-1 lg:ml-64 lg:mr-80 p-margin-mobile md:p-margin-desktop min-h-screen">
+<div class="max-w-2xl mx-auto space-y-lg">
+<!-- Composer -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex gap-md">
+<div class="h-12 w-12 rounded-full overflow-hidden shrink-0">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up portrait of a professional male in a clean white studio setting. The image is brightly lit, emphasizing clarity and modern aesthetics. The style is hyper-clean and professional, with a focus on human connection within a high-tech corporate world." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaWXnDxIGroG2cKPeCUKBUeG5rOuJzCCNmqN_NemGCLi52XOwJr4jMMBJVY2VLLmgSZGZIb5ZmGlCybcX3PAE22l-jXX5wEM-IW8c5lv9x8W2o3_0fYwgJ8w2yROmM_ppOZt9zfntTvx8liULmf5-eaF3kdsmxvrF8ljPL9JWpye6UIm6ZBBoRGWdZMNItpOTw5CqFSWRVqMdUvurVOSc474eD00ECkL1X81pwibsLs4InmpS4CK_XNZGvw92kqtaVtudwXB3thdg">
+</div>
+<textarea class="w-full bg-surface-container-low border border-outline-variant rounded-xl p-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none min-h-[100px] font-body-md" placeholder="Share something..."></textarea>
+</div>
+<div class="flex justify-between items-center mt-md">
+<div class="flex gap-sm">
+<button class="p-xs rounded-lg hover:bg-surface-container-high text-secondary flex items-center gap-xs">
+<span class="material-symbols-outlined">image</span>
+<span class="font-label-sm text-label-sm">Photo</span>
+</button>
+<button class="p-xs rounded-lg hover:bg-surface-container-high text-secondary flex items-center gap-xs">
+<span class="material-symbols-outlined">videocam</span>
+<span class="font-label-sm text-label-sm">Video</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary px-lg py-xs rounded-full font-bold hover:opacity-90 transition-all active:scale-95">Post</button>
+</div>
+</div>
+<!-- Feed Items -->
+<div class="space-y-md">
+<!-- Post Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="p-md">
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-md">
+<div class="h-10 w-10 rounded-full overflow-hidden">
+<img alt="Sarah Chen" class="w-full h-full object-cover" data-alt="A portrait of a vibrant professional woman smiling warmly in a sophisticated, well-lit workspace. The aesthetic is clean, with soft ambient light and a shallow depth of field. The corporate setting is hinted at by minimalist furniture and a bright, airy atmosphere that feels both professional and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVJ_M8b5hcblyQLnue8xz3rbATkmOILD84FEHyj4fROePqUeabndpY-1eYXG0-vBFQigUtU7LBv2W_0eDnhyv5Rnsr88742NlJ9hmjWiOy4P836ZKO06X9Zkd399GMi52DXu4Aqs63haKwcjCmpjHflnhcBpIq98-x6Lh4rhajvE4Be5IfIHbDJsJ_yh3Ze47iyqh98eec1Boj9-CZFvrAmo_ZxIl9qQpGzy2k0UfzN4A8PNGExuHpqNGKtDsPpcEMgNS00aAK6Tk">
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold">Sarah Chen</h4>
+<p class="font-label-sm text-label-sm text-outline">2 hours ago • Product Design</p>
+</div>
+</div>
+<button class="text-outline hover:text-on-surface">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md mb-md">Just pushed the new design system updates for the NeutronTech dashboard. Focusing on precision-engineered typography and better accessibility. Can't wait for the team to try it out! 🚀</p>
+<div class="rounded-lg overflow-hidden border border-outline-variant">
+<img alt="Design System Interface" class="w-full h-64 object-cover" data-alt="A high-end, futuristic user interface displayed on a sleek monitor. The UI features complex data visualizations, clean white space, and a vibrant electric blue color palette. The workspace is minimalist and organized, with soft ambient lighting and a sophisticated tech-startup atmosphere. The focus is on precision and modern professional design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApG5GQO7DAy5N5J1awoti83z7TWfn6a-gX4jCKKq90F8lw2oiCUomxRIn0QaUMBxhLUY0xcH3m0AwrUdpfS5an-Ljg4BR2VhZ4y8V6HRPgPE5ZKQG_eIkQMCwwCcnsw6ObmTixY36ZM6cJpDx-amlUcZrl53wAjJPX3qEKn00TwVvHJiEouCyEHN2P4VraAd8OUVhhsZZusWBnKNesz3vK5ZAAAf0m-GO9GZNOc9P9h3qWWtm4zvE6ZEFCfZyzN6WI1Io5r3VMHVA">
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant flex gap-lg">
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-colors group">
+<span class="material-symbols-outlined group-active:scale-125 transition-transform">favorite</span>
+<span class="font-label-md text-label-md">128</span>
+</button>
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">comment</span>
+<span class="font-label-md text-label-md">24</span>
+</button>
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-colors ml-auto">
+
+</button>
+</div>
+</div>
+<!-- Post Card 2 (Text only) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="p-md">
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-md">
+<div class="h-10 w-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold">Tech Radar</h4>
+<p class="font-label-sm text-label-sm text-outline">5 hours ago</p>
+</div>
+</div>
+</div>
+<p class="font-body-md text-body-md text-primary font-bold mb-xs">Exciting News!</p>
+<p class="font-body-md text-body-md">We've just integrated advanced glassmorphism components into the library. Check out the documentation to see how you can use background-blur effects to create depth in your layouts while maintaining high performance. #NeutronUpdates #ModernUI</p>
+</div>
+<div class="px-md py-sm border-t border-outline-variant flex gap-lg">
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-colors group">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-md text-label-md">342</span>
+</button>
+<button class="flex items-center gap-xs text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">comment</span>
+<span class="font-label-md text-label-md">12</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Sidebar (Trending/Suggestions) -->
+<aside class="hidden lg:flex flex-col w-80 fixed right-0 top-0 h-screen border-l border-outline-variant p-md pt-20 space-y-lg overflow-y-auto">
+<!-- Trending Topics -->
+<div class="bg-surface-container-low rounded-2xl p-lg border border-outline-variant">
+<h3 class="font-headline-md text-headline-md mb-md">Trending for you</h3>
+<div class="space-y-md">
+<div class="group cursor-pointer">
+<p class="font-label-sm text-label-sm text-outline">Technology • Trending</p>
+<h4 class="font-label-md text-label-md font-bold group-hover:text-primary transition-colors">#QuantumComputing</h4>
+<p class="font-label-sm text-label-sm text-outline"><br></p>
+</div>
+<div class="group cursor-pointer">
+<p class="font-label-sm text-label-sm text-outline">Business • Trending</p>
+<h4 class="font-label-md text-label-md font-bold group-hover:text-primary transition-colors">#NeutronSeriesB</h4>
+<p class="font-label-sm text-label-sm text-outline"><br></p>
+</div>
+<div class="group cursor-pointer">
+<p class="font-label-sm text-label-sm text-outline">Design • Trending</p>
+<h4 class="font-label-md text-label-md font-bold group-hover:text-primary transition-colors">#MinimalistUI</h4>
+<p class="font-label-sm text-label-sm text-outline"><br></p>
+</div>
+</div>
+<button class="w-full mt-lg text-primary font-bold text-label-md hover:underline text-left">Show more</button>
+</div>
+<!-- Suggested Users -->
+
+<!-- Mini Footer -->
+<footer class="px-md py-sm">
+<div class="flex flex-wrap gap-sm text-outline font-label-sm text-label-sm">
+<a class="hover:underline" href="#">About</a>
+<a class="hover:underline" href="#">Privacy</a>
+<a class="hover:underline" href="#">Terms</a>
+<a class="hover:underline" href="#">Cookies</a>
+<span class="">© 2024 NeutronTech Inc.</span>
+</div>
+</footer>
+</aside>
+</div>
+<!-- Mobile Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface/80 backdrop-blur-md border-t border-outline-variant px-margin-mobile py-xs flex justify-around items-center z-50">
+<button class="flex flex-col items-center p-xs text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+</button>
+<button class="flex flex-col items-center p-xs text-secondary">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="flex flex-col items-center p-xs text-secondary">
+<span class="material-symbols-outlined">mail</span>
+</button>
+<button class="flex flex-col items-center p-xs text-secondary">
+<span class="material-symbols-outlined">person</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for post like button
+        document.querySelectorAll('button.group').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('.material-symbols-outlined');
+                const count = this.querySelector('span:last-child');
+                
+                if (icon.style.fontVariationSettings.includes("'FILL' 1")) {
+                    icon.style.fontVariationSettings = "'FILL' 0";
+                    this.classList.remove('text-primary');
+                    this.classList.add('text-secondary');
+                    count.textContent = parseInt(count.textContent) - 1;
+                } else {
+                    icon.style.fontVariationSettings = "'FILL' 1";
+                    this.classList.remove('text-secondary');
+                    this.classList.add('text-primary');
+                    count.textContent = parseInt(count.textContent) + 1;
+                }
+            });
+        });
+    </script>
+
+
+
+
+</body></html>

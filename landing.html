@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>NeutronTech | Innovation at its Forefront</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "inverse-on-surface": "#f1efff", "on-secondary": "#ffffff", "secondary": "#545f72",
+          "inverse-surface": "#2f2f3b", "primary-fixed-dim": "#bec2ff", "on-tertiary-fixed-variant": "#900e00",
+          "on-tertiary-fixed": "#3f0300", "surface-variant": "#e3e1f0", "inverse-primary": "#bec2ff",
+          "on-primary-container": "#c1c5ff", "surface-tint": "#2f3eff", "surface-dim": "#dad8e8",
+          "secondary-container": "#d5e0f7", "surface-bright": "#fbf8ff", "outline": "#757589",
+          "on-tertiary": "#ffffff", "on-error-container": "#93000a", "tertiary": "#7e0b00",
+          "surface-container-highest": "#e3e1f0", "on-tertiary-container": "#ffb8aa",
+          "on-surface-variant": "#444557", "on-error": "#ffffff", "on-secondary-fixed": "#111c2c",
+          "surface-container-low": "#f4f2ff", "on-secondary-fixed-variant": "#3c475a",
+          "primary-container": "#1929fe", "surface-container": "#eeecfc", "on-surface": "#1a1b25",
+          "secondary-fixed": "#d8e3fa", "on-background": "#1a1b25", "on-primary-fixed-variant": "#0013e7",
+          "surface-container-lowest": "#ffffff", "secondary-fixed-dim": "#bcc7dd", "error": "#ba1a1a",
+          "on-primary": "#ffffff", "tertiary-fixed": "#ffdad4", "primary-fixed": "#e0e0ff",
+          "background": "#fbf8ff", "on-secondary-container": "#586377", "surface-container-high": "#e8e6f6",
+          "primary": "#0010cc", "surface": "#fbf8ff", "tertiary-container": "#a91300",
+          "error-container": "#ffdad6", "tertiary-fixed-dim": "#ffb4a6", "outline-variant": "#c5c5da",
+          "on-primary-fixed": "#00046a"
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: {
+          "sm": "1rem", "margin-desktop": "32px", "margin-mobile": "16px", "base": "4px",
+          "xs": "0.5rem", "xl": "4rem", "md": "1.5rem", "lg": "2rem", "gutter": "24px"
+        },
+        fontFamily: {
+          "body-lg": ["Inter"], "label-sm": ["Geist"], "headline-md": ["Geist"],
+          "headline-lg-mobile": ["Geist"], "label-md": ["Geist"], "body-md": ["Inter"],
+          "display": ["Geist"], "headline-lg": ["Geist"]
+        },
+        fontSize: {
+          "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+          "label-sm": ["12px", { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "600" }],
+          "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "600" }],
+          "headline-lg-mobile": ["24px", { lineHeight: "1.2", fontWeight: "600" }],
+          "label-md": ["14px", { lineHeight: "1.4", letterSpacing: "0.02em", fontWeight: "500" }],
+          "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+          "display": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+          "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "600" }]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-card { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226,232,240,0.5); }
+  .blur-nav { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  body { scroll-behavior: smooth; font-family: 'Inter', sans-serif; background-color: #fbf8ff; color: #1a1b25; }
+  .bento-card { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
+  .bento-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+</style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- ── TOP NAV ── -->
+<header id="top-nav" class="fixed top-0 w-full z-50 bg-surface/90 blur-nav border-b border-outline-variant shadow-sm h-16">
+  <nav class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
+    <div class="flex items-center gap-md">
+      <a href="landing.html" class="font-display text-headline-lg text-primary tracking-tight">NeutronTech</a>
+      <!-- Desktop nav links -->
+      <div class="hidden lg:flex gap-sm ml-lg">
+        <a href="feed.html" class="font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-base rounded-lg">Feed</a>
+        <a href="search.html" class="font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-base rounded-lg">Search</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-md">
+      <div class="hidden sm:flex items-center gap-sm">
+        <a href="login.html" class="font-label-md text-label-md text-primary bg-surface border border-outline-variant px-md py-xs rounded-full hover:bg-surface-container-low active:scale-95 duration-150">Login</a>
+        <a href="login.html" class="font-label-md text-label-md bg-primary-container text-white px-md py-xs rounded-full hover:brightness-110 active:scale-95 duration-150 shadow-md shadow-primary/20">Sign Up</a>
+      </div>
+      <!-- Mobile hamburger -->
+      <button class="lg:hidden text-primary p-xs" id="menu-toggle">
+        <span class="material-symbols-outlined" style="font-size:32px;">menu</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ── MOBILE MENU OVERLAY ── -->
+<div class="fixed inset-0 z-[60] bg-surface translate-x-full transition-transform duration-300 ease-in-out lg:hidden" id="mobile-menu">
+  <div class="flex flex-col p-md h-full">
+    <div class="flex justify-between items-center mb-xl">
+      <span class="font-display text-headline-md text-primary tracking-tight">NeutronTech</span>
+      <button class="p-xs text-primary" id="menu-close">
+        <span class="material-symbols-outlined" style="font-size:32px;">close</span>
+      </button>
+    </div>
+    <nav class="flex flex-col space-y-md">
+      <a class="font-label-md text-headline-md text-primary font-bold border-b-2 border-primary pb-xs w-fit" href="feed.html">Feed</a>
+      <a class="font-label-md text-headline-md text-secondary hover:text-primary transition-colors" href="search.html">Search</a>
+    </nav>
+    <div class="mt-auto flex flex-col gap-sm pb-xl">
+      <a href="login.html" class="w-full py-md bg-primary-container text-on-primary text-label-md font-bold rounded-xl active:scale-95 duration-150 text-center">Sign Up</a>
+      <a href="login.html" class="w-full py-md border border-outline text-primary text-label-md font-bold rounded-xl active:scale-95 duration-150 text-center">Login</a>
+    </div>
+  </div>
+</div>
+
+<main class="pt-16">
+
+  <!-- ── HERO SECTION ── -->
+  <section class="relative py-16 lg:py-40 bg-surface-bright">
+    <div class="absolute top-0 right-0 -z-10 w-1/2 h-full bg-[radial-gradient(circle_at_70%_30%,_#e0e0ff_0%,_transparent_60%)] opacity-40 hidden lg:block"></div>
+    <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+
+      <!-- Mobile hero (centered) -->
+      <div class="flex flex-col items-center text-center lg:hidden">
+        <div class="inline-flex items-center gap-xs px-sm py-xs bg-secondary-container rounded-full mb-md">
+          <span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings:'FILL' 1;">bolt</span>
+          <span class="font-label-sm text-on-secondary-container">VERSION 2.0 IS LIVE</span>
+        </div>
+        <h1 class="font-display text-[42px] leading-[1.1] text-primary mb-md tracking-tight">INNOVATION AT ITS FOREFRONT</h1>
+        <p class="font-body-md text-on-surface-variant mb-xl max-w-sm">
+          Empowering the next generation of creators through high-energy connectivity and professional precision.
+        </p>
+        <div class="flex flex-col w-full gap-sm max-w-sm">
+          <a href="login.html" class="w-full py-md bg-primary-container text-on-primary text-label-md font-bold rounded-xl shadow-lg active:scale-95 transition-all text-center">Join NeutronTech</a>
+          <a href="feed.html" class="w-full py-md bg-surface text-primary border border-outline-variant text-label-md font-bold rounded-xl active:scale-95 transition-all text-center">Explore Feed</a>
+        </div>
+      </div>
+
+      <!-- Mobile hero image -->
+      <div class="px-0 mb-xl mt-lg lg:hidden">
+        <div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border border-outline-variant">
+          <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChvSUjRblG1KhR2Rc335vs-xGrD3lMxp8LrYlTe8luuT8GI2Ef7BsSETp1kTsTwAj6p51NaX6nqgs6F6B1MRGQUf0kp1LP20g-GrIMfbWfzVXafOfsKscRVEg-akgCA4CcRGOAcISyC9f7rB7aFkq1LmI0KCU_wBF0kCzXygWu8ObR5VLpYLS3nObBoTN3gafZAHX4qkyQCZh3GGv3KZLdo0EH-Wl7FpXzKdDwGv9DRLgAZRXV2kbWjLbVYAEDBHHmnKrYE_npVhw" alt="NeutronTech Platform">
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+        </div>
+      </div>
+
+      <!-- Desktop hero (2-column) -->
+      <div class="hidden lg:grid grid-cols-2 gap-xl items-center">
+        <div class="space-y-lg">
+          <div class="inline-flex items-center gap-xs px-md py-xs bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm tracking-widest">
+            <span class="material-symbols-outlined !text-[16px]">bolt</span>
+            INNOVATION AT ITS FOREFRONT
+          </div>
+          <h1 class="font-display text-display lg:text-[72px] leading-[1.05] text-on-surface">
+            Connecting <span class="text-primary-container">Technology-minded</span> people.
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+            The definitive hub for engineers, designers, and tech pioneers. Build your network, showcase your breakthroughs, and stay ahead of the curve.
+          </p>
+          <div class="flex flex-wrap gap-md pt-md">
+            <a href="login.html" class="bg-primary-container text-white px-xl py-md rounded-xl font-label-md text-label-md hover:brightness-110 shadow-lg shadow-primary/20 active:scale-95 transition-all">Join NeutronTech</a>
+            <a href="feed.html" class="border border-outline-variant text-on-surface px-xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low active:scale-95 transition-all">Explore Feed</a>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="glass-card rounded-[40px] shadow-2xl p-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
+            <img alt="Server room visual" class="w-full h-[500px] object-cover rounded-2xl grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbyOGnJb6xjFH5jLdYDPuzLetRiyxPEU-pI6bBy1g6Qgqi9BN3tB3kNHmGx5Vs0i9rxbDPnqeCH43OdkwghxH78NBUY69l5GsMR714iVk0AaYCSEKYqwF4lDUaQ70mvxPIjYuULq95gGVRsyucIzokN1FJfUYA8dFdHG0BZi6UvRWWfz1xQDZdMDomzGjORpsfOoP70NW2AFLUIVy-K7Mk6YVeTLfwyv1nbcSPUhR52xV79WTLXKqVysgT9O0ork_6q17RxnKqQ1Y">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MOBILE: FEED PREVIEW ── -->
+  <section class="px-margin-mobile mb-xl lg:hidden">
+    <div class="flex justify-between items-end mb-md">
+      <h2 class="font-headline-lg-mobile text-on-surface">Trending Feed</h2>
+      <a class="text-primary font-label-md" href="feed.html">View all</a>
+    </div>
+    <div class="flex flex-col gap-md">
+      <div class="bg-surface-container-lowest p-md rounded-2xl border border-outline-variant shadow-sm">
+        <div class="flex items-center gap-sm mb-sm">
+          <img class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQZIWLQde2lRUfQWsubY6StLCaMTmq89X_4gX3qjzGxHGVIZSJm7klH7wHynwu9_S4lro3nt_F62DqnVrycWbuwyd4cAlaRurw2CKP0HtLtsNRnYp-aA6Ah_pE7206zSPOKngd1m59ANbwHsVk_0gIADZy7SO-YE8oB7XNvPIdadrkknqSK0JhktfV9L0yMudpaLeRKtziGGzuIV6r4F4hjoia2bhSZ0FHTgozzASUymog1tb4dMfMZ0sW5liLDDmUJzvJNAALlGA" alt="Alex Rivera">
+          <div>
+            <p class="font-label-md text-on-surface font-bold">Alex Rivera</p>
+            <p class="font-label-sm text-on-surface-variant">2 hours ago</p>
+          </div>
+        </div>
+        <p class="font-body-md text-on-surface-variant mb-md">Just pushed the final update to the Neutron core. The latency improvements are beyond expectations. ⚡️</p>
+        <div class="aspect-video rounded-xl overflow-hidden mb-md border border-outline-variant">
+          <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzKo5U4Cq8prtEjlZKrTovDiPGxd3IrWrmLGlMi0NAaX5ulC6ZB_W9ISEiNBIElWJs_HVviD0b7lqABqDy72LJGqBR5G9SI8cFedfbqePw4qswBQ73tfjo6cGxmeVRZvahz2sZdHJiA1GCl-KaAMO9zv3A9X3BsoiYof-GyNCVoNawUd3_ZleKGXqJSDZxEoOGe94gUxf_72_VSV79g4eWdCYzCpaCeV1V3f9obTgOO7oDqBRNREsxqrFaPxa9mj_apJqcou8uRKU" alt="Code visualization">
+        </div>
+        <div class="flex gap-md">
+          <button class="flex items-center gap-xs text-secondary"><span class="material-symbols-outlined text-[20px]">favorite</span> <span class="font-label-sm">2.4k</span></button>
+          <button class="flex items-center gap-xs text-secondary"><span class="material-symbols-outlined text-[20px]">chat_bubble</span> <span class="font-label-sm">128</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES SECTION ── -->
+  <!-- Mobile feature cards -->
+  <section class="px-margin-mobile mb-xl flex flex-col gap-md lg:hidden">
+    <h2 class="font-headline-lg-mobile text-on-surface mb-xs">The Ecosystem</h2>
+    <div class="bg-primary p-md rounded-3xl text-on-primary flex flex-col gap-md min-h-[200px] justify-between overflow-hidden relative">
+      <div class="z-10">
+        <span class="material-symbols-outlined text-[40px] mb-xs">search</span>
+        <h3 class="font-headline-md mb-xs">Smart Search</h3>
+        <p class="font-body-md opacity-80">Precision-engineered discovery for the tech-social hub.</p>
+      </div>
+      <a href="search.html" class="self-start bg-white/20 text-white px-md py-xs rounded-full font-label-md text-label-md hover:bg-white/30 transition-colors">Explore Search</a>
+      <div class="absolute -right-8 -bottom-8 opacity-20 transform rotate-12">
+        <span class="material-symbols-outlined text-[200px]" style="font-variation-settings:'FILL' 1;">manage_search</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-md">
+      <a href="profile.html" class="bg-surface-container p-md rounded-3xl border border-outline-variant flex flex-col gap-sm hover:shadow-md transition-shadow">
+        <span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings:'FILL' 1;">person</span>
+        <h3 class="font-label-md font-bold text-on-surface">Digital Profile</h3>
+        <p class="font-label-sm text-on-surface-variant">Your identity, secured and polished.</p>
+      </a>
+      <a href="feed.html" class="bg-secondary-container p-md rounded-3xl border border-outline-variant flex flex-col gap-sm hover:shadow-md transition-shadow">
+        <span class="material-symbols-outlined text-on-secondary-container text-[32px]" style="font-variation-settings:'FILL' 1;">groups</span>
+        <h3 class="font-label-md font-bold text-on-secondary-container">Community</h3>
+        <p class="font-label-sm text-on-secondary-container/80">Collaborate with fellow innovators.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Desktop features bento grid -->
+  <section class="bg-surface-container-low py-24 lg:py-40 hidden lg:block">
+    <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="flex flex-col items-center text-center mb-24">
+        <h2 class="font-headline-lg text-display text-on-surface mb-md">Engineered for Collaboration</h2>
+        <p class="text-on-surface-variant max-w-2xl font-body-lg text-body-lg">Precision tools designed for the modern tech workflow, enabling seamless discovery and professional growth.</p>
+      </div>
+      <div class="grid grid-cols-12 gap-gutter">
+        <!-- Community Feed Card -->
+        <div class="col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300 bento-card">
+          <div class="flex justify-between items-start mb-md">
+            <div>
+              <span class="material-symbols-outlined text-primary-container mb-sm">dynamic_feed</span>
+              <h3 class="font-headline-md text-headline-md">Community Feed</h3>
+              <p class="text-on-surface-variant font-label-md">Real-time updates from your tech ecosystem.</p>
+            </div>
+            <a href="feed.html" class="text-primary-container font-label-sm hover:underline">View All</a>
+          </div>
+          <div class="space-y-md mt-lg">
+            <div class="flex gap-md p-md bg-surface-container/30 rounded-lg border border-outline-variant/50 group-hover:-translate-y-1 transition-transform duration-300">
+              <div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary-container !text-[20px]">person</span>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center">
+                  <span class="font-bold font-label-md">Sarah Chen</span>
+                  <span class="text-label-sm text-outline">2m ago</span>
+                </div>
+                <p class="font-body-md text-on-surface-variant mt-xs">Just pushed a major update to the open-source neural engine. Check out the repository!</p>
+                <div class="flex gap-sm mt-sm">
+                  <span class="px-xs py-[2px] bg-secondary-container/50 text-[10px] rounded font-bold">GITHUB</span>
+                  <span class="px-xs py-[2px] bg-tertiary-container/20 text-[10px] rounded font-bold">AI</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Search Card -->
+        <a href="search.html" class="col-span-4 bg-primary-container text-white rounded-xl p-lg flex flex-col justify-between group shadow-lg hover:brightness-110 transition-all bento-card">
+          <div>
+            <span class="material-symbols-outlined mb-sm" style="font-variation-settings:'FILL' 1;">search</span>
+            <h3 class="font-headline-md text-headline-md">Advanced Search</h3>
+            <p class="text-white/80 font-label-md mt-sm">Find specialists, repos, and topics across the entire global network.</p>
+          </div>
+          <div class="mt-xl relative">
+            <div class="bg-white/10 rounded-lg p-sm border border-white/20 flex items-center gap-sm">
+              <span class="material-symbols-outlined text-white/50">search</span>
+              <span class="text-white/50 text-label-md">Search keywords...</span>
+            </div>
+          </div>
+        </a>
+        <!-- Profile Card -->
+        <a href="profile.html" class="col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col items-center text-center shadow-sm hover:shadow-xl transition-all duration-300 bento-card">
+          <div class="w-24 h-24 rounded-full border-4 border-primary-container/20 p-1 mb-md">
+            <img alt="User avatar" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI7Gp0M93O_45TEfaPyBQN1etVXJ1Q1hH88GxPFByL0bIleIeQXrK_g0uF8jL9_Q2pv1d-cfl28RyDJBe692CZj2fUZkViNNf6finC-nZ23pugVZSpR9RLVqbJa1Ca-6RWA6ENdfiETmWG-BIVfsNTMaWfqriTxa5zJGRC-2UQ9jFB4xMET-Hyf-1g92APWGKGyyYt_LFeahcxtutwC9N28XNPBgtqFsFkbxLWOWRmdAnEVzuBgUtK6AQEMb7L9fdECeSVtqta3Rs">
+          </div>
+          <h3 class="font-headline-md text-headline-md">Your Profile</h3>
+          <p class="text-on-surface-variant font-label-md mb-md">Showcase your career highlights</p>
+          <div class="w-full h-px bg-outline-variant mb-md"></div>
+          <div class="flex justify-around w-full">
+            <div><span class="block font-bold text-primary-container">1.2k</span><span class="text-[10px] text-outline uppercase font-bold tracking-wider">Followers</span></div>
+            <div><span class="block font-bold text-primary-container">48</span><span class="text-[10px] text-outline uppercase font-bold tracking-wider">Projects</span></div>
+          </div>
+        </a>
+        <!-- Creed Card -->
+        <div class="col-span-8 bg-surface-container-highest rounded-xl p-lg flex items-center relative overflow-hidden shadow-sm">
+          <div class="z-10 max-w-md">
+            <span class="font-label-sm text-primary-container font-bold mb-sm block uppercase tracking-widest">Our Creed</span>
+            <h3 class="font-headline-lg text-headline-lg mb-sm">Integrity in Innovation.</h3>
+            <p class="font-body-md text-on-surface-variant leading-relaxed">We believe technology should empower, not distract. Our community is built on mutual respect, rigorous peer review, and a commitment to solving the world's hardest problems.</p>
+          </div>
+          <div class="absolute -right-16 bottom-0 opacity-10">
+            <span class="material-symbols-outlined !text-[200px]" style="font-variation-settings:'FILL' 1;">security</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MOBILE: CREED SECTION ── -->
+  <section class="px-margin-mobile mb-xl py-xl bg-surface-container-low rounded-[40px] mx-4 lg:hidden">
+    <div class="text-center max-w-xs mx-auto">
+      <h2 class="font-display text-headline-lg text-primary mb-md">The Creed</h2>
+      <div class="w-12 h-1 bg-primary mx-auto mb-lg rounded-full"></div>
+      <p class="font-body-lg text-on-surface italic mb-lg leading-relaxed">
+        "We believe that technology should be an accelerator of human connection, not a barrier. Our mission is to engineer spaces that foster radical transparency and high-octane innovation."
+      </p>
+      <div class="flex flex-col items-center gap-xs">
+        <p class="font-label-md font-bold text-primary">NEUTRONTECH LEADERSHIP</p>
+        <p class="font-label-sm text-on-surface-variant tracking-widest">EST. 2024</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA SECTION (desktop) ── -->
+  <section class="py-24 lg:py-40 hidden lg:block">
+    <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="bg-primary-container p-16 lg:p-24 rounded-[40px] text-center text-white relative overflow-hidden shadow-2xl shadow-primary-container/30">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
+        <div class="relative z-10 space-y-lg">
+          <h2 class="font-display text-4xl md:text-[56px] leading-tight">Ready to join the next wave?</h2>
+          <p class="font-body-lg text-body-lg text-white/80 max-w-2xl mx-auto">Join thousands of tech leaders already building the future on NeutronTech.</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-md pt-lg">
+            <a href="login.html" class="bg-white text-primary-container px-xl py-md rounded-xl font-bold font-label-md hover:bg-surface-container-low transition-all active:scale-95">Get Started</a>
+            <a href="search.html" class="border border-white/30 text-white px-xl py-md rounded-xl font-label-md hover:bg-white/10 transition-all active:scale-95">Explore</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MOBILE CTA ── -->
+  <section class="px-margin-mobile mb-xl lg:hidden">
+    <div class="bg-primary-container p-lg rounded-3xl text-white text-center relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+      <div class="relative z-10">
+        <h2 class="font-display text-2xl leading-tight mb-md">Ready to join?</h2>
+        <p class="font-body-md text-white/80 mb-lg">Join thousands of tech leaders already building the future.</p>
+        <a href="login.html" class="inline-block bg-white text-primary-container px-xl py-md rounded-xl font-bold font-label-md hover:bg-surface-container-low transition-all active:scale-95">Get Started Free</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant py-xl px-margin-mobile md:px-margin-desktop">
+  <div class="max-w-[1280px] mx-auto">
+    <!-- Mobile footer: 2-col Company/Help grid (exact mobile design) -->
+    <div class="flex flex-col gap-lg lg:hidden">
+      <div>
+        <div class="font-display text-headline-md text-primary tracking-tight mb-xs">NeutronTech</div>
+        <p class="font-body-md text-on-surface-variant">Pioneering the tech-social intersection.</p>
+      </div>
+      <div class="grid grid-cols-2 gap-md">
+        <div class="flex flex-col gap-sm">
+          <span class="font-label-sm text-primary uppercase tracking-wider">Company</span>
+          <a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+          <a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy</a>
+        </div>
+        <div class="flex flex-col gap-sm">
+          <span class="font-label-sm text-primary uppercase tracking-wider">Help</span>
+          <a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms</a>
+          <a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+        </div>
+      </div>
+      <div class="pt-md border-t border-outline-variant flex flex-col gap-md items-center">
+        <div class="flex gap-md">
+          <a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+          <a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+          <a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+        </div>
+        <p class="font-label-sm text-on-surface-variant">© 2024 NeutronTech Inc.</p>
+      </div>
+    </div>
+    <!-- Desktop footer: horizontal layout -->
+    <div class="hidden lg:flex flex-row justify-between items-center gap-xl">
+      <div class="flex flex-col items-start gap-xs">
+        <span class="font-display text-headline-md font-bold text-primary-container">NeutronTech</span>
+        <p class="font-body-md text-on-surface-variant font-label-sm">© 2024 NeutronTech Inc.</p>
+      </div>
+      <div class="flex flex-wrap justify-center gap-lg">
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">About</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">Privacy</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">Terms</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">Support</a>
+      </div>
+      <div class="flex gap-md">
+        <button class="p-sm text-on-surface-variant hover:text-primary-container transition-colors bg-surface-container rounded-full">
+          <span class="material-symbols-outlined !text-[20px]">public</span>
+        </button>
+        <button class="p-sm text-on-surface-variant hover:text-primary-container transition-colors bg-surface-container rounded-full">
+          <span class="material-symbols-outlined !text-[20px]">code</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const menuToggle = document.getElementById('menu-toggle');
+  const menuClose = document.getElementById('menu-close');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  menuToggle.addEventListener('click', () => {
+    mobileMenu.classList.remove('translate-x-full');
+    document.body.style.overflow = 'hidden';
+  });
+  menuClose.addEventListener('click', () => {
+    mobileMenu.classList.add('translate-x-full');
+    document.body.style.overflow = '';
+  });
+
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('top-nav');
+    nav.classList.toggle('shadow-md', window.scrollY > 20);
+    nav.classList.toggle('shadow-sm', window.scrollY <= 20);
+  });
+</script>
+</body>
+</html>

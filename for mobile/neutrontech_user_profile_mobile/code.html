@@ -1,0 +1,280 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 390px; height: 1746px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#00046a",
+                      "secondary-container": "#d5e0f7",
+                      "on-tertiary-container": "#ffb8aa",
+                      "on-primary-fixed-variant": "#0013e7",
+                      "surface": "#fbf8ff",
+                      "surface-variant": "#e3e1f0",
+                      "surface-tint": "#2f3eff",
+                      "inverse-surface": "#2f2f3b",
+                      "on-surface": "#1a1b25",
+                      "secondary": "#545f72",
+                      "surface-container-highest": "#e3e1f0",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "surface-container-low": "#f4f2ff",
+                      "background": "#fbf8ff",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#ffb4a6",
+                      "primary-fixed-dim": "#bec2ff",
+                      "outline": "#757589",
+                      "on-primary-container": "#c1c5ff",
+                      "tertiary-container": "#a91300",
+                      "primary-container": "#1929fe",
+                      "on-surface-variant": "#444557",
+                      "on-secondary-fixed": "#111c2c",
+                      "tertiary": "#7e0b00",
+                      "surface-container-high": "#e8e6f6",
+                      "on-secondary-container": "#586377",
+                      "primary-fixed": "#e0e0ff",
+                      "outline-variant": "#c5c5da",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#3f0300",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eeecfc",
+                      "tertiary-fixed": "#ffdad4",
+                      "secondary-fixed": "#d8e3fa",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#f1efff",
+                      "inverse-primary": "#bec2ff",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#bcc7dd",
+                      "on-tertiary-fixed-variant": "#900e00",
+                      "surface-dim": "#dad8e8",
+                      "surface-bright": "#fbf8ff",
+                      "primary": "#0010cc",
+                      "on-background": "#1a1b25"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "1.5rem",
+                      "margin-mobile": "16px",
+                      "lg": "2rem",
+                      "base": "4px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px",
+                      "xs": "0.5rem",
+                      "xl": "4rem",
+                      "sm": "1rem"
+              },
+              "fontFamily": {
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "label-md": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Geist"],
+                      "body-md": ["Inter"],
+                      "display": ["Geist"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm h-16 flex items-center px-margin-mobile">
+<div class="flex justify-between items-center w-full max-w-1280px mx-auto">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-headline-md">bolt</span>
+<h1 class="font-display text-headline-md text-primary tracking-tight">NeutronTech</h1>
+</div>
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors">search</button>
+<button class="material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors">notifications</button>
+</div>
+</div>
+</header>
+<main class="pt-16 pb-20">
+<!-- Profile Banner -->
+<div class="relative h-40 w-full overflow-hidden">
+<div class="absolute inset-0 bg-primary-container"></div>
+<img class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-60" data-alt="A high-tech digital landscape featuring abstract circuitry patterns and glowing electric blue lines on a deep navy background. The visual style is sleek and futuristic, utilizing soft ambient glows and sharp geometric shapes to create a sense of advanced innovation and technological speed. The lighting is low-key with vibrant primary blue accents that dominate the composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh-fPmOJOnYeEABft_IapEb4Hnn-yIOc0T_6lNQFT8KxCBkww5v0lI0fkZAKwrr3WUmUK0Vo6D_tVvADgO2exQrFJ83EymlFwxSr7BezroAN_ZVmkjOre8cXSmmQ3EyExW0Pm4S8i6vMTVMLlHGCiMUjLSgHqMeVx0BWShd2uHAdtX-nyaWW5B5BHYpUZE_CUp4_HGePjhIiDc2OyhGlafzIUWt949u_fzh87vSSxOb88XtJCVopLh8QBb5b6CsTC3IbhZHo4XB-4">
+</div>
+<!-- Profile Header Section -->
+<div class="px-margin-mobile -mt-12 relative z-10">
+<div class="flex flex-col items-center">
+<!-- Avatar -->
+<div class="w-24 h-24 rounded-full border-4 border-surface overflow-hidden shadow-lg bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional close-up portrait of a tech-savvy individual with a confident and friendly expression. The person has modern, clean-cut features and is positioned against a minimalist, bright studio background with soft neutral lighting. The overall aesthetic is clean, professional, and corporate, perfectly aligned with a high-end technology startup brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv-1HsceDTdzriDDZB2EHkfUKcsLaDCBizXfEB_vG8yHe_WGDPcIR1HGP7JisZRnRDyxXoL-RDpo7JE0Ku3zrFWp7bvt2JvdelM2r6Z-9VFyosn6KAV94lkBuUoAvlf4W4aZ5MnVc0TQZrBkSk9L8AvBtQHnyWYc2Bb2moCijfDrsMTuL4HNfOlBaiaN-RlmrJjKA1TgzPlGuSOzQrqEQDcAwqZL-NJCBptl0b3-HDsM5zLOb5IqlrETAQyhoN5533CmUzcRm4H8M">
+</div>
+<!-- Identity -->
+<div class="text-center mt-md">
+<h2 class="font-headline-md text-headline-lg-mobile text-on-surface">Alex Rivera</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">@arivera_tech</p>
+</div>
+<!-- Stats Row -->
+
+<!-- Action Buttons -->
+<div class="flex gap-sm w-full max-w-sm mt-md">
+
+<button class="flex-1 bg-surface border border-outline-variant text-on-surface h-12 rounded-xl font-label-md text-label-md active:scale-95 transition-transform duration-150">
+                        Edit Profile
+                    </button>
+</div>
+<!-- Bio -->
+<div class="w-full mt-lg">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                        Full-stack architect &amp; AI enthusiast. Building the next generation of social tech at NeutronTech. 🚀 Passionate about clean code, UX precision, and the future of decentralized networks. 
+                    </p>
+<div class="flex items-center gap-xs mt-sm text-primary">
+<span class="material-symbols-outlined text-[18px]">link</span>
+<a class="font-label-md text-label-md hover:underline" href="#">neutrontech.io/arivera</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Posts List -->
+<div class="mt-xl px-margin-mobile">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-headline-md text-headline-md">Recent Activity</h3>
+<button class="font-label-md text-label-md text-primary">View All</button>
+</div>
+<div class="space-y-md">
+<!-- Post Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small thumbnail profile picture of a professional individual in a brightly lit office setting, maintaining a consistent high-tech corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu0DFoQc5JZa7kPPXKIWdB1XAOw3vcg_S8xQrLuB4RD6z0U-4SjYeCNHtL5Vncwjn1z2aDbgLZCyPKKJLf1xQeNPszDx9Nl-cytEE3kbHpbtY6iorSScQwS45kFTJIWThOXzsI_l-VWxCNGGLIdsXK6sLqb6MFkECfIBFmk1DYBpgTJ0H47Ok7KVjNUrK-BZEJyRq7McfDbqDLEKS0tVTQsWc_y8tTJLKHjyqoHzGu6_ZgV77ivwZzzG-TKysCrtGOG0zUXodF7-g">
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="text-label-sm text-on-surface-variant">2 hours ago</p>
+</div>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant">more_horiz</button>
+</div>
+<p class="text-body-md text-on-surface mb-md">
+                        Just deployed the new Neutron Core update. The performance gains in the bento grid rendering are insane! Check out the documentation for the new API endpoints. 🛠️
+                    </p>
+<div class="h-48 rounded-lg overflow-hidden mb-md">
+<img class="w-full h-full object-cover" data-alt="A clean, professional screenshot of a modern software dashboard featuring a bento grid layout with glowing blue charts and data visualizations. The interface uses a light mode aesthetic with crisp typography and subtle shadows, reflecting a high-end technology product environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5Cn0Mo6ciMBzBgDQ6tFzuJYSRhSE-dTBiHk-RbJFhaL65kZWZikTu4YJo3jebVsRb4wImBHFeDCDKzPHFpKq6CqPMcWa2Z9cLYdMwZvzfFAIBOMENfCh2lopVSavSVFO9IC0LARdOoyYEVb4bJfIlmOzDZGaQVz0K995njXJVyQ6nzwx0yi2X784_2tpoTUB5OVOKxV18ejNGmtSP248tOYvgOiz8n-Agye0bGcZO9WYnwBw7ONJ_KANHCdIkO6NSjYdi3j28MAY">
+</div>
+<div class="flex items-center gap-md border-t border-outline-variant pt-sm">
+<button class="flex items-center gap-xs text-on-surface-variant active:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+<span class="text-label-md">1.2k</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant active:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+<span class="text-label-md">48</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant active:text-primary transition-colors">
+
+</button>
+</div>
+</div>
+<!-- Post Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Small avatar of the user in a professional setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRHGFNAJeLJre9lXo-9dgRcn_MR4QWbD-UBm_2FlcEPVSSPC4EcXhPymIJoqfoCgwC8DyTENIP0g6DZh9eqV8ZhOGHm7W0Q9BO7VqVdxYRWRbU-QILEHzIbAKYbZ2SD69A_Ufmhp2SKzZt0J16DC1NOhqXCyt9094a8J2t6MVGCbQpT7vrM2WKviFFxqrp67NBtaQLvv7pJEieygsNc4sdfsASp22sl2SfawsSHMooT5b4_9mALj6lbuP7sAb-O7V-ZW5i72GwS7E">
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="text-label-sm text-on-surface-variant">Yesterday</p>
+</div>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant">more_horiz</button>
+</div>
+<p class="text-body-md text-on-surface">
+                        What are your thoughts on the transition to Geist for the primary design system font? Personally, the tracking on headline-lg is a game changer for mobile readability.
+                    </p>
+<div class="flex items-center gap-md mt-md pt-sm border-t border-outline-variant">
+<button class="flex items-center gap-xs text-on-surface-variant active:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+<span class="text-label-md">856</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant active:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+<span class="text-label-md">124</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant active:text-primary transition-colors">
+
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface border-t border-outline-variant h-16 md:hidden">
+<div class="flex justify-around items-center h-full">
+<button class="flex flex-col items-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-sm font-label-sm">Home</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined">search</span>
+<span class="text-label-sm font-label-sm">Search</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-label-sm font-label-sm">Post</span>
+</button>
+<button class="flex flex-col items-center text-primary font-bold transition-all active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</button>
+</div>
+</nav>
+<script>
+        // Micro-interaction for follow button
+        const followBtn = document.querySelector('button.bg-primary');
+        if (followBtn) {
+            followBtn.addEventListener('click', () => {
+                if (followBtn.innerText === 'Follow') {
+                    followBtn.innerText = 'Following';
+                    followBtn.classList.replace('bg-primary', 'bg-secondary-container');
+                    followBtn.classList.replace('text-on-primary', 'text-on-secondary-container');
+                } else {
+                    followBtn.innerText = 'Follow';
+                    followBtn.classList.replace('bg-secondary-container', 'bg-primary');
+                    followBtn.classList.replace('text-on-secondary-container', 'text-on-primary');
+                }
+            });
+        }
+    </script>
+
+
+</body></html>

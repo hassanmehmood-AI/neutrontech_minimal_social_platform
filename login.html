@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Login &amp; Sign Up | NeutronTech</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode:"class",
+    theme:{
+      extend:{
+        colors:{
+          "inverse-on-surface":"#f1efff","on-secondary":"#ffffff","secondary":"#545f72",
+          "inverse-surface":"#2f2f3b","primary-fixed-dim":"#bec2ff","surface-variant":"#e3e1f0",
+          "inverse-primary":"#bec2ff","on-primary-container":"#c1c5ff","surface-tint":"#2f3eff",
+          "surface-dim":"#dad8e8","secondary-container":"#d5e0f7","surface-bright":"#fbf8ff",
+          "outline":"#757589","on-tertiary":"#ffffff","tertiary":"#7e0b00",
+          "surface-container-highest":"#e3e1f0","on-tertiary-container":"#ffb8aa",
+          "on-surface-variant":"#444557","on-error":"#ffffff","on-secondary-fixed":"#111c2c",
+          "surface-container-low":"#f4f2ff","on-secondary-fixed-variant":"#3c475a",
+          "primary-container":"#1929fe","surface-container":"#eeecfc","on-surface":"#1a1b25",
+          "secondary-fixed":"#d8e3fa","on-background":"#1a1b25","on-primary-fixed-variant":"#0013e7",
+          "surface-container-lowest":"#ffffff","secondary-fixed-dim":"#bcc7dd","error":"#ba1a1a",
+          "on-primary":"#ffffff","tertiary-fixed":"#ffdad4","primary-fixed":"#e0e0ff",
+          "background":"#fbf8ff","on-secondary-container":"#586377","surface-container-high":"#e8e6f6",
+          "primary":"#0010cc","surface":"#fbf8ff","tertiary-container":"#a91300",
+          "error-container":"#ffdad6","outline-variant":"#c5c5da","on-primary-fixed":"#00046a",
+          "on-tertiary-fixed":"#3f0300","on-tertiary-fixed-variant":"#900e00",
+          "on-error-container":"#93000a","tertiary-fixed-dim":"#ffb4a6"
+        },
+        borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        spacing:{"sm":"1rem","margin-desktop":"32px","margin-mobile":"16px","base":"4px","xs":"0.5rem","xl":"4rem","md":"1.5rem","lg":"2rem","gutter":"24px"},
+        fontFamily:{"body-lg":["Inter"],"label-sm":["Geist"],"headline-md":["Geist"],"headline-lg-mobile":["Geist"],"label-md":["Geist"],"body-md":["Inter"],"display":["Geist"],"headline-lg":["Geist"]},
+        fontSize:{
+          "body-lg":["18px",{lineHeight:"1.6",fontWeight:"400"}],
+          "label-sm":["12px",{lineHeight:"1.2",letterSpacing:"0.05em",fontWeight:"600"}],
+          "headline-md":["24px",{lineHeight:"1.3",fontWeight:"600"}],
+          "headline-lg-mobile":["24px",{lineHeight:"1.2",fontWeight:"600"}],
+          "label-md":["14px",{lineHeight:"1.4",letterSpacing:"0.02em",fontWeight:"500"}],
+          "body-md":["16px",{lineHeight:"1.6",fontWeight:"400"}],
+          "display":["48px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+          "headline-lg":["32px",{lineHeight:"1.2",letterSpacing:"-0.01em",fontWeight:"600"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;vertical-align:middle;}
+  .auth-card{box-shadow:0px 4px 20px rgba(10,17,40,0.05);}
+  .tap-scale:active{transform:scale(0.98);}
+  .transition-height{transition:max-height 0.4s ease-in-out,opacity 0.3s ease-in-out;}
+  body{font-family:'Inter',sans-serif;background-color:#fbf8ff;color:#1a1b25;}
+  .glass-panel{background:rgba(25,41,254,0.85);backdrop-filter:blur(12px);}
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen overflow-x-hidden">
+
+<!-- ═══════════════════════════════════════════════
+     MOBILE LAYOUT  (hidden on md+)
+     Exact match to neutrontech_login_sign_up_mobile
+════════════════════════════════════════════════ -->
+<div class="md:hidden min-h-screen flex flex-col items-center justify-center p-margin-mobile relative">
+
+  <!-- Decorative background blobs -->
+  <div class="fixed -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+  <div class="fixed -bottom-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+
+  <main class="w-full max-w-md mx-auto flex flex-col items-center space-y-xl">
+
+    <!-- Header: bolt icon + logo -->
+    <header class="text-center space-y-sm">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-container rounded-xl shadow-lg mb-md">
+        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1;">bolt</span>
+      </div>
+      <h1 class="font-display text-display text-primary tracking-tight">NeutronTech</h1>
+      <p class="font-label-md text-label-md text-on-surface-variant">The future of social innovation.</p>
+    </header>
+
+    <!-- Auth card -->
+    <div class="w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-md auth-card">
+      <!-- Toggle pills -->
+      <div class="flex p-xs bg-surface-container-low rounded-lg mb-lg gap-xs">
+        <button class="flex-1 py-xs rounded-md font-label-md text-label-md transition-all bg-surface-container-highest text-primary shadow-sm" id="mob-login-tab" onclick="mobSwitch('login')">Login</button>
+        <button class="flex-1 py-xs rounded-md font-label-md text-label-md transition-all text-on-surface-variant" id="mob-signup-tab" onclick="mobSwitch('signup')">Sign Up</button>
+      </div>
+
+      <!-- LOGIN form -->
+      <form class="space-y-md" id="mob-login-form" onsubmit="goToFeed(event)">
+        <!-- Username -->
+        <div>
+          <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Username</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">alternate_email</span>
+            <input class="w-full pl-xl pr-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/15 focus:border-primary outline-none transition-all font-body-md" placeholder="neutron_user" type="text">
+          </div>
+        </div>
+        <!-- Password -->
+        <div>
+          <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Password</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">lock</span>
+            <input class="w-full pl-xl pr-12 py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/15 focus:border-primary outline-none transition-all font-body-md" placeholder="••••••••" type="password" id="mob-pwd">
+            <button class="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onclick="togglePwd('mob-pwd')">
+              <span class="material-symbols-outlined">visibility</span>
+            </button>
+          </div>
+        </div>
+        <!-- Submit -->
+        <button class="w-full py-md bg-primary-container text-white font-label-md text-label-md rounded-lg shadow-md tap-scale hover:brightness-110 transition-all mt-lg" type="submit">
+          Sign In
+        </button>
+      </form>
+
+      <!-- SIGNUP form (hidden) -->
+      <form class="space-y-md hidden" id="mob-signup-form" onsubmit="goToFeed(event)">
+        <!-- Full Name -->
+        <div>
+          <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Full Name</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">person</span>
+            <input class="w-full pl-xl pr-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/15 focus:border-primary outline-none transition-all font-body-md" placeholder="John Doe" type="text">
+          </div>
+        </div>
+        <!-- Username -->
+        <div>
+          <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Username</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">alternate_email</span>
+            <input class="w-full pl-xl pr-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/15 focus:border-primary outline-none transition-all font-body-md" placeholder="neutron_user" type="text">
+          </div>
+        </div>
+        <!-- Email -->
+        <div>
+          <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Email Address</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">mail</span>
+            <input class="w-full pl-xl pr-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/15 focus:border-primary outline-none transition-all font-body-md" placeholder="hello@neutrontech.io" type="email">
+          </div>
+        </div>
+        <!-- Password -->
+        <div>
+          <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Password</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">lock</span>
+            <input class="w-full pl-xl pr-12 py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/15 focus:border-primary outline-none transition-all font-body-md" placeholder="••••••••" type="password" id="mob-signup-pwd">
+            <button class="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onclick="togglePwd('mob-signup-pwd')">
+              <span class="material-symbols-outlined">visibility</span>
+            </button>
+          </div>
+        </div>
+        <button class="w-full py-md bg-primary-container text-white font-label-md text-label-md rounded-lg shadow-md tap-scale hover:brightness-110 transition-all mt-lg" type="submit">
+          Create Account
+        </button>
+      </form>
+
+      <div class="mt-md text-center">
+        <a class="font-label-sm text-label-sm text-primary hover:underline" href="#">Forgot password?</a>
+      </div>
+    </div>
+
+    <!-- Social login + terms -->
+    <footer class="w-full space-y-md">
+      <div class="flex items-center gap-sm">
+        <div class="h-px bg-outline-variant flex-1"></div>
+        <span class="font-label-sm text-label-sm text-outline">OR CONTINUE WITH</span>
+        <div class="h-px bg-outline-variant flex-1"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-md">
+        <button class="flex items-center justify-center gap-xs py-sm border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all tap-scale">
+          <img alt="Google" class="w-4 h-4" src="https://www.gstatic.com/images/branding/product/2x/googleg_96dp.png">
+          Google
+        </button>
+        <button class="flex items-center justify-center gap-xs py-sm border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all tap-scale">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">ios</span>
+          Apple
+        </button>
+      </div>
+      <p class="text-center font-label-sm text-label-sm text-on-surface-variant px-md leading-relaxed">
+        By continuing, you agree to NeutronTech's
+        <a class="text-primary hover:underline" href="#">Terms of Service</a> and
+        <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DESKTOP LAYOUT  (hidden on mobile, shows md+)
+     Exact match to neutrontech_login_sign_up laptop
+════════════════════════════════════════════════ -->
+<div class="hidden md:flex min-h-screen flex-col">
+
+  <main class="flex-grow flex flex-row h-screen overflow-hidden">
+
+    <!-- Left branding panel -->
+    <section class="hidden md:flex w-1/2 bg-primary-container relative overflow-hidden items-center justify-center p-xl">
+      <div class="absolute inset-0 z-0">
+        <img class="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_mngc07qN1BwTUEn9wOMEvj5HquXKfx5XA47N7cSDy7GWAxYKvoZMa-ApNYkqa35hyIBmzCDfGDlgcCdhuUAOxQZCltQFYhKSGORyqCaXFJJa5xrWRGdqrzUTvjzfJk1p4fTWyJeE9JtmzpZfUw7BzixKevW4glRJNJyd1kMGvVqHf3pDODXYDR5_JcC4IeJRVJu30KF3q5EMvhPxwD9n0_x-UXxnusrtqdDue3O-rkaOjjntf_Usx927QuYkMfk3Uln5z8Ykbkc" alt="Tech background">
+      </div>
+      <div class="relative z-10 max-w-lg text-left">
+        <a href="landing.html" class="inline-block mb-md">
+          <span class="font-display text-headline-lg text-white/80 tracking-tight">NeutronTech</span>
+        </a>
+        <h1 class="font-display text-display text-on-primary mb-md leading-tight">
+          Powering the next generation of Tech-Social.
+        </h1>
+        <p class="font-body-lg text-body-lg text-primary-fixed mb-lg opacity-90">
+          Connect, collaborate, and scale with NeutronTech's precision-engineered platform.
+        </p>
+        <div class="flex flex-wrap gap-md">
+          <div class="flex items-center gap-xs bg-white/10 backdrop-blur-md px-md py-sm rounded-xl border border-white/20">
+            <span class="material-symbols-outlined text-white">speed</span>
+            <span class="font-label-md text-label-md text-white">Ultra Fast</span>
+          </div>
+          <div class="flex items-center gap-xs bg-white/10 backdrop-blur-md px-md py-sm rounded-xl border border-white/20">
+            <span class="material-symbols-outlined text-white">security</span>
+            <span class="font-label-md text-label-md text-white">Secure Architecture</span>
+          </div>
+        </div>
+      </div>
+      <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+    </section>
+
+    <!-- Right form panel -->
+    <section class="w-full md:w-1/2 bg-surface-container-lowest flex items-center justify-center p-xl overflow-y-auto">
+      <div class="w-full max-w-md">
+
+        <!-- Logo -->
+        <div class="mb-xl">
+          <div class="inline-flex items-center gap-xs mb-sm">
+            <span class="material-symbols-outlined text-primary-container text-4xl" style="font-variation-settings:'FILL' 1;">bolt</span>
+            <a href="landing.html" class="font-display text-headline-lg text-primary tracking-tight">NeutronTech</a>
+          </div>
+        </div>
+
+        <!-- Tab nav -->
+        <div class="flex gap-lg border-b border-outline-variant mb-xl">
+          <button class="pb-sm font-label-md text-label-md transition-all border-b-2 border-primary-container text-primary-container font-bold" id="desk-login-tab" onclick="deskSwitch('login')">Login</button>
+          <button class="pb-sm font-label-md text-label-md transition-all border-b-2 border-transparent text-secondary hover:text-primary" id="desk-signup-tab" onclick="deskSwitch('signup')">Sign Up</button>
+        </div>
+
+        <!-- Desktop Login form -->
+        <div id="desk-login-form" class="space-y-md">
+          <div class="space-y-xs">
+            <h2 class="font-headline-md text-headline-md text-on-surface">Welcome back</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Please enter your details to sign in.</p>
+          </div>
+          <form class="space-y-md mt-lg" onsubmit="goToFeed(event)">
+            <div class="space-y-base">
+              <label class="font-label-md text-label-md text-on-surface-variant ml-1">Email Address</label>
+              <input class="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary-container/15 focus:border-primary-container transition-all" placeholder="name@company.com" type="email">
+            </div>
+            <div class="space-y-base">
+              <div class="flex justify-between">
+                <label class="font-label-md text-label-md text-on-surface-variant ml-1">Password</label>
+                <a class="font-label-md text-label-md text-primary hover:underline" href="#">Forgot password?</a>
+              </div>
+              <div class="relative">
+                <input class="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary-container/15 focus:border-primary-container transition-all" placeholder="••••••••" type="password" id="desk-pwd">
+                <button class="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onclick="togglePwd('desk-pwd')">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <div class="flex items-center gap-xs">
+              <input class="w-4 h-4 rounded border-outline-variant text-primary-container focus:ring-primary-container" id="remember" type="checkbox">
+              <label class="font-label-md text-label-md text-on-surface-variant" for="remember">Remember for 30 days</label>
+            </div>
+            <button class="w-full bg-primary-container text-white py-sm rounded-xl font-label-md text-label-md font-bold hover:brightness-110 active:scale-[0.98] transition-all flex justify-center items-center gap-xs" type="submit">
+              Sign In <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </form>
+          <div class="relative py-md">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-outline-variant"></div></div>
+            <div class="relative flex justify-center text-label-sm uppercase"><span class="bg-surface-container-lowest px-sm text-outline">Or continue with</span></div>
+          </div>
+          <div class="grid grid-cols-2 gap-sm">
+            <button class="flex items-center justify-center gap-xs border border-outline-variant py-sm rounded-xl hover:bg-surface-container transition-colors">
+              <img src="https://www.gstatic.com/images/branding/product/2x/googleg_96dp.png" alt="Google" class="h-5 w-5 mr-2">
+              <span class="font-label-md text-label-md">Google</span>
+            </button>
+            <button class="flex items-center justify-center gap-xs border border-outline-variant py-sm rounded-xl hover:bg-surface-container transition-colors">
+              <span class="material-symbols-outlined text-xl">mail</span>
+              <span class="font-label-md text-label-md">Email</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Desktop Signup form -->
+        <div id="desk-signup-form" class="hidden space-y-md">
+          <div class="space-y-xs">
+            <h2 class="font-headline-md text-headline-md text-on-surface">Create an account</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Join the hub of modern innovation.</p>
+          </div>
+          <form class="space-y-md mt-lg" onsubmit="goToFeed(event)">
+            <div class="grid grid-cols-2 gap-md">
+              <div class="space-y-base">
+                <label class="font-label-md text-label-md text-on-surface-variant ml-1">Full Name</label>
+                <input class="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary-container/15 focus:border-primary-container transition-all" placeholder="John Doe" type="text">
+              </div>
+              <div class="space-y-base">
+                <label class="font-label-md text-label-md text-on-surface-variant ml-1">Username</label>
+                <input class="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary-container/15 focus:border-primary-container transition-all" placeholder="johndoe_tech" type="text">
+              </div>
+            </div>
+            <div class="space-y-base">
+              <label class="font-label-md text-label-md text-on-surface-variant ml-1">Email Address</label>
+              <input class="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary-container/15 focus:border-primary-container transition-all" placeholder="name@company.com" type="email">
+            </div>
+            <div class="space-y-base">
+              <label class="font-label-md text-label-md text-on-surface-variant ml-1">Password</label>
+              <div class="relative">
+                <input class="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary-container/15 focus:border-primary-container transition-all" placeholder="Min. 8 characters" type="password" id="desk-signup-pwd">
+                <button class="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onclick="togglePwd('desk-signup-pwd')">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <button class="w-full bg-primary-container text-white py-sm rounded-xl font-label-md text-label-md font-bold hover:brightness-110 active:scale-[0.98] transition-all" type="submit">
+              Create Account
+            </button>
+          </form>
+          <p class="text-center font-label-sm text-label-sm text-outline pt-sm">
+            By signing up, you agree to our <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Desktop footer -->
+  <footer class="bg-surface-container-lowest py-md border-t border-outline-variant">
+    <div class="max-w-[1280px] mx-auto px-margin-mobile flex flex-col md:flex-row justify-between items-center gap-sm">
+      <span class="font-label-sm text-label-sm text-on-surface-variant opacity-60">© 2024 NeutronTech Inc.</span>
+      <div class="flex gap-md">
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Status</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Security</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  function goToFeed(e) { e.preventDefault(); window.location.href = 'feed.html'; }
+
+  // Mobile tab switch
+  function mobSwitch(mode) {
+    const loginForm = document.getElementById('mob-login-form');
+    const signupForm = document.getElementById('mob-signup-form');
+    const loginTab = document.getElementById('mob-login-tab');
+    const signupTab = document.getElementById('mob-signup-tab');
+    if (mode === 'login') {
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+      loginTab.classList.add('bg-surface-container-highest','text-primary','shadow-sm');
+      loginTab.classList.remove('text-on-surface-variant');
+      signupTab.classList.remove('bg-surface-container-highest','text-primary','shadow-sm');
+      signupTab.classList.add('text-on-surface-variant');
+    } else {
+      signupForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+      signupTab.classList.add('bg-surface-container-highest','text-primary','shadow-sm');
+      signupTab.classList.remove('text-on-surface-variant');
+      loginTab.classList.remove('bg-surface-container-highest','text-primary','shadow-sm');
+      loginTab.classList.add('text-on-surface-variant');
+    }
+  }
+
+  // Desktop tab switch
+  function deskSwitch(mode) {
+    const loginForm = document.getElementById('desk-login-form');
+    const signupForm = document.getElementById('desk-signup-form');
+    const loginTab = document.getElementById('desk-login-tab');
+    const signupTab = document.getElementById('desk-signup-tab');
+    if (mode === 'login') {
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+      loginTab.classList.add('border-primary-container','text-primary-container','font-bold');
+      loginTab.classList.remove('border-transparent','text-secondary');
+      signupTab.classList.remove('border-primary-container','text-primary-container','font-bold');
+      signupTab.classList.add('border-transparent','text-secondary');
+    } else {
+      signupForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+      signupTab.classList.add('border-primary-container','text-primary-container','font-bold');
+      signupTab.classList.remove('border-transparent','text-secondary');
+      loginTab.classList.remove('border-primary-container','text-primary-container','font-bold');
+      loginTab.classList.add('border-transparent','text-secondary');
+    }
+  }
+
+  function togglePwd(id) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  // Input icon highlight on focus
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('focus', () => {
+      const icon = input.parentElement.querySelector('.material-symbols-outlined');
+      if (icon) icon.classList.add('text-primary');
+    });
+    input.addEventListener('blur', () => {
+      const icon = input.parentElement.querySelector('.material-symbols-outlined');
+      if (icon) icon.classList.remove('text-primary');
+    });
+  });
+</script>
+</body>
+</html>

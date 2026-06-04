@@ -1,0 +1,324 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>NeutronTech | Innovation at its Forefront</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        body {
+            scroll-behavior: smooth;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#f1efff",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#545f72",
+                    "inverse-surface": "#2f2f3b",
+                    "primary-fixed-dim": "#bec2ff",
+                    "on-tertiary-fixed-variant": "#900e00",
+                    "on-tertiary-fixed": "#3f0300",
+                    "surface-variant": "#e3e1f0",
+                    "inverse-primary": "#bec2ff",
+                    "on-primary-container": "#c1c5ff",
+                    "surface-tint": "#2f3eff",
+                    "surface-dim": "#dad8e8",
+                    "secondary-container": "#d5e0f7",
+                    "surface-bright": "#fbf8ff",
+                    "outline": "#757589",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#7e0b00",
+                    "surface-container-highest": "#e3e1f0",
+                    "on-tertiary-container": "#ffb8aa",
+                    "on-surface-variant": "#444557",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#111c2c",
+                    "surface-container-low": "#f4f2ff",
+                    "on-secondary-fixed-variant": "#3c475a",
+                    "primary-container": "#1929fe",
+                    "surface-container": "#eeecfc",
+                    "on-surface": "#1a1b25",
+                    "secondary-fixed": "#d8e3fa",
+                    "on-background": "#1a1b25",
+                    "on-primary-fixed-variant": "#0013e7",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#bcc7dd",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#ffdad4",
+                    "primary-fixed": "#e0e0ff",
+                    "background": "#fbf8ff",
+                    "on-secondary-container": "#586377",
+                    "surface-container-high": "#e8e6f6",
+                    "primary": "#0010cc",
+                    "surface": "#fbf8ff",
+                    "tertiary-container": "#a91300",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffb4a6",
+                    "outline-variant": "#c5c5da",
+                    "on-primary-fixed": "#00046a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "1rem",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "xs": "0.5rem",
+                    "xl": "4rem",
+                    "md": "1.5rem",
+                    "lg": "2rem",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "label-md": ["Geist"],
+                    "body-md": ["Inter"],
+                    "display": ["Geist"],
+                    "headline-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-primary-container selection:text-white">
+<!-- TopNavBar Component -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant shadow-sm h-16">
+<nav class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full w-full max-w-[1280px] mx-auto">
+<div class="flex items-center gap-md">
+<span class="font-display text-headline-lg text-primary tracking-tight">NeutronTech</span>
+<div class="hidden md:flex gap-sm ml-lg">
+<a class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary py-base transition-colors" href="#">Feed</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-base rounded-lg" href="#">Search</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-base rounded-lg" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex items-center gap-sm">
+<button class="font-label-md text-label-md text-primary bg-surface border border-outline-variant px-md py-xs rounded-full hover:bg-surface-container-low active:scale-95 duration-150">Login</button>
+<button class="font-label-md text-label-md bg-primary-container text-white px-md py-xs rounded-full hover:brightness-110 active:scale-95 duration-150 shadow-md shadow-primary/20">Sign Up</button>
+</div>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</nav>
+</header>
+<main class="pt-16">
+<!-- Hero Section - Refined 2-Column Layout for better spacing -->
+<section class="relative py-24 lg:py-40 bg-surface-bright">
+<div class="absolute top-0 right-0 -z-10 w-1/2 h-full bg-[radial-gradient(circle_at_70%_30%,_#e0e0ff_0%,_transparent_60%)] opacity-40"></div>
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xl items-center">
+<div class="space-y-lg">
+<div class="inline-flex items-center gap-xs px-md py-xs bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm tracking-widest">
+<span class="material-symbols-outlined !text-[16px]">bolt</span>
+                            INNOVATION AT ITS FOREFRONT
+                        </div>
+<h1 class="font-display text-display lg:text-[72px] leading-[1.05] text-on-surface">
+                            Connecting <span class="text-primary-container">Technology-minded</span> people.
+                        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                            The definitive hub for engineers, designers, and tech pioneers. Build your network, showcase your breakthroughs, and stay ahead of the curve.
+                        </p>
+<div class="flex flex-wrap gap-md pt-md">
+<button class="bg-primary-container text-white px-xl py-md rounded-xl font-label-md text-label-md hover:brightness-110 shadow-lg shadow-primary/20 active:scale-95 transition-all">Join NeutronTech</button>
+<button class="border border-outline-variant text-on-surface px-xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low active:scale-95 transition-all">Explore</button>
+</div>
+</div>
+<!-- Hero Visual - Positioned clearly to prevent text overlap -->
+<div class="relative hidden lg:block">
+<div class="glass-card rounded-[40px] shadow-2xl p-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
+<img alt="Server room visual" class="w-full h-[500px] object-cover rounded-2xl grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbyOGnJb6xjFH5jLdYDPuzLetRiyxPEU-pI6bBy1g6Qgqi9BN3tB3kNHmGx5Vs0i9rxbDPnqeCH43OdkwghxH78NBUY69l5GsMR714iVk0AaYCSEKYqwF4lDUaQ70mvxPIjYuULq95gGVRsyucIzokN1FJfUYA8dFdHG0BZi6UvRWWfz1xQDZdMDomzGjORpsfOoP70NW2AFLUIVy-K7Mk6YVeTLfwyv1nbcSPUhR52xV79WTLXKqVysgT9O0ork_6q17RxnKqQ1Y">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid - Increased padding for "airy" feel -->
+<section class="bg-surface-container-low py-24 lg:py-40">
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex flex-col items-center text-center mb-24">
+<h2 class="font-headline-lg text-display text-on-surface mb-md">Engineered for Collaboration</h2>
+<p class="text-on-surface-variant max-w-2xl font-body-lg text-body-lg">Precision tools designed for the modern tech workflow, enabling seamless discovery and professional growth.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Community Feed Card -->
+<div class="md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="material-symbols-outlined text-primary-container mb-sm">dynamic_feed</span>
+<h3 class="font-headline-md text-headline-md">Community Feed</h3>
+<p class="text-on-surface-variant font-label-md">Real-time updates from your tech ecosystem.</p>
+</div>
+<button class="text-primary-container font-label-sm hover:underline">View All</button>
+</div>
+<div class="space-y-md mt-lg">
+<div class="flex gap-md p-md bg-surface-container/30 rounded-lg border border-outline-variant/50 group-hover:-translate-y-1 transition-transform duration-300">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container !text-[20px]">person</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center">
+<span class="font-bold font-label-md">Sarah Chen</span>
+<span class="text-label-sm text-outline">2m ago</span>
+</div>
+<p class="font-body-md text-on-surface-variant mt-xs">Just pushed a major update to the open-source neural engine. Check out the repository!</p>
+<div class="flex gap-sm mt-sm">
+<span class="px-xs py-[2px] bg-secondary-container/50 text-[10px] rounded font-bold">GITHUB</span>
+<span class="px-xs py-[2px] bg-tertiary-container/20 text-[10px] rounded font-bold">AI</span>
+</div>
+</div>
+</div>
+<div class="flex gap-md p-md bg-surface-container/20 rounded-lg opacity-60">
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary !text-[20px]">person</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center">
+<span class="font-bold font-label-md">Alex Rivera</span>
+<span class="text-label-sm text-outline">15m ago</span>
+</div>
+<p class="font-body-md text-on-surface-variant mt-xs">Exploring the limits of WebGPU in the browser. Results are looking promising for 3D rendering.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Search Card -->
+<div class="md:col-span-4 bg-primary-container text-white rounded-xl p-lg flex flex-col justify-between group shadow-lg">
+<div>
+<span class="material-symbols-outlined mb-sm" style="font-variation-settings: 'FILL' 1;">search</span>
+<h3 class="font-headline-md text-headline-md">Advanced Search</h3>
+<p class="text-white/80 font-label-md mt-sm">Find specialists, repos, and topics across the entire global network.</p>
+</div>
+<div class="mt-xl relative">
+<div class="bg-white/10 rounded-lg p-sm border border-white/20 flex items-center gap-sm">
+<span class="material-symbols-outlined text-white/50">search</span>
+<span class="text-white/50 text-label-md">Search keywords...</span>
+</div>
+</div>
+</div>
+<!-- Profile Card -->
+<div class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col items-center text-center shadow-sm hover:shadow-xl transition-all duration-300">
+<div class="w-24 h-24 rounded-full border-4 border-primary-container/20 p-1 mb-md">
+<img alt="User avatar" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI7Gp0M93O_45TEfaPyBQN1etVXJ1Q1hH88GxPFByL0bIleIeQXrK_g0uF8jL9_Q2pv1d-cfl28RyDJBe692CZj2fUZkViNNf6finC-nZ23pugVZSpR9RLVqbJa1Ca-6RWA6ENdfiETmWG-BIVfsNTMaWfqriTxa5zJGRC-2UQ9jFB4xMET-Hyf-1g92APWGKGyyYt_LFeahcxtutwC9N28XNPBgtqFsFkbxLWOWRmdAnEVzuBgUtK6AQEMb7L9fdECeSVtqta3Rs">
+</div>
+<h3 class="font-headline-md text-headline-md">Your Profile</h3>
+<p class="text-on-surface-variant font-label-md mb-md">Showcase your career highlights</p>
+<div class="w-full h-px bg-outline-variant mb-md"></div>
+<div class="flex justify-around w-full">
+<div>
+<span class="block font-bold text-primary-container">1.2k</span>
+<span class="text-[10px] text-outline uppercase font-bold tracking-wider">Followers</span>
+</div>
+<div>
+<span class="block font-bold text-primary-container">48</span>
+<span class="text-[10px] text-outline uppercase font-bold tracking-wider">Projects</span>
+</div>
+</div>
+</div>
+<!-- Creed Section (Asymmetric) -->
+<div class="md:col-span-8 bg-surface-container-highest rounded-xl p-lg flex items-center relative overflow-hidden shadow-sm">
+<div class="z-10 max-w-md">
+<span class="font-label-sm text-primary-container font-bold mb-sm block uppercase tracking-widest">Our Creed</span>
+<h3 class="font-headline-lg text-headline-lg mb-sm">Integrity in Innovation.</h3>
+<p class="font-body-md text-on-surface-variant leading-relaxed">We believe technology should empower, not distract. Our community is built on mutual respect, rigorous peer review, and a commitment to solving the world's hardest problems.</p>
+</div>
+<div class="absolute -right-16 bottom-0 opacity-10">
+<span class="material-symbols-outlined !text-[200px]" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section - Increased padding for airy feel -->
+<section class="py-24 lg:py-40">
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="bg-primary-container p-16 lg:p-24 rounded-[40px] text-center text-white relative overflow-hidden shadow-2xl shadow-primary-container/30">
+<!-- Background Patterns -->
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
+<div class="relative z-10 space-y-lg">
+<h2 class="font-display text-4xl md:text-[56px] leading-tight">Ready to join the next wave?</h2>
+<p class="font-body-lg text-body-lg text-white/80 max-w-2xl mx-auto">Join thousands of tech leaders already building the future on NeutronTech.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-md pt-lg">
+<button class="bg-white text-primary-container px-xl py-md rounded-xl font-bold font-label-md hover:bg-surface-container-low transition-all active:scale-95">Get Started</button>
+<button class="border border-white/30 text-white px-xl py-md rounded-xl font-label-md hover:bg-white/10 transition-all active:scale-95">Contact Us</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant py-16">
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-xl">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="font-display text-headline-md font-bold text-primary-container">NeutronTech</span>
+<p class="font-body-md text-on-surface-variant font-label-sm">© 2024 NeutronTech Inc.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">About</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">Privacy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">Terms</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors" href="#">Support</a>
+</div>
+<div class="flex gap-md">
+<button class="p-sm text-on-surface-variant hover:text-primary-container transition-colors bg-surface-container rounded-full">
+<span class="material-symbols-outlined !text-[20px]">public</span>
+</button>
+<button class="p-sm text-on-surface-variant hover:text-primary-container transition-colors bg-surface-container rounded-full">
+<span class="material-symbols-outlined !text-[20px]">code</span>
+</button>
+</div>
+</div>
+</footer>
+<script>
+        // Interaction: Navbar shadow on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('header');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+                nav.classList.remove('shadow-sm');
+            } else {
+                nav.classList.add('shadow-sm');
+                nav.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>
