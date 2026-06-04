@@ -162,7 +162,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex h-screen overflow-hidden">
 
         {/* Left branding panel */}
-        <section className="w-[35%] bg-primary-container relative overflow-hidden flex items-center justify-center p-xl">
+        <section className="w-1/2 bg-primary-container relative overflow-hidden flex items-center justify-center p-xl">
           <div className="absolute inset-0 z-0">
             <img className="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_mngc07qN1BwTUEn9wOMEvj5HquXKfx5XA47N7cSDy7GWAxYKvoZMa-ApNYkqa35hyIBmzCDfGDlgcCdhuUAOxQZCltQFYhKSGORyqCaXFJJa5xrWRGdqrzUTvjzfJk1p4fTWyJeE9JtmzpZfUw7BzixKevW4glRJNJyd1kMGvVqHf3pDODXYDR5_JcC4IeJRVJu30KF3q5EMvhPxwD9n0_x-UXxnusrtqdDue3O-rkaOjjntf_Usx927QuYkMfk3Uln5z8Ykbkc" alt="Tech background" />
           </div>
@@ -191,7 +191,7 @@ export default function LoginPage() {
         </section>
 
         {/* Right form panel */}
-        <section className="flex-1 bg-surface-container-lowest flex flex-col items-center justify-center px-10 overflow-hidden">
+        <section className="w-1/2 bg-surface-container-lowest flex flex-col items-center justify-center px-10 overflow-hidden">
           <div className="w-full max-w-[396px]">
 
             {signupMsg && (
