@@ -69,7 +69,7 @@ export default function LandingPage() {
       <main className="pt-16">
 
         {/* ── HERO ── */}
-        <section className="relative py-16 lg:py-40 bg-surface-bright">
+        <section className="relative pt-8 pb-16 lg:pt-16 lg:pb-40 bg-surface-bright">
           <div className="absolute top-0 right-0 -z-10 w-1/2 h-full bg-[radial-gradient(circle_at_70%_30%,_#e0e0e0_0%,_transparent_60%)] opacity-40 hidden lg:block"></div>
           <div className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
             {/* Mobile */}

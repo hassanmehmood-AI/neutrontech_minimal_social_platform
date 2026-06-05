@@ -38,6 +38,8 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab]   = useState<'posts' | 'media'>('posts');
   const [scrolled, setScrolled]     = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState<number | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Edit modal
   const [editOpen, setEditOpen]           = useState(false);
@@ -47,6 +49,8 @@ export default function ProfilePage() {
   const [coverFile, setCoverFile]         = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [coverPreview, setCoverPreview]   = useState<string | null>(null);
+  const [clearAvatar, setClearAvatar]     = useState(false);
+  const [clearCover, setClearCover]       = useState(false);
   const [saving, setSaving]               = useState(false);
   const [saveError, setSaveError]         = useState('');
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -71,6 +75,23 @@ export default function ProfilePage() {
     });
   }, [router]);
 
+  const getToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token ?? '';
+  };
+
+  const deletePost = async (id: number) => {
+    setMenuOpen(null);
+    const token = await getToken();
+    const res = await fetch(`/api/posts/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (res.ok) {
+      setPosts((prev) => prev.filter((p) => p.id !== id));
+    }
+  };
+
   const toggleLike = (id: number) =>
     setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
 
@@ -86,6 +107,8 @@ export default function ProfilePage() {
     setCoverFile(null);
     setAvatarPreview(null);
     setCoverPreview(null);
+    setClearAvatar(false);
+    setClearCover(false);
     setSaveError('');
     setEditOpen(true);
   };
@@ -94,8 +117,8 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    if (type === 'avatar') { setAvatarFile(file); setAvatarPreview(url); }
-    else                   { setCoverFile(file);  setCoverPreview(url);  }
+    if (type === 'avatar') { setAvatarFile(file); setAvatarPreview(url); setClearAvatar(false); }
+    else                   { setCoverFile(file);  setCoverPreview(url);  setClearCover(false);  }
     e.target.value = '';
   };
 
@@ -108,26 +131,31 @@ export default function ProfilePage() {
     const token = session?.access_token ?? '';
     const authHeader = { 'Authorization': `Bearer ${token}` };
 
-    let newAvatarUrl = profile.avatar_url;
-    let newCoverUrl  = profile.cover_url;
+    let newAvatarUrl: string | null = clearAvatar ? null : profile.avatar_url;
+    let newCoverUrl:  string | null = clearCover  ? null : profile.cover_url;
 
-    // Upload via server-side route (service role key — no RLS issues)
-    if (avatarFile) {
-      const form = new FormData();
-      form.append('file', avatarFile);
-      const up = await fetch('/api/upload', { method: 'POST', headers: authHeader, body: form });
-      const { url } = await up.json();
-      if (url) newAvatarUrl = url;
-    }
+    // Upload avatar and cover in parallel if files were selected
+    const uploads = await Promise.all([
+      avatarFile ? (async () => {
+        const form = new FormData();
+        form.append('file', avatarFile);
+        const up = await fetch('/api/upload', { method: 'POST', headers: authHeader, body: form });
+        const { url } = await up.json();
+        return url as string | undefined;
+      })() : Promise.resolve(undefined),
+      coverFile ? (async () => {
+        const form = new FormData();
+        form.append('file', coverFile);
+        const up = await fetch('/api/upload', { method: 'POST', headers: authHeader, body: form });
+        const { url } = await up.json();
+        return url as string | undefined;
+      })() : Promise.resolve(undefined),
+    ]);
 
-    if (coverFile) {
-      const form = new FormData();
-      form.append('file', coverFile);
-      const up = await fetch('/api/upload', { method: 'POST', headers: authHeader, body: form });
-      const { url } = await up.json();
-      if (url) newCoverUrl = url;
-    }
+    if (uploads[0]) newAvatarUrl = uploads[0];
+    if (uploads[1]) newCoverUrl  = uploads[1];
 
+    // PATCH 1: save name, bio, avatar
     const res = await fetch(`/api/users/${profile.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...authHeader },
@@ -142,6 +170,7 @@ export default function ProfilePage() {
 
     const updated = await res.json();
 
+    // PATCH 2: save cover separately (requires cover_url column in profiles table)
     if (newCoverUrl !== profile.cover_url) {
       await fetch(`/api/users/${profile.id}`, {
         method: 'PATCH',
@@ -160,8 +189,7 @@ export default function ProfilePage() {
   const bio         = profile?.bio || 'No bio yet.';
   const avatarUrl   = profile?.avatar_url || undefined;
 
-  const mediaPosts   = posts.filter((p) => p.images.length > 0 || p.videoUrl);
-  const visiblePosts = activeTab === 'posts' ? posts : mediaPosts;
+  const mediaPosts = posts.filter((p) => p.images.length > 0 || p.videoUrl);
 
   if (authLoading) {
     return (
@@ -173,6 +201,27 @@ export default function ProfilePage() {
 
   return (
     <div className="font-body-md text-body-md overflow-x-hidden">
+
+      {/* ── IMAGE PREVIEW LIGHTBOX ── */}
+      {previewUrl && (
+        <div
+          onClick={() => setPreviewUrl(null)}
+          className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-md"
+        >
+          <button
+            onClick={() => setPreviewUrl(null)}
+            className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-sm transition-colors"
+          >
+            <span className="material-symbols-outlined text-[28px]">close</span>
+          </button>
+          <img
+            src={previewUrl}
+            alt="Preview"
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-full max-h-[90vh] rounded-xl object-contain shadow-2xl"
+          />
+        </div>
+      )}
 
       {/* ── EDIT PROFILE MODAL ── */}
       {editOpen && (
@@ -214,7 +263,7 @@ export default function ProfilePage() {
                 background: '#111', cursor: 'pointer', overflow: 'hidden',
               }}
             >
-              {(coverPreview || profile?.cover_url) ? (
+              {!clearCover && (coverPreview || profile?.cover_url) ? (
                 <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={coverPreview || profile?.cover_url!} alt="Cover" />
               ) : (
                 <div style={{
@@ -230,6 +279,20 @@ export default function ProfilePage() {
                 <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: '32px' }}>add_photo_alternate</span>
                 <span style={{ color: '#fff', fontSize: '13px', fontWeight: 500 }}>Change cover photo</span>
               </div>
+              {!clearCover && (coverPreview || profile?.cover_url) && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setClearCover(true); setCoverFile(null); setCoverPreview(null); }}
+                  style={{
+                    position: 'absolute', top: '8px', right: '8px',
+                    background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
+                    width: '32px', height: '32px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                  title="Remove cover photo"
+                >
+                  <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: '18px' }}>delete</span>
+                </button>
+              )}
               <input ref={coverInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => pickFile(e, 'cover')} />
             </div>
 
@@ -247,7 +310,7 @@ export default function ProfilePage() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
                 >
-                  {(avatarPreview || avatarUrl) ? (
+                  {!clearAvatar && (avatarPreview || avatarUrl) ? (
                     <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={avatarPreview || avatarUrl} alt={displayName} />
                   ) : (
                     <span className="material-symbols-outlined" style={{ color: '#9ca3af', fontSize: '36px' }}>person</span>
@@ -268,6 +331,16 @@ export default function ProfilePage() {
                 <div>
                   <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1f2937' }}>Profile Photo</p>
                   <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#6b7280' }}>Click the circle to change</p>
+                  {!clearAvatar && (avatarPreview || avatarUrl) && (
+                    <button
+                      onClick={() => { setClearAvatar(true); setAvatarFile(null); setAvatarPreview(null); }}
+                      style={{
+                        marginTop: '6px', padding: '4px 10px', fontSize: '12px', fontWeight: 500,
+                        color: '#ef4444', background: 'none', border: '1px solid #ef4444',
+                        borderRadius: '8px', cursor: 'pointer',
+                      }}
+                    >Remove photo</button>
+                  )}
                 </div>
               </div>
 
@@ -374,6 +447,10 @@ export default function ProfilePage() {
             <span className="material-symbols-outlined">search</span>
             <span className="font-label-md text-label-md">Search</span>
           </Link>
+          <Link className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/settings">
+            <span className="material-symbols-outlined">settings</span>
+            <span className="font-label-md text-label-md">Settings</span>
+          </Link>
         </nav>
         <div className="pt-md border-t border-outline-variant flex flex-col space-y-xs">
           <button onClick={handleLogout} className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full">
@@ -389,7 +466,12 @@ export default function ProfilePage() {
         {/* ── PROFILE BANNER ── */}
         <div className="relative h-40 md:h-64 lg:h-80 w-full overflow-hidden">
           {profile?.cover_url ? (
-            <img className="w-full h-full object-cover" src={profile.cover_url} alt="Cover photo" />
+            <img
+              className="w-full h-full object-cover cursor-zoom-in"
+              src={profile.cover_url}
+              alt="Cover photo"
+              onClick={() => setPreviewUrl(profile.cover_url!)}
+            />
           ) : (
             <>
               <div className="absolute inset-0 bg-primary-container"></div>
@@ -403,13 +485,12 @@ export default function ProfilePage() {
           <div className="flex flex-col items-center">
             <div className="w-24 h-24 rounded-full border-4 border-surface overflow-hidden shadow-lg bg-surface-container flex items-center justify-center">
               {avatarUrl
-                ? <img className="w-full h-full object-cover" src={avatarUrl} alt={displayName} />
+                ? <img className="w-full h-full object-cover cursor-zoom-in" src={avatarUrl} alt={displayName} onClick={() => setPreviewUrl(avatarUrl)} />
                 : <span className="material-symbols-outlined text-primary text-[48px]">person</span>
               }
             </div>
             <div className="text-center mt-md">
               <h2 className="font-headline-md text-headline-lg-mobile text-on-surface">{displayName}</h2>
-              {username && <p className="font-label-md text-label-md text-on-surface-variant">@{username}</p>}
             </div>
             <div className="flex gap-sm w-full max-w-[24rem] mt-md">
               <button
@@ -437,14 +518,13 @@ export default function ProfilePage() {
                 <div className="relative group">
                   <div className="w-32 h-32 md:w-40 md:h-40 rounded-xl bg-surface border-4 border-surface-container-lowest soft-shadow overflow-hidden flex items-center justify-center">
                     {avatarUrl
-                      ? <img className="w-full h-full object-cover" src={avatarUrl} alt={displayName} />
+                      ? <img className="w-full h-full object-cover cursor-zoom-in" src={avatarUrl} alt={displayName} onClick={() => setPreviewUrl(avatarUrl)} />
                       : <span className="material-symbols-outlined text-primary text-[64px]">person</span>
                     }
                   </div>
                 </div>
                 <div className="mb-2">
                   <h1 className="font-headline-lg text-headline-lg text-on-surface">{displayName}</h1>
-                  {username && <p className="font-label-md text-label-md text-secondary">@{username}</p>}
                   {profile?.role && (
                     <div className="flex items-center mt-2 space-x-base text-on-surface-variant">
                       <span className="material-symbols-outlined text-[18px]">work</span>
@@ -521,60 +601,110 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {visiblePosts.length === 0 && (
-              <div className="text-center py-16 text-on-surface-variant">
-                <span className="material-symbols-outlined text-[48px] block mb-md">article</span>
-                <p className="font-label-md text-label-md">No posts yet. Share something on the feed!</p>
-              </div>
+            {/* ── RECENT POSTS TAB ── */}
+            {activeTab === 'posts' && (
+              <>
+                {posts.length === 0 && (
+                  <div className="text-center py-16 text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[48px] block mb-md">article</span>
+                    <p className="font-label-md text-label-md">No posts yet. Share something on the feed!</p>
+                  </div>
+                )}
+                {posts.map((post) => (
+                  <div key={post.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-sm">
+                      <div className="flex items-center gap-sm">
+                        <div className="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden flex items-center justify-center">
+                          {post.avatar
+                            ? <img className="w-full h-full object-cover" src={post.avatar} alt={post.author} />
+                            : <span className="material-symbols-outlined text-primary">person</span>
+                          }
+                        </div>
+                        <div>
+                          <p className="font-label-md text-label-md text-on-surface">{post.author}</p>
+                          <p className="text-label-sm text-on-surface-variant">{post.time}{post.tag ? ` • ${post.tag}` : ''}</p>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <button
+                          className="text-on-surface-variant hover:text-on-surface p-1 rounded-full transition-colors"
+                          onClick={() => setMenuOpen(menuOpen === post.id ? null : post.id)}
+                        >
+                          <span className="material-symbols-outlined">more_horiz</span>
+                        </button>
+                        {menuOpen === post.id && (
+                          <div className="absolute right-0 top-8 z-20 bg-surface border border-outline-variant rounded-xl shadow-lg py-xs min-w-[120px]">
+                            <button
+                              onClick={() => deletePost(post.id)}
+                              className="w-full flex items-center gap-xs px-md py-sm text-error hover:bg-error-container transition-colors font-label-md text-label-md"
+                            >
+                              <span className="material-symbols-outlined text-[18px]">delete</span>
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {post.content && (
+                      <p className="text-body-md text-on-surface mb-md">{post.content}</p>
+                    )}
+
+                    {post.images.length > 0 && (
+                      <div className={`${post.images.length === 1 ? '' : 'grid grid-cols-2 gap-xs'} mb-md`}>
+                        {post.images.map((src, i) => (
+                          <div key={i} className="rounded-lg overflow-hidden border border-outline-variant aspect-video cursor-zoom-in" onClick={() => setPreviewUrl(src)}>
+                            <img className="w-full h-full object-cover" src={src} alt={`Image ${i + 1}`} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-md border-t border-outline-variant pt-sm">
+                      <button className={`flex items-center gap-xs transition-colors ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant'}`} onClick={() => toggleLike(post.id)}>
+                        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                        <span className="text-label-md">{post.likes}</span>
+                      </button>
+                      <button className="flex items-center gap-xs text-on-surface-variant">
+                        <span className="material-symbols-outlined text-[20px]">chat_bubble</span>
+                        <span className="text-label-md">{post.comments}</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </>
             )}
 
-            {visiblePosts.map((post) => (
-              <div key={post.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-sm">
-                  <div className="flex items-center gap-sm">
-                    <div className="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden flex items-center justify-center">
-                      {post.avatar
-                        ? <img className="w-full h-full object-cover" src={post.avatar} alt={post.author} />
-                        : <span className="material-symbols-outlined text-primary">person</span>
-                      }
-                    </div>
-                    <div>
-                      <p className="font-label-md text-label-md text-on-surface">{post.author}</p>
-                      <p className="text-label-sm text-on-surface-variant">{post.time}{post.tag ? ` • ${post.tag}` : ''}</p>
-                    </div>
-                  </div>
-                  <button className="material-symbols-outlined text-on-surface-variant">more_horiz</button>
-                </div>
-
-                {post.content && (
-                  <p className="text-body-md text-on-surface mb-md">{post.content}</p>
-                )}
-
-                {post.images.length > 0 && (
-                  <div className={`${post.images.length === 1 ? '' : 'grid grid-cols-2 gap-xs'} mb-md`}>
-                    {post.images.map((src, i) => (
-                      <div key={i} className="rounded-lg overflow-hidden border border-outline-variant aspect-video">
-                        <img className="w-full h-full object-cover" src={src} alt={`Image ${i + 1}`} />
-                      </div>
-                    ))}
+            {/* ── MEDIA TAB ── */}
+            {activeTab === 'media' && (
+              <>
+                {mediaPosts.length === 0 && (
+                  <div className="text-center py-16 text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[48px] block mb-md">photo_library</span>
+                    <p className="font-label-md text-label-md">No media yet.</p>
                   </div>
                 )}
-
-                <div className="flex items-center gap-md border-t border-outline-variant pt-sm">
-                  <button className={`flex items-center gap-xs transition-colors ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant'}`} onClick={() => toggleLike(post.id)}>
-                    <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                    <span className="text-label-md">{post.likes}</span>
-                  </button>
-                  <button className="flex items-center gap-xs text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[20px]">chat_bubble</span>
-                    <span className="text-label-md">{post.comments}</span>
-                  </button>
-                  <button className="ml-auto flex items-center gap-xs text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[20px]">share</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+                {mediaPosts.length > 0 && (
+                  <div className="grid grid-cols-3 gap-1">
+                    {mediaPosts.flatMap((post) => [
+                      ...post.images.map((src, i) => (
+                        <div key={`${post.id}-img-${i}`} className="aspect-square overflow-hidden rounded-sm bg-surface-container-low cursor-zoom-in" onClick={() => setPreviewUrl(src)}>
+                          <img className="w-full h-full object-cover" src={src} alt="" />
+                        </div>
+                      )),
+                      ...(post.videoUrl ? [
+                        <div key={`${post.id}-vid`} className="aspect-square overflow-hidden rounded-sm bg-black relative">
+                          <video className="w-full h-full object-cover" src={post.videoUrl} muted />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <span className="material-symbols-outlined text-white text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
+                          </div>
+                        </div>
+                      ] : []),
+                    ])}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
 

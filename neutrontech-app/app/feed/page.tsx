@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -41,6 +41,7 @@ export default function FeedPage() {
   const [authLoading, setAuthLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [commentText, setCommentText] = useState<Record<number, string>>({});
   const [sendingComment, setSendingComment] = useState<Record<number, boolean>>({});
@@ -200,6 +201,28 @@ export default function FeedPage() {
   return (
     <div className="font-body-md text-on-background">
 
+      {/* ── IMAGE PREVIEW LIGHTBOX ── */}
+      {previewUrl && (
+        <div
+          onClick={() => setPreviewUrl(null)}
+          className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-md"
+        >
+          <button
+            onClick={() => setPreviewUrl(null)}
+            className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-sm transition-colors"
+          >
+            <span className="material-symbols-outlined text-[28px]">close</span>
+          </button>
+          <img
+            src={previewUrl}
+            alt="Preview"
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-full max-h-[90vh] rounded-xl object-contain shadow-2xl"
+          />
+        </div>
+      )}
+
+
       {/* ── TOP NAV ── */}
       <header className="fixed top-0 w-full z-50 glass-effect border-b border-outline-variant shadow-sm h-16">
         <div className="grid grid-cols-3 items-center px-margin-mobile md:px-margin-desktop h-full max-w-[1280px] mx-auto">
@@ -255,6 +278,10 @@ export default function FeedPage() {
             <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/profile">
               <span className="material-symbols-outlined">person</span>
               <span className="font-label-md text-label-md">Profile</span>
+            </Link>
+            <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/settings">
+              <span className="material-symbols-outlined">settings</span>
+              <span className="font-label-md text-label-md">Settings</span>
             </Link>
           </nav>
           <div className="pt-md border-t border-outline-variant flex flex-col space-y-xs">
@@ -324,8 +351,8 @@ export default function FeedPage() {
 
             <div className="flex flex-col gap-md">
               {posts.map((post, index) => (
-                <>
-                  <article key={post.id} className="feed-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+                <React.Fragment key={post.id}>
+                  <article className="feed-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
                     <div className="p-md">
                       <div className="flex justify-between items-start mb-sm">
                         <div className="flex gap-sm items-center">
@@ -340,20 +367,19 @@ export default function FeedPage() {
                             <p className="font-label-sm text-label-sm text-on-surface-variant">{post.time}{post.tag ? ` • ${post.tag}` : ''}</p>
                           </div>
                         </div>
-                        <button className="text-on-surface-variant"><span className="material-symbols-outlined">more_horiz</span></button>
                       </div>
 
                       {post.content && <p className="font-body-md text-on-surface mb-md">{post.content}</p>}
 
                       {post.images.length === 1 && (
-                        <div className="rounded-xl overflow-hidden mb-md aspect-video border border-outline-variant">
+                        <div className="rounded-xl overflow-hidden mb-md aspect-video border border-outline-variant cursor-zoom-in" onClick={() => setPreviewUrl(post.images[0])}>
                           <img alt="Post image" className="w-full h-full object-cover" src={post.images[0]} />
                         </div>
                       )}
                       {post.images.length > 1 && (
                         <div className="grid grid-cols-2 gap-xs mb-md">
                           {post.images.map((src, i) => (
-                            <div key={i} className="rounded-xl overflow-hidden aspect-square border border-outline-variant">
+                            <div key={i} className="rounded-xl overflow-hidden aspect-square border border-outline-variant cursor-zoom-in" onClick={() => setPreviewUrl(src)}>
                               <img alt={`Image ${i + 1}`} className="w-full h-full object-cover" src={src} />
                             </div>
                           ))}
@@ -379,9 +405,6 @@ export default function FeedPage() {
                             <span className="text-label-sm">{post.comments}</span>
                           </button>
                         </div>
-                        <button className="text-on-surface-variant hover:text-primary transition-colors">
-                          <span className="material-symbols-outlined text-[20px]">share</span>
-                        </button>
                       </div>
 
                       {/* ── COMMENTS SECTION ── */}
@@ -464,7 +487,7 @@ export default function FeedPage() {
                       </div>
                     </section>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </div>
           </div>
