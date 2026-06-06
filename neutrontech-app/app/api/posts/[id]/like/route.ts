@@ -6,39 +6,25 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getAuthUser(request);
+  const [user, { id }] = await Promise.all([getAuthUser(request), params]);
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id } = await params;
-
-  const { data: post, error: postError } = await supabaseAdmin
-    .from('posts')
-    .select('likes')
-    .eq('id', id)
-    .single();
+  const [{ data: post, error: postError }, { data: existing }] = await Promise.all([
+    supabaseAdmin.from('posts').select('likes').eq('id', id).single(),
+    supabaseAdmin.from('likes').select('id').eq('post_id', id).eq('user_id', user.id).maybeSingle(),
+  ]);
 
   if (postError) return Response.json({ error: 'Post not found' }, { status: 404 });
 
-  const { data: existing } = await supabaseAdmin
-    .from('likes')
-    .select('id')
-    .eq('post_id', id)
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const isLiked = !!existing;
+  const newLikes = Math.max(0, (post.likes as number) + (isLiked ? -1 : 1));
 
-  let newLikes: number;
-  let liked: boolean;
+  await Promise.all([
+    isLiked
+      ? supabaseAdmin.from('likes').delete().eq('id', existing!.id)
+      : supabaseAdmin.from('likes').insert({ post_id: Number(id), user_id: user.id }),
+    supabaseAdmin.from('posts').update({ likes: newLikes }).eq('id', id),
+  ]);
 
-  if (existing) {
-    await supabaseAdmin.from('likes').delete().eq('id', existing.id);
-    newLikes = Math.max(0, (post.likes as number) - 1);
-    liked = false;
-  } else {
-    await supabaseAdmin.from('likes').insert({ post_id: Number(id), user_id: user.id });
-    newLikes = (post.likes as number) + 1;
-    liked = true;
-  }
-
-  await supabaseAdmin.from('posts').update({ likes: newLikes }).eq('id', id);
-  return Response.json({ liked, likes: newLikes });
+  return Response.json({ liked: !isLiked, likes: newLikes });
 }
