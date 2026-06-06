@@ -87,8 +87,8 @@ export default function LoginPage() {
         <div className="fixed -bottom-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
 
         <main className="w-full max-w-[28rem] mx-auto flex flex-col items-center space-y-md">
-          <header className="w-full flex flex-col items-center gap-xs">
-            <img src="/brand-logo.png" alt="Neutron Tech logo" className="h-10 w-10 object-contain brightness-0 invert opacity-80" />
+          <header className="w-full text-center">
+            <img src="/brand-logo.png" alt="Neutron Tech logo" className="h-10 w-10 object-contain brightness-0 invert opacity-80 mx-auto mb-xs" />
             <span className="font-display text-headline-lg text-on-surface tracking-tight font-bold">Neutron Tech</span>
           </header>
 
