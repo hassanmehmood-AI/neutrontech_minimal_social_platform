@@ -38,6 +38,7 @@ export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [liked, setLiked] = useState<Record<number, boolean>>({});
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
   const [authLoading, setAuthLoading] = useState(true);
   const [posting, setPosting] = useState(false);
@@ -153,10 +154,18 @@ export default function FeedPage() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setSelectedImages(prev => [...prev, ...Array.from(e.target.files!)]);
-      e.target.value = '';
-    }
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    e.target.value = '';
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result as string;
+        setSelectedImages((prev) => [...prev, file]);
+        setImagePreviews((prev) => [...prev, dataUrl]);
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,6 +212,7 @@ export default function FeedPage() {
 
     if (composerRef.current) composerRef.current.value = '';
     setSelectedImages([]);
+    setImagePreviews([]);
     setSelectedVideos([]);
     if (imageInputRef.current) imageInputRef.current.value = '';
     if (videoInputRef.current) videoInputRef.current.value = '';
@@ -339,19 +349,22 @@ export default function FeedPage() {
                 </div>
                 <div className="flex-1">
                   <textarea ref={composerRef} className="w-full bg-transparent border-none focus:ring-0 font-body-md text-on-surface placeholder:text-on-surface-variant resize-none outline-none" placeholder={`What's on your mind, ${composerName}?`} rows={2}></textarea>
-                  {selectedImages.length > 0 && (
+                  {imagePreviews.length > 0 && (
                     <div className={`mt-sm rounded-xl overflow-hidden grid gap-0.5 ${
-                      selectedImages.length === 1 ? 'grid-cols-1' :
-                      selectedImages.length === 2 ? 'grid-cols-2' :
+                      imagePreviews.length === 1 ? 'grid-cols-1' :
+                      imagePreviews.length === 2 ? 'grid-cols-2' :
                       'grid-cols-3'
                     }`}>
-                      {selectedImages.map((file, i) => (
+                      {imagePreviews.map((src, i) => (
                         <div key={i} className="relative aspect-square">
-                          <img src={URL.createObjectURL(file)} alt={file.name} className="w-full h-full object-cover" />
+                          <img src={src} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
                           <button
                             type="button"
                             className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 rounded-full p-0.5 flex items-center justify-center transition-colors"
-                            onClick={() => setSelectedImages(prev => prev.filter((_, j) => j !== i))}
+                            onClick={() => {
+                              setSelectedImages(prev => prev.filter((_, j) => j !== i));
+                              setImagePreviews(prev => prev.filter((_, j) => j !== i));
+                            }}
                           >
                             <span className="material-symbols-outlined text-white text-[14px]">close</span>
                           </button>
