@@ -93,9 +93,8 @@ export default function FeedPage() {
   }, [router]);
 
   const getToken = async () => {
-    if (tokenRef.current) return tokenRef.current;
     const { data: { session } } = await supabase.auth.getSession();
-    tokenRef.current = session?.access_token ?? '';
+    if (session?.access_token) tokenRef.current = session.access_token;
     return tokenRef.current;
   };
 
