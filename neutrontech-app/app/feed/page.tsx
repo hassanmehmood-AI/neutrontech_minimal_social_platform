@@ -43,6 +43,7 @@ export default function FeedPage() {
   const [authLoading, setAuthLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
+  const [likingPosts, setLikingPosts] = useState<Set<number>>(new Set());
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [commentText, setCommentText] = useState<Record<number, string>>({});
@@ -131,7 +132,8 @@ export default function FeedPage() {
   };
 
   const toggleLike = async (id: number) => {
-    if (!currentUser) return;
+    if (!currentUser || likingPosts.has(id)) return;
+    setLikingPosts((prev) => new Set(prev).add(id));
     const wasLiked = liked[id] ?? false;
     setLiked((prev) => ({ ...prev, [id]: !wasLiked }));
     setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? -1 : 1) } : p));
@@ -149,6 +151,8 @@ export default function FeedPage() {
     } catch {
       setLiked((prev) => ({ ...prev, [id]: wasLiked }));
       setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? 1 : -1) } : p));
+    } finally {
+      setLikingPosts((prev) => { const s = new Set(prev); s.delete(id); return s; });
     }
   };
 
@@ -490,7 +494,12 @@ export default function FeedPage() {
 
                       <div className="flex justify-between items-center pt-sm border-t border-outline-variant">
                         <div className="flex gap-md">
-                          <button className={`flex items-center gap-xs transition-colors ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => toggleLike(post.id)}>
+                          <button
+                            className={`flex items-center gap-xs transition-colors disabled:opacity-60 ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
+                            style={{ touchAction: 'manipulation' }}
+                            disabled={likingPosts.has(post.id)}
+                            onClick={() => toggleLike(post.id)}
+                          >
                             <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                             <span className="text-label-sm">{post.likes}</span>
                           </button>
