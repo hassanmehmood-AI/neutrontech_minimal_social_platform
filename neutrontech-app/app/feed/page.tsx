@@ -51,17 +51,21 @@ export default function FeedPage() {
   const tokenRef = useRef<string>('');
 
   useEffect(() => {
+    let cancelled = false;
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled) return;
       if (!session) { router.replace('/login'); return; }
 
       tokenRef.current = session.access_token;
 
-      // Get profile for display name + avatar
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name, avatar_url')
         .eq('id', session.user.id)
         .single();
+
+      if (cancelled) return;
 
       setCurrentUser({
         id: session.user.id,
@@ -72,9 +76,11 @@ export default function FeedPage() {
 
       fetch('/api/posts')
         .then((r) => r.json())
-        .then((data: Post[]) => setPosts(data))
-        .finally(() => setAuthLoading(false));
+        .then((data: Post[]) => { if (!cancelled) setPosts(data); })
+        .finally(() => { if (!cancelled) setAuthLoading(false); });
     });
+
+    return () => { cancelled = true; };
   }, [router]);
 
   const getToken = async () => {
@@ -128,6 +134,7 @@ export default function FeedPage() {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({}),
       });
+      if (!res.ok) throw new Error('Like failed');
       const { liked: isLiked, likes } = await res.json();
       setLiked((prev) => ({ ...prev, [id]: isLiked }));
       setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes } : p));
