@@ -271,13 +271,13 @@ export default function FeedPage() {
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
               <span className="font-label-md text-label-md">Home</span>
             </Link>
-            <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/search">
-              <span className="material-symbols-outlined">search</span>
-              <span className="font-label-md text-label-md">Search</span>
-            </Link>
             <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/profile">
               <span className="material-symbols-outlined">person</span>
               <span className="font-label-md text-label-md">Profile</span>
+            </Link>
+            <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/search">
+              <span className="material-symbols-outlined">search</span>
+              <span className="font-label-md text-label-md">Search</span>
             </Link>
             <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/settings">
               <span className="material-symbols-outlined">settings</span>

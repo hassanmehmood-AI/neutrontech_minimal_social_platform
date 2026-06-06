@@ -35,6 +35,11 @@ export default function SearchPage() {
       .then((data) => setPeople(data.people || []));
   }, [query]);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace('/login');
+  };
+
   return (
     <div className="font-body-md text-body-md overflow-x-hidden">
 
@@ -88,12 +93,12 @@ export default function SearchPage() {
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>search</span>
             <span className="font-label-md text-label-md">Search</span>
           </Link>
-        </nav>
-        <div className="border-t border-outline-variant pt-md space-y-xs">
           <Link className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/settings">
             <span className="material-symbols-outlined">settings</span>
             <span className="font-label-md text-label-md">Settings</span>
           </Link>
+        </nav>
+        <div className="border-t border-outline-variant pt-md space-y-xs">
           <Link className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/">
             <span className="material-symbols-outlined">logout</span>
             <span className="font-label-md text-label-md">Logout</span>
@@ -186,6 +191,10 @@ export default function SearchPage() {
             <span className="material-symbols-outlined">person</span>
             <span className="font-label-sm text-[10px]">Profile</span>
           </Link>
+          <button onClick={handleLogout} className="flex flex-col items-center justify-center gap-1 text-on-surface-variant active:scale-95 duration-150">
+            <span className="material-symbols-outlined">logout</span>
+            <span className="font-label-sm text-[10px]">Logout</span>
+          </button>
         </div>
       </nav>
 
