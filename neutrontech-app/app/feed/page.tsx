@@ -48,10 +48,13 @@ export default function FeedPage() {
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const tokenRef = useRef<string>('');
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { router.replace('/login'); return; }
+
+      tokenRef.current = session.access_token;
 
       // Get profile for display name + avatar
       const { data: profile } = await supabase
@@ -75,8 +78,10 @@ export default function FeedPage() {
   }, [router]);
 
   const getToken = async () => {
+    if (tokenRef.current) return tokenRef.current;
     const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token ?? '';
+    tokenRef.current = session?.access_token ?? '';
+    return tokenRef.current;
   };
 
   const toggleComments = async (postId: number) => {
@@ -113,15 +118,23 @@ export default function FeedPage() {
 
   const toggleLike = async (id: number) => {
     if (!currentUser) return;
-    const token = await getToken();
-    const res = await fetch(`/api/posts/${id}/like`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({}),
-    });
-    const { liked: isLiked, likes } = await res.json();
-    setLiked((prev) => ({ ...prev, [id]: isLiked }));
-    setPosts((prev) => prev.map((p) => (p.id === id ? { ...p, likes } : p)));
+    const wasLiked = liked[id] ?? false;
+    setLiked((prev) => ({ ...prev, [id]: !wasLiked }));
+    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? -1 : 1) } : p));
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/posts/${id}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({}),
+      });
+      const { liked: isLiked, likes } = await res.json();
+      setLiked((prev) => ({ ...prev, [id]: isLiked }));
+      setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes } : p));
+    } catch {
+      setLiked((prev) => ({ ...prev, [id]: wasLiked }));
+      setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? 1 : -1) } : p));
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
