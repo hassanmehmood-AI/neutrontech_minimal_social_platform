@@ -18,6 +18,7 @@ type Post = {
   videoUrl?: string;
   likes: number;
   comments: number;
+  likedByMe?: boolean;
 };
 
 type Comment = {
@@ -74,9 +75,16 @@ export default function FeedPage() {
         avatar: profile?.avatar_url || '',
       });
 
-      fetch('/api/posts')
+      fetch('/api/posts', { headers: { 'Authorization': `Bearer ${session.access_token}` } })
         .then((r) => r.json())
-        .then((data: Post[]) => { if (!cancelled) setPosts(data); })
+        .then((data: Post[]) => {
+          if (!cancelled) {
+            const likedMap: Record<number, boolean> = {};
+            data.forEach((p) => { if (p.likedByMe) likedMap[p.id] = true; });
+            setPosts(data);
+            setLiked(likedMap);
+          }
+        })
         .finally(() => { if (!cancelled) setAuthLoading(false); });
     });
 

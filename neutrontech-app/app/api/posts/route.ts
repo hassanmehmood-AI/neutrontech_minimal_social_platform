@@ -20,14 +20,25 @@ function transform(p: Record<string, unknown>) {
   };
 }
 
-export async function GET() {
-  const { data, error } = await supabaseAdmin
-    .from('posts')
-    .select('*, profiles(full_name, avatar_url)')
-    .order('created_at', { ascending: false });
+export async function GET(request: NextRequest) {
+  const user = await getAuthUser(request);
+
+  const [{ data, error }, { data: userLikes }] = await Promise.all([
+    supabaseAdmin
+      .from('posts')
+      .select('*, profiles(full_name, avatar_url)')
+      .order('created_at', { ascending: false }),
+    user
+      ? supabaseAdmin.from('likes').select('post_id').eq('user_id', user.id)
+      : Promise.resolve({ data: [] }),
+  ]);
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
-  return Response.json((data || []).map(transform));
+
+  const likedIds = new Set((userLikes || []).map((l: { post_id: number }) => l.post_id));
+  return Response.json(
+    (data || []).map((p) => ({ ...transform(p), likedByMe: likedIds.has(Number(p.id)) }))
+  );
 }
 
 export async function POST(request: NextRequest) {
