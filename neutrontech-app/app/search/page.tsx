@@ -133,15 +133,13 @@ export default function SearchPage() {
             </div>
           </div>
 
-          {/* Results heading */}
-          <div className="flex items-center justify-between">
-            <h2 className="font-headline-md text-headline-md text-on-surface">
-              {query ? `Results for "${query}"` : 'Top Results'}
-            </h2>
-            {query && (
-              <span className="font-label-sm text-label-sm text-on-surface-variant">{people.length} found</span>
-            )}
-          </div>
+          {/* Empty state */}
+          {!query && (
+            <div className="flex flex-col items-center justify-center py-16 gap-md text-center">
+              <span className="material-symbols-outlined text-[48px] text-outline">person_search</span>
+              <p className="font-body-md text-on-surface-variant">Type a name to find people</p>
+            </div>
+          )}
 
           {/* No results */}
           {query && people.length === 0 && (
@@ -152,26 +150,32 @@ export default function SearchPage() {
             </div>
           )}
 
-          {/* People list */}
-          <div className="space-y-md">
-            {people.map((person) => (
-              <Link
-                key={person.id}
-                href={`/profile/${person.id}`}
-                className="flex items-center gap-md p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-md transition-all active:scale-[0.98] shadow-sm"
-              >
-                {person.avatar
-                  ? <img alt={person.name} className="w-14 h-14 rounded-full object-cover shrink-0" src={person.avatar} />
-                  : <span className="w-14 h-14 rounded-full bg-surface-container-low flex items-center justify-center shrink-0 material-symbols-outlined text-primary text-[28px]">person</span>
-                }
-                <div className="flex-1 min-w-0">
-                  <p className="font-headline-md text-[18px] text-on-surface leading-tight">{person.name}</p>
-                  <p className="text-on-surface-variant font-label-md text-label-md truncate">{person.role}</p>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant shrink-0">chevron_right</span>
-              </Link>
-            ))}
-          </div>
+          {/* People list — only when query is active */}
+          {query && people.length > 0 && (
+            <div className="space-y-md">
+              <div className="flex items-center justify-between">
+                <h2 className="font-headline-md text-headline-md text-on-surface">Results for &ldquo;{query}&rdquo;</h2>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">{people.length} found</span>
+              </div>
+              {people.map((person) => (
+                <Link
+                  key={person.id}
+                  href={`/profile/${person.id}`}
+                  className="flex items-center gap-md p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-md transition-all active:scale-[0.98] shadow-sm"
+                >
+                  {person.avatar
+                    ? <img alt={person.name} className="w-14 h-14 rounded-full object-cover shrink-0" src={person.avatar} />
+                    : <span className="w-14 h-14 rounded-full bg-surface-container-low flex items-center justify-center shrink-0 material-symbols-outlined text-primary text-[28px]">person</span>
+                  }
+                  <div className="flex-1 min-w-0">
+                    <p className="font-headline-md text-[18px] text-on-surface leading-tight">{person.name}</p>
+                    <p className="text-on-surface-variant font-label-md text-label-md truncate">{person.role}</p>
+                  </div>
+                  <span className="material-symbols-outlined text-on-surface-variant shrink-0">chevron_right</span>
+                </Link>
+              ))}
+            </div>
+          )}
 
         </div>
       </main>

@@ -25,9 +25,10 @@ type Post = {
   tag: string;
   content: string;
   images: string[];
-  videoUrl?: string;
+  videoUrls: string[];
   likes: number;
   comments: number;
+  likedByMe?: boolean;
 };
 
 export default function ProfilePage() {
@@ -35,6 +36,8 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts]     = useState<Post[]>([]);
   const [liked, setLiked]     = useState<Record<number, boolean>>({});
+  const [likingPosts, setLikingPosts] = useState<Set<number>>(new Set());
+  const likingPostsRef = useRef<Set<number>>(new Set());
   const [activeTab, setActiveTab]   = useState<'posts' | 'media'>('posts');
   const [scrolled, setScrolled]     = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -65,11 +68,16 @@ export default function ProfilePage() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { router.replace('/login'); return; }
-      const res = await fetch(`/api/users/${session.user.id}`);
+      const res = await fetch(`/api/users/${session.user.id}`, {
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      });
       if (res.ok) {
         const { user, posts: userPosts } = await res.json();
         setProfile(user);
         setPosts(userPosts);
+        const likedMap: Record<number, boolean> = {};
+        (userPosts as Post[]).forEach((p) => { if (p.likedByMe) likedMap[p.id] = true; });
+        setLiked(likedMap);
       }
       setAuthLoading(false);
     });
@@ -92,8 +100,32 @@ export default function ProfilePage() {
     }
   };
 
-  const toggleLike = (id: number) =>
-    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleLike = async (id: number) => {
+    if (likingPostsRef.current.has(id)) return;
+    likingPostsRef.current.add(id);
+    setLikingPosts(new Set(likingPostsRef.current));
+    const wasLiked = liked[id] ?? false;
+    setLiked((prev) => ({ ...prev, [id]: !wasLiked }));
+    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? -1 : 1) } : p));
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/posts/${id}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error('Like failed');
+      const { liked: isLiked, likes } = await res.json();
+      setLiked((prev) => ({ ...prev, [id]: isLiked }));
+      setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes } : p));
+    } catch {
+      setLiked((prev) => ({ ...prev, [id]: wasLiked }));
+      setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? 1 : -1) } : p));
+    } finally {
+      likingPostsRef.current.delete(id);
+      setLikingPosts(new Set(likingPostsRef.current));
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -189,7 +221,7 @@ export default function ProfilePage() {
   const bio         = profile?.bio || 'No bio yet.';
   const avatarUrl   = profile?.avatar_url || undefined;
 
-  const mediaPosts = posts.filter((p) => p.images.length > 0 || p.videoUrl);
+  const mediaPosts = posts.filter((p) => p.images.length > 0 || p.videoUrls.length > 0);
 
   if (authLoading) {
     return (
@@ -452,7 +484,7 @@ export default function ProfilePage() {
             <span className="font-label-md text-label-md">Settings</span>
           </Link>
         </nav>
-        <div className="pt-md border-t border-outline-variant flex flex-col space-y-xs">
+        <div className="pt-sm border-t border-outline-variant flex flex-col space-y-xs">
           <button onClick={handleLogout} className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full">
             <span className="material-symbols-outlined">logout</span>
             <span className="font-label-md text-label-md">Logout</span>
@@ -661,7 +693,12 @@ export default function ProfilePage() {
                     )}
 
                     <div className="flex items-center gap-md border-t border-outline-variant pt-sm">
-                      <button className={`flex items-center gap-xs transition-colors ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant'}`} onClick={() => toggleLike(post.id)}>
+                      <button
+                        className={`flex items-center gap-xs transition-colors disabled:opacity-60 ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
+                        style={{ touchAction: 'manipulation' }}
+                        disabled={likingPosts.has(post.id)}
+                        onClick={() => toggleLike(post.id)}
+                      >
                         <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                         <span className="text-label-md">{post.likes}</span>
                       </button>
@@ -692,9 +729,9 @@ export default function ProfilePage() {
                           <img className="w-full h-full object-cover" src={src} alt="" />
                         </div>
                       )),
-                      ...(post.videoUrl ? [
+                      ...(post.videoUrls[0] ? [
                         <div key={`${post.id}-vid`} className="aspect-square overflow-hidden rounded-sm bg-black relative">
-                          <video className="w-full h-full object-cover" src={post.videoUrl} muted />
+                          <video className="w-full h-full object-cover" src={post.videoUrls[0]} muted />
                           <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                             <span className="material-symbols-outlined text-white text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
                           </div>
@@ -711,13 +748,13 @@ export default function ProfilePage() {
       </main>
 
       {/* ── DESKTOP FOOTER ── */}
-      <footer className="w-full py-xl bg-surface-container-lowest border-t border-outline-variant hidden lg:block">
-        <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto gap-md lg:ml-64">
+      <footer className="w-full py-sm bg-surface-container-lowest border-t border-outline-variant hidden lg:block">
+        <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto lg:ml-64">
           <div className="flex items-center space-x-sm">
-            <img src="/logo.png" alt="Neutron Tech" className="h-12 w-auto drop-shadow-sm" />
+            <img src="/logo.png" alt="Neutron Tech" className="h-8 w-auto drop-shadow-sm" />
             <span className="font-label-sm text-label-sm text-secondary">© 2024 Neutron Tech Inc.</span>
           </div>
-          <div className="flex space-x-lg">
+          <div className="flex space-x-md">
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">About</a>
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">Privacy</a>
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">Terms</a>

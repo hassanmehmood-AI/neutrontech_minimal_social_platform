@@ -4,10 +4,10 @@ import { getAuthUser } from '@/lib/auth';
 import { timeAgo } from '@/lib/utils';
 
 export async function GET(
-  _req: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
+  const [viewer, { id }] = await Promise.all([getAuthUser(request), params]);
 
   const { data: user, error } = await supabaseAdmin
     .from('profiles')
@@ -17,11 +17,18 @@ export async function GET(
 
   if (error) return Response.json({ error: 'User not found' }, { status: 404 });
 
-  const { data: rawPosts } = await supabaseAdmin
-    .from('posts')
-    .select('*, profiles(full_name, avatar_url)')
-    .eq('user_id', id)
-    .order('created_at', { ascending: false });
+  const [{ data: rawPosts }, { data: viewerLikes }] = await Promise.all([
+    supabaseAdmin
+      .from('posts')
+      .select('*, profiles(full_name, avatar_url)')
+      .eq('user_id', id)
+      .order('created_at', { ascending: false }),
+    viewer
+      ? supabaseAdmin.from('likes').select('post_id').eq('user_id', viewer.id)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const likedIds = new Set((viewerLikes || []).map((l: { post_id: number }) => l.post_id));
 
   const posts = (rawPosts || []).map((p) => {
     const profile = p.profiles as Record<string, string> | null;
@@ -34,9 +41,10 @@ export async function GET(
       tag: p.tag || '',
       content: p.content || '',
       images: p.images || [],
-      videoUrl: p.video_url || undefined,
+      videoUrls: (p.video_urls as string[]) || [],
       likes: p.likes || 0,
       comments: p.comments || 0,
+      likedByMe: likedIds.has(Number(p.id)),
     };
   });
 

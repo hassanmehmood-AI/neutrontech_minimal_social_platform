@@ -44,6 +44,7 @@ export default function FeedPage() {
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
   const [likingPosts, setLikingPosts] = useState<Set<number>>(new Set());
+  const likingPostsRef = useRef<Set<number>>(new Set());
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [commentText, setCommentText] = useState<Record<number, string>>({});
@@ -132,8 +133,9 @@ export default function FeedPage() {
   };
 
   const toggleLike = async (id: number) => {
-    if (!currentUser || likingPosts.has(id)) return;
-    setLikingPosts((prev) => new Set(prev).add(id));
+    if (!currentUser || likingPostsRef.current.has(id)) return;
+    likingPostsRef.current.add(id);
+    setLikingPosts(new Set(likingPostsRef.current));
     const wasLiked = liked[id] ?? false;
     setLiked((prev) => ({ ...prev, [id]: !wasLiked }));
     setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? -1 : 1) } : p));
@@ -152,7 +154,8 @@ export default function FeedPage() {
       setLiked((prev) => ({ ...prev, [id]: wasLiked }));
       setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + (wasLiked ? 1 : -1) } : p));
     } finally {
-      setLikingPosts((prev) => { const s = new Set(prev); s.delete(id); return s; });
+      likingPostsRef.current.delete(id);
+      setLikingPosts(new Set(likingPostsRef.current));
     }
   };
 
