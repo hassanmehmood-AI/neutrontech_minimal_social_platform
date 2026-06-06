@@ -14,7 +14,7 @@ function transform(p: Record<string, unknown>) {
     tag: (p.tag as string) || '',
     content: (p.content as string) || '',
     images: (p.images as string[]) || [],
-    videoUrl: (p.video_url as string) || undefined,
+    videoUrls: (p.video_urls as string[]) || [],
     likes: (p.likes as number) || 0,
     comments: (p.comments as number) || 0,
   };
@@ -46,14 +46,14 @@ export async function POST(request: NextRequest) {
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
-  const { content, images, videoUrl, tag } = body;
+  const { content, images, videoUrls, tag } = body;
 
-  if (!content && (!images || images.length === 0) && !videoUrl) {
+  if (!content && (!images || images.length === 0) && (!videoUrls || videoUrls.length === 0)) {
     return Response.json({ error: 'Post must have content or media' }, { status: 400 });
   }
 
   const persistableImages = (images || []).filter((url: string) => !url.startsWith('blob:'));
-  const persistableVideo  = videoUrl && !videoUrl.startsWith('blob:') ? videoUrl : null;
+  const persistableVideos = (videoUrls || []).filter((url: string) => !url.startsWith('blob:'));
 
   const { data, error } = await supabaseAdmin
     .from('posts')
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       user_id: user.id,
       content: content || '',
       images: persistableImages,
-      video_url: persistableVideo,
+      video_urls: persistableVideos,
       tag: tag || null,
     })
     .select('*, profiles(full_name, avatar_url)')
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
   return Response.json(
-    { ...transform(data as Record<string, unknown>), images: images || [], videoUrl },
+    { ...transform(data as Record<string, unknown>), images: images || [], videoUrls: videoUrls || [] },
     { status: 201 }
   );
 }

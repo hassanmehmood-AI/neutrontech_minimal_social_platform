@@ -15,7 +15,7 @@ type Post = {
   tag: string;
   content: string;
   images: string[];
-  videoUrl?: string;
+  videoUrls: string[];
   likes: number;
   comments: number;
   likedByMe?: boolean;
@@ -38,7 +38,7 @@ export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [liked, setLiked] = useState<Record<number, boolean>>({});
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
   const [authLoading, setAuthLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
@@ -153,24 +153,25 @@ export default function FeedPage() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setSelectedImages(Array.from(e.target.files));
+    if (e.target.files) {
+      setSelectedImages(prev => [...prev, ...Array.from(e.target.files!)]);
+      e.target.value = '';
+    }
   };
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setSelectedVideo(e.target.files[0]);
+    if (e.target.files) setSelectedVideos(Array.from(e.target.files));
   };
 
   const handlePost = async () => {
     const text = composerRef.current?.value.trim() ?? '';
-    if (!text && selectedImages.length === 0 && !selectedVideo) return;
+    if (!text && selectedImages.length === 0 && selectedVideos.length === 0) return;
 
     setPosting(true);
 
     const token = await getToken();
 
-    // Upload each image via the server-side API route to get a permanent public URL
-    const imageUrls: string[] = [];
-    for (const file of selectedImages) {
+    const uploadFile = async (file: File) => {
       const form = new FormData();
       form.append('file', file);
       const up = await fetch('/api/upload', {
@@ -179,10 +180,13 @@ export default function FeedPage() {
         body: form,
       });
       const { url } = await up.json();
-      imageUrls.push(url ?? URL.createObjectURL(file));
-    }
+      return url ?? URL.createObjectURL(file);
+    };
 
-    const videoUrl = selectedVideo ? URL.createObjectURL(selectedVideo) : undefined;
+    const [imageUrls, videoUrls] = await Promise.all([
+      Promise.all(selectedImages.map(uploadFile)),
+      Promise.all(selectedVideos.map(uploadFile)),
+    ]);
 
     const res = await fetch('/api/posts', {
       method: 'POST',
@@ -190,7 +194,7 @@ export default function FeedPage() {
       body: JSON.stringify({
         content: text,
         images: imageUrls,
-        videoUrl,
+        videoUrls,
         tag: '',
       }),
     });
@@ -199,7 +203,7 @@ export default function FeedPage() {
 
     if (composerRef.current) composerRef.current.value = '';
     setSelectedImages([]);
-    setSelectedVideo(null);
+    setSelectedVideos([]);
     if (imageInputRef.current) imageInputRef.current.value = '';
     if (videoInputRef.current) videoInputRef.current.value = '';
     setPosting(false);
@@ -335,23 +339,45 @@ export default function FeedPage() {
                 </div>
                 <div className="flex-1">
                   <textarea ref={composerRef} className="w-full bg-transparent border-none focus:ring-0 font-body-md text-on-surface placeholder:text-on-surface-variant resize-none outline-none" placeholder={`What's on your mind, ${composerName}?`} rows={2}></textarea>
-                  {(selectedImages.length > 0 || selectedVideo) && (
-                    <div className="flex flex-wrap gap-xs mt-sm">
+                  {selectedImages.length > 0 && (
+                    <div className={`mt-sm rounded-xl overflow-hidden grid gap-0.5 ${
+                      selectedImages.length === 1 ? 'grid-cols-1' :
+                      selectedImages.length === 2 ? 'grid-cols-2' :
+                      'grid-cols-3'
+                    }`}>
                       {selectedImages.map((file, i) => (
-                        <div key={i} className="relative w-16 h-16 rounded-lg overflow-hidden border border-outline-variant">
+                        <div key={i} className="relative aspect-square">
                           <img src={URL.createObjectURL(file)} alt={file.name} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 rounded-full p-0.5 flex items-center justify-center transition-colors"
+                            onClick={() => setSelectedImages(prev => prev.filter((_, j) => j !== i))}
+                          >
+                            <span className="material-symbols-outlined text-white text-[14px]">close</span>
+                          </button>
                         </div>
                       ))}
-                      {selectedVideo && (
-                        <div className="flex items-center gap-xs px-sm py-xs bg-surface-container-low rounded-lg border border-outline-variant">
+                    </div>
+                  )}
+                  {selectedVideos.length > 0 && (
+                    <div className="flex flex-wrap gap-xs mt-xs">
+                      {selectedVideos.map((file, i) => (
+                        <div key={i} className="flex items-center gap-xs px-sm py-xs bg-surface-container-low rounded-lg border border-outline-variant">
                           <span className="material-symbols-outlined text-[16px] text-primary">videocam</span>
-                          <span className="font-label-sm text-on-surface-variant truncate max-w-[120px]">{selectedVideo.name}</span>
+                          <span className="font-label-sm text-on-surface-variant truncate max-w-[100px]">{file.name}</span>
+                          <button
+                            type="button"
+                            className="ml-xs text-on-surface-variant hover:text-error transition-colors"
+                            onClick={() => setSelectedVideos(prev => prev.filter((_, j) => j !== i))}
+                          >
+                            <span className="material-symbols-outlined text-[14px]">close</span>
+                          </button>
                         </div>
-                      )}
+                      ))}
                     </div>
                   )}
                   <input ref={imageInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImageChange} />
-                  <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoChange} />
+                  <input ref={videoInputRef} type="file" accept="video/*" multiple className="hidden" onChange={handleVideoChange} />
                   <div className="flex justify-between items-center mt-sm pt-sm border-t border-outline-variant">
                     <div className="flex gap-sm">
                       <button className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors" onClick={() => imageInputRef.current?.click()} title="Add image">
@@ -400,22 +426,53 @@ export default function FeedPage() {
                       {post.content && <p className="font-body-md text-on-surface mb-md">{post.content}</p>}
 
                       {post.images.length === 1 && (
-                        <div className="rounded-xl overflow-hidden mb-md aspect-video border border-outline-variant cursor-zoom-in" onClick={() => setPreviewUrl(post.images[0])}>
-                          <img alt="Post image" className="w-full h-full object-cover" src={post.images[0]} />
+                        <div className="rounded-xl overflow-hidden mb-md max-h-96 border border-outline-variant cursor-zoom-in" onClick={() => setPreviewUrl(post.images[0])}>
+                          <img alt="Post image" className="w-full max-h-96 object-cover" src={post.images[0]} />
                         </div>
                       )}
-                      {post.images.length > 1 && (
-                        <div className="grid grid-cols-2 gap-xs mb-md">
+                      {post.images.length === 2 && (
+                        <div className="grid grid-cols-2 gap-0.5 mb-md rounded-xl overflow-hidden">
                           {post.images.map((src, i) => (
-                            <div key={i} className="rounded-xl overflow-hidden aspect-square border border-outline-variant cursor-zoom-in" onClick={() => setPreviewUrl(src)}>
+                            <div key={i} className="aspect-square cursor-zoom-in" onClick={() => setPreviewUrl(src)}>
                               <img alt={`Image ${i + 1}`} className="w-full h-full object-cover" src={src} />
                             </div>
                           ))}
                         </div>
                       )}
-                      {post.videoUrl && (
-                        <div className="rounded-xl overflow-hidden mb-md border border-outline-variant">
-                          <video src={post.videoUrl} controls className="w-full max-h-64 object-contain bg-black" />
+                      {post.images.length === 3 && (
+                        <div className="grid grid-cols-2 gap-0.5 mb-md rounded-xl overflow-hidden h-64">
+                          <div className="cursor-zoom-in row-span-2 h-full" onClick={() => setPreviewUrl(post.images[0])}>
+                            <img alt="Image 1" className="w-full h-full object-cover" src={post.images[0]} />
+                          </div>
+                          <div className="cursor-zoom-in h-full" onClick={() => setPreviewUrl(post.images[1])}>
+                            <img alt="Image 2" className="w-full h-full object-cover" src={post.images[1]} />
+                          </div>
+                          <div className="cursor-zoom-in h-full" onClick={() => setPreviewUrl(post.images[2])}>
+                            <img alt="Image 3" className="w-full h-full object-cover" src={post.images[2]} />
+                          </div>
+                        </div>
+                      )}
+                      {post.images.length >= 4 && (
+                        <div className="grid grid-cols-2 gap-0.5 mb-md rounded-xl overflow-hidden">
+                          {post.images.slice(0, 4).map((src, i) => (
+                            <div key={i} className="relative aspect-square cursor-zoom-in" onClick={() => setPreviewUrl(src)}>
+                              <img alt={`Image ${i + 1}`} className="w-full h-full object-cover" src={src} />
+                              {i === 3 && post.images.length > 4 && (
+                                <div className="absolute inset-0 bg-black/55 flex items-center justify-center pointer-events-none">
+                                  <span className="text-white font-bold text-2xl">+{post.images.length - 4}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {post.videoUrls?.length > 0 && (
+                        <div className="space-y-sm mb-md">
+                          {post.videoUrls.map((url, i) => (
+                            <div key={i} className="rounded-xl overflow-hidden border border-outline-variant">
+                              <video src={url} controls className="w-full max-h-64 object-contain bg-black" />
+                            </div>
+                          ))}
                         </div>
                       )}
 
