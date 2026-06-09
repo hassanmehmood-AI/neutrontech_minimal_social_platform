@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 
 type Post = {
   id: number;
+  userId: string;
   author: string;
   avatar: string;
   time: string;
@@ -429,14 +430,14 @@ export default function FeedPage() {
                     <div className="p-md">
                       <div className="flex justify-between items-start mb-sm">
                         <div className="flex gap-sm items-center">
-                          <div className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low flex items-center justify-center shrink-0">
+                          <Link href={post.userId === currentUser?.id ? '/profile' : `/profile/${post.userId}`} className="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low flex items-center justify-center shrink-0">
                             {post.avatar
                               ? <img alt={post.author} className="w-full h-full object-cover" src={post.avatar} />
                               : <span className="material-symbols-outlined text-primary">person</span>
                             }
-                          </div>
+                          </Link>
                           <div>
-                            <Link href="/profile" className="font-label-md text-label-md text-on-surface font-bold hover:text-primary">{post.author}</Link>
+                            <Link href={post.userId === currentUser?.id ? '/profile' : `/profile/${post.userId}`} className="font-label-md text-label-md text-on-surface font-bold hover:text-primary">{post.author}</Link>
                             <p className="font-label-sm text-label-sm text-on-surface-variant">{post.time}{post.tag ? ` • ${post.tag}` : ''}</p>
                           </div>
                         </div>

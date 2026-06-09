@@ -128,6 +128,11 @@ body {
   overflow-x: hidden;
 }
 
+/* ── Pointer cursor on all clickable elements ── */
+a, button, [role="button"], label[for], select, summary {
+  cursor: pointer;
+}
+
 /* ── Material Symbols ── */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

@@ -16,7 +16,7 @@ export default function LandingPage() {
       if (session) {
         router.replace('/feed');
       } else {
-        setChecked(true);
+        router.replace('/login');
       }
     });
   }, [router]);

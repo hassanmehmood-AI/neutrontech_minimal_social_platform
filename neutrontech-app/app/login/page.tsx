@@ -154,6 +154,9 @@ export default function LoginPage() {
             <a className="text-primary hover:underline" href="#">Terms of Service</a> and{' '}
             <a className="text-primary hover:underline" href="#">Privacy Policy</a>.
           </p>
+          <Link href="/portfolio" className="font-label-sm text-label-sm text-primary hover:underline">
+            Portfolio
+          </Link>
         </main>
       </div>
 
@@ -190,6 +193,9 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+          <Link href="/portfolio" className="absolute bottom-lg left-xl font-label-sm text-label-sm text-white/60 hover:text-white transition-colors z-10">
+            Portfolio
+          </Link>
         </section>
 
         {/* Right form panel */}
