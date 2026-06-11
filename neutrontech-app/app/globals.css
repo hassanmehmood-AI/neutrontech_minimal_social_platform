@@ -199,6 +199,18 @@ a, button, [role="button"], label[for], select, summary {
   border: 1px solid #e0e0e0;
 }
 
+/* ── Likes modal ── */
+.likes-user-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.likes-user-row:hover {
+  background-color: #f0f0f0;
+}
+.likes-close-btn:hover {
+  background-color: #f0f0f0;
+}
+
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

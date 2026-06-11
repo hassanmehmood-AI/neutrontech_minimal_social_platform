@@ -29,7 +29,10 @@ type Comment = {
   avatar: string;
   content: string;
   time: string;
+  replyCount?: number;
 };
+
+type LikerUser = { id: string; name: string; avatar: string };
 
 type CurrentUser = { id: string; email: string; name: string; avatar: string };
 
@@ -50,6 +53,12 @@ export default function FeedPage() {
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [commentText, setCommentText] = useState<Record<number, string>>({});
   const [sendingComment, setSendingComment] = useState<Record<number, boolean>>({});
+  const [likesModal, setLikesModal] = useState<{ postId: number; users: LikerUser[]; loading: boolean } | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Record<number, boolean>>({});
+  const [replyText, setReplyText] = useState<Record<number, string>>({});
+  const [sendingReply, setSendingReply] = useState<Record<number, boolean>>({});
+  const [commentReplies, setCommentReplies] = useState<Record<number, Comment[]>>({});
+  const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -231,6 +240,55 @@ export default function FeedPage() {
     router.replace('/login');
   };
 
+  const openLikesModal = async (postId: number) => {
+    setLikesModal({ postId, users: [], loading: true });
+    try {
+      const res = await fetch(`/api/posts/${postId}/like`);
+      const users: LikerUser[] = await res.json();
+      setLikesModal({ postId, users, loading: false });
+    } catch {
+      setLikesModal({ postId, users: [], loading: false });
+    }
+  };
+
+  const loadReplies = async (postId: number, commentId: number) => {
+    if (commentReplies[commentId] !== undefined) {
+      setExpandedReplies((prev) => ({ ...prev, [commentId]: !prev[commentId] }));
+      return;
+    }
+    setExpandedReplies((prev) => ({ ...prev, [commentId]: true }));
+    try {
+      const res = await fetch(`/api/posts/${postId}/comments?parent_id=${commentId}`);
+      const data: Comment[] = await res.json();
+      setCommentReplies((prev) => ({ ...prev, [commentId]: data }));
+    } catch {
+      setCommentReplies((prev) => ({ ...prev, [commentId]: [] }));
+    }
+  };
+
+  const submitReply = async (postId: number, parentCommentId: number) => {
+    const text = replyText[parentCommentId]?.trim();
+    if (!text) return;
+    setSendingReply((prev) => ({ ...prev, [parentCommentId]: true }));
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ content: text, parent_id: parentCommentId }),
+      });
+      if (res.ok) {
+        const newReply: Comment = await res.json();
+        setCommentReplies((prev) => ({ ...prev, [parentCommentId]: [...(prev[parentCommentId] || []), newReply] }));
+        setReplyText((prev) => ({ ...prev, [parentCommentId]: '' }));
+        setExpandedReplies((prev) => ({ ...prev, [parentCommentId]: true }));
+        setReplyingTo((prev) => ({ ...prev, [parentCommentId]: false }));
+      }
+    } finally {
+      setSendingReply((prev) => ({ ...prev, [parentCommentId]: false }));
+    }
+  };
+
   const focusComposer = () => {
     composerRef.current?.focus();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -271,6 +329,85 @@ export default function FeedPage() {
         </div>
       )}
 
+
+      {/* ── LIKES MODAL ── */}
+      {likesModal && (
+        <div
+          onClick={() => setLikesModal(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 300,
+            backgroundColor: 'rgba(0,0,0,0.65)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '1rem',
+              width: '100%',
+              maxWidth: '380px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+              border: '1px solid #e0e0e0',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              maxHeight: '70vh',
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #e0e0e0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#000', fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                <span style={{ fontWeight: 600, fontSize: '14px', color: '#111' }}>
+                  {likesModal.loading
+                    ? 'Loading…'
+                    : `${likesModal.users.length} ${likesModal.users.length === 1 ? 'person' : 'people'} liked this`}
+                </span>
+              </div>
+              <button
+                onClick={() => setLikesModal(null)}
+                className="likes-close-btn"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '50%', display: 'flex', alignItems: 'center', color: '#555', transition: 'background-color 0.15s ease' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>close</span>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div style={{ overflowY: 'auto', padding: '8px' }}>
+              {likesModal.loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
+                  <span className="material-symbols-outlined animate-spin" style={{ fontSize: '28px', color: '#000' }}>progress_activity</span>
+                </div>
+              ) : likesModal.users.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', gap: '8px' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '36px', color: '#767676' }}>favorite_border</span>
+                  <p style={{ fontSize: '14px', color: '#555' }}>No likes yet</p>
+                </div>
+              ) : (
+                likesModal.users.map((user) => (
+                  <div
+                    key={user.id}
+                    className="likes-user-row"
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', borderRadius: '12px' }}
+                    onClick={() => { setLikesModal(null); router.push(user.id === currentUser?.id ? '/profile' : `/profile/${user.id}`); }}
+                  >
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, backgroundColor: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {user.avatar
+                        ? <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={user.name} />
+                        : <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#000' }}>person</span>
+                      }
+                    </div>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#111' }}>{user.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── TOP NAV ── */}
       <header className="fixed top-0 w-full z-50 glass-effect border-b border-outline-variant shadow-sm h-16">
@@ -498,15 +635,23 @@ export default function FeedPage() {
 
                       <div className="flex justify-between items-center pt-sm border-t border-outline-variant">
                         <div className="flex gap-md">
-                          <button
-                            className={`flex items-center gap-xs transition-colors disabled:opacity-60 ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
-                            style={{ touchAction: 'manipulation' }}
-                            disabled={likingPosts.has(post.id)}
-                            onClick={() => toggleLike(post.id)}
-                          >
-                            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                            <span className="text-label-sm">{post.likes}</span>
-                          </button>
+                          <div className="flex items-center gap-xs">
+                            <button
+                              className={`transition-colors disabled:opacity-60 ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
+                              style={{ touchAction: 'manipulation' }}
+                              disabled={likingPosts.has(post.id)}
+                              onClick={() => toggleLike(post.id)}
+                            >
+                              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                            </button>
+                            <button
+                              className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                              onClick={() => openLikesModal(post.id)}
+                              title="See who liked this"
+                            >
+                              {post.likes}
+                            </button>
+                          </div>
                           <button
                             className={`flex items-center gap-xs transition-colors ${openComments[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
                             onClick={() => toggleComments(post.id)}
@@ -543,7 +688,85 @@ export default function FeedPage() {
                                   <p className="font-label-sm text-label-sm font-bold text-on-surface">{c.author}</p>
                                   <p className="font-body-md text-on-surface" style={{ fontSize: '14px' }}>{c.content}</p>
                                 </div>
-                                <p className="font-label-sm text-label-sm text-on-surface-variant mt-xs ml-sm">{c.time}</p>
+                                <div className="flex items-center gap-sm mt-xs ml-sm">
+                                  <p className="font-label-sm text-label-sm text-on-surface-variant">{c.time}</p>
+                                  <button
+                                    className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors font-medium"
+                                    onClick={() => setReplyingTo((prev) => ({ ...prev, [c.id]: !prev[c.id] }))}
+                                  >
+                                    Reply
+                                  </button>
+                                  {((c.replyCount || 0) > 0 || (commentReplies[c.id]?.length || 0) > 0) && (
+                                    <button
+                                      className="font-label-sm text-label-sm text-primary hover:underline transition-colors"
+                                      onClick={() => loadReplies(post.id, c.id)}
+                                    >
+                                      {expandedReplies[c.id]
+                                        ? 'Hide replies'
+                                        : `View ${c.replyCount || commentReplies[c.id]?.length || ''} replies`}
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Inline reply input */}
+                                {replyingTo[c.id] && (
+                                  <div className="flex gap-xs items-center mt-xs">
+                                    <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                                      {composerAvatar
+                                        ? <img src={composerAvatar} className="w-full h-full object-cover" alt="" />
+                                        : <span className="material-symbols-outlined text-primary" style={{ fontSize: '12px' }}>person</span>
+                                      }
+                                    </div>
+                                    <div className="flex-1 flex gap-xs">
+                                      <input
+                                        value={replyText[c.id] || ''}
+                                        onChange={(e) => setReplyText((prev) => ({ ...prev, [c.id]: e.target.value }))}
+                                        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitReply(post.id, c.id); } }}
+                                        placeholder={`Reply to ${c.author}…`}
+                                        className="flex-1 bg-surface-container-low rounded-full px-sm py-xs outline-none border border-outline-variant focus:border-primary transition-colors"
+                                        style={{ fontSize: '13px' }}
+                                      />
+                                      <button
+                                        onClick={() => submitReply(post.id, c.id)}
+                                        disabled={sendingReply[c.id] || !replyText[c.id]?.trim()}
+                                        className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors disabled:opacity-40"
+                                      >
+                                        <span className="material-symbols-outlined text-[18px]">send</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Nested replies */}
+                                {expandedReplies[c.id] && (
+                                  <div className="mt-xs ml-sm space-y-xs border-l-2 border-outline-variant pl-sm">
+                                    {commentReplies[c.id] === undefined ? (
+                                      <div className="flex justify-center py-xs">
+                                        <span className="material-symbols-outlined animate-spin text-primary text-[16px]">progress_activity</span>
+                                      </div>
+                                    ) : commentReplies[c.id].length === 0 ? (
+                                      <p className="text-center font-label-sm text-label-sm text-on-surface-variant py-xs">No replies yet</p>
+                                    ) : (
+                                      commentReplies[c.id].map((reply) => (
+                                        <div key={reply.id} className="flex gap-xs">
+                                          <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                                            {reply.avatar
+                                              ? <img src={reply.avatar} className="w-full h-full object-cover" alt={reply.author} />
+                                              : <span className="material-symbols-outlined text-primary" style={{ fontSize: '14px' }}>person</span>
+                                            }
+                                          </div>
+                                          <div>
+                                            <div className="bg-surface-container-low rounded-xl px-sm py-xs">
+                                              <p className="font-label-sm text-label-sm font-bold text-on-surface">{reply.author}</p>
+                                              <p className="font-body-md text-on-surface" style={{ fontSize: '13px' }}>{reply.content}</p>
+                                            </div>
+                                            <p className="font-label-sm text-on-surface-variant mt-xs ml-xs" style={{ fontSize: '11px' }}>{reply.time}</p>
+                                          </div>
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ))}

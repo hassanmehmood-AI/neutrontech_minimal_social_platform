@@ -2,6 +2,40 @@ import { type NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { getAuthUser } from '@/lib/auth';
 
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  const { data: likesData, error } = await supabaseAdmin
+    .from('likes')
+    .select('user_id')
+    .eq('post_id', id);
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  if (!likesData?.length) return Response.json([]);
+
+  const userIds = likesData.map((l: { user_id: string }) => l.user_id);
+
+  const { data: profiles } = await supabaseAdmin
+    .from('profiles')
+    .select('id, full_name, avatar_url')
+    .in('id', userIds);
+
+  const profileMap = Object.fromEntries(
+    (profiles || []).map((p: { id: string; full_name: string; avatar_url: string }) => [p.id, p])
+  );
+
+  return Response.json(
+    userIds.map((uid: string) => ({
+      id: uid,
+      name: (profileMap[uid] as { full_name?: string } | undefined)?.full_name || 'Unknown',
+      avatar: (profileMap[uid] as { avatar_url?: string } | undefined)?.avatar_url || '',
+    }))
+  );
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
