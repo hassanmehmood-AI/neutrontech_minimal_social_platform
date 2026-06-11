@@ -267,7 +267,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <p className="text-center font-label-sm text-label-sm text-outline mt-lg">© 2024 Neutron Tech Inc.</p>
+            <p className="text-center font-label-sm text-label-sm text-outline mt-lg">© 2026 Neutron Tech. All rights reserved.</p>
           </div>
         </section>
       </div>
