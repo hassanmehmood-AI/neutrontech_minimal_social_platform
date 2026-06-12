@@ -31,6 +31,18 @@ type Post = {
   likedByMe?: boolean;
 };
 
+type Comment = {
+  id: number;
+  userId: string;
+  author: string;
+  avatar: string;
+  content: string;
+  time: string;
+  replyCount?: number;
+};
+
+type LikerUser = { id: string; name: string; avatar: string };
+
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -43,6 +55,17 @@ export default function ProfilePage() {
   const [authLoading, setAuthLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState<number | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
+  const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
+  const [commentText, setCommentText] = useState<Record<number, string>>({});
+  const [sendingComment, setSendingComment] = useState<Record<number, boolean>>({});
+  const [likesModal, setLikesModal] = useState<{ postId: number; users: LikerUser[]; loading: boolean } | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Record<number, boolean>>({});
+  const [replyText, setReplyText] = useState<Record<number, string>>({});
+  const [sendingReply, setSendingReply] = useState<Record<number, boolean>>({});
+  const [commentReplies, setCommentReplies] = useState<Record<number, Comment[]>>({});
+  const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
 
   // Edit modal
   const [editOpen, setEditOpen]           = useState(false);
@@ -127,7 +150,90 @@ export default function ProfilePage() {
     }
   };
 
+  const toggleComments = async (postId: number) => {
+    if (openComments[postId]) {
+      setOpenComments((prev) => ({ ...prev, [postId]: false }));
+      return;
+    }
+    setOpenComments((prev) => ({ ...prev, [postId]: true }));
+    if (!postComments[postId]) {
+      const res = await fetch(`/api/posts/${postId}/comments`);
+      const data: Comment[] = await res.json();
+      setPostComments((prev) => ({ ...prev, [postId]: data }));
+    }
+  };
+
+  const submitComment = async (postId: number) => {
+    const text = commentText[postId]?.trim();
+    if (!text) return;
+    setSendingComment((prev) => ({ ...prev, [postId]: true }));
+    const token = await getToken();
+    const res = await fetch(`/api/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ content: text }),
+    });
+    if (res.ok) {
+      const newComment: Comment = await res.json();
+      setPostComments((prev) => ({ ...prev, [postId]: [...(prev[postId] || []), newComment] }));
+      setCommentText((prev) => ({ ...prev, [postId]: '' }));
+      setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, comments: p.comments + 1 } : p));
+    }
+    setSendingComment((prev) => ({ ...prev, [postId]: false }));
+  };
+
+  const openLikesModal = async (postId: number) => {
+    setLikesModal({ postId, users: [], loading: true });
+    try {
+      const res = await fetch(`/api/posts/${postId}/like`);
+      const users: LikerUser[] = await res.json();
+      setLikesModal({ postId, users, loading: false });
+    } catch {
+      setLikesModal({ postId, users: [], loading: false });
+    }
+  };
+
+  const loadReplies = async (postId: number, commentId: number) => {
+    if (commentReplies[commentId] !== undefined) {
+      setExpandedReplies((prev) => ({ ...prev, [commentId]: !prev[commentId] }));
+      return;
+    }
+    setExpandedReplies((prev) => ({ ...prev, [commentId]: true }));
+    try {
+      const res = await fetch(`/api/posts/${postId}/comments?parent_id=${commentId}`);
+      const data: Comment[] = await res.json();
+      setCommentReplies((prev) => ({ ...prev, [commentId]: data }));
+    } catch {
+      setCommentReplies((prev) => ({ ...prev, [commentId]: [] }));
+    }
+  };
+
+  const submitReply = async (postId: number, parentCommentId: number) => {
+    const text = replyText[parentCommentId]?.trim();
+    if (!text) return;
+    setSendingReply((prev) => ({ ...prev, [parentCommentId]: true }));
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ content: text, parent_id: parentCommentId }),
+      });
+      if (res.ok) {
+        const newReply: Comment = await res.json();
+        setCommentReplies((prev) => ({ ...prev, [parentCommentId]: [...(prev[parentCommentId] || []), newReply] }));
+        setReplyText((prev) => ({ ...prev, [parentCommentId]: '' }));
+        setExpandedReplies((prev) => ({ ...prev, [parentCommentId]: true }));
+        setReplyingTo((prev) => ({ ...prev, [parentCommentId]: false }));
+      }
+    } finally {
+      setSendingReply((prev) => ({ ...prev, [parentCommentId]: false }));
+    }
+  };
+
   const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
     await supabase.auth.signOut();
     router.replace('/login');
   };
@@ -441,6 +547,59 @@ export default function ProfilePage() {
         </div>
       )}
 
+      {/* ── LIKES MODAL ── */}
+      {likesModal && (
+        <div
+          onClick={() => setLikesModal(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 300, backgroundColor: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ backgroundColor: '#ffffff', borderRadius: '1rem', width: '100%', maxWidth: '380px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', border: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', overflow: 'hidden', maxHeight: '70vh' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #e0e0e0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#000', fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                <span style={{ fontWeight: 600, fontSize: '14px', color: '#111' }}>
+                  {likesModal.loading ? 'Loading…' : `${likesModal.users.length} ${likesModal.users.length === 1 ? 'person' : 'people'} liked this`}
+                </span>
+              </div>
+              <button onClick={() => setLikesModal(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '50%', display: 'flex', alignItems: 'center', color: '#555' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>close</span>
+              </button>
+            </div>
+            <div style={{ overflowY: 'auto', padding: '8px' }}>
+              {likesModal.loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
+                  <span className="material-symbols-outlined animate-spin" style={{ fontSize: '28px', color: '#000' }}>progress_activity</span>
+                </div>
+              ) : likesModal.users.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0', gap: '8px' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '36px', color: '#767676' }}>favorite_border</span>
+                  <p style={{ fontSize: '14px', color: '#555' }}>No likes yet</p>
+                </div>
+              ) : (
+                likesModal.users.map((user) => (
+                  <div
+                    key={user.id}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', borderRadius: '12px', cursor: 'pointer' }}
+                    onClick={() => { setLikesModal(null); router.push(user.id === profile?.id ? '/profile' : `/profile/${user.id}`); }}
+                  >
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, backgroundColor: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {user.avatar
+                        ? <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={user.name} />
+                        : <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#000' }}>person</span>
+                      }
+                    </div>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#111' }}>{user.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── TOP NAV ── */}
       <header className={`fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant h-16 flex items-center px-margin-mobile md:px-margin-desktop ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
         <div className="grid grid-cols-3 items-center w-full max-w-[1280px] mx-auto">
@@ -453,7 +612,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-center justify-end gap-sm">
             <button className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary" onClick={() => window.location.href = '/search'}>search</button>
-            <button onClick={handleLogout} className="hidden lg:block font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low px-md py-xs rounded-lg transition-all active:scale-95">Logout</button>
+            <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="hidden lg:block font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low px-md py-xs rounded-lg transition-all active:scale-95 disabled:opacity-50">{loggingOut ? 'Logging out…' : 'Logout'}</button>
           </div>
         </div>
       </header>
@@ -485,9 +644,9 @@ export default function ProfilePage() {
           </Link>
         </nav>
         <div className="pt-sm border-t border-outline-variant flex flex-col space-y-xs">
-          <button onClick={handleLogout} className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full">
+          <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full disabled:opacity-50">
             <span className="material-symbols-outlined">logout</span>
-            <span className="font-label-md text-label-md">Logout</span>
+            <span className="font-label-md text-label-md">{loggingOut ? 'Logging out…' : 'Logout'}</span>
           </button>
         </div>
       </aside>
@@ -693,20 +852,157 @@ export default function ProfilePage() {
                     )}
 
                     <div className="flex items-center gap-md border-t border-outline-variant pt-sm">
+                      <div className="flex items-center gap-xs">
+                        <button
+                          className={`transition-colors disabled:opacity-60 ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
+                          style={{ touchAction: 'manipulation' }}
+                          disabled={likingPosts.has(post.id)}
+                          onClick={() => toggleLike(post.id)}
+                        >
+                          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                        </button>
+                        <button
+                          className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                          onClick={() => openLikesModal(post.id)}
+                          title="See who liked this"
+                        >
+                          {post.likes}
+                        </button>
+                      </div>
                       <button
-                        className={`flex items-center gap-xs transition-colors disabled:opacity-60 ${liked[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
-                        style={{ touchAction: 'manipulation' }}
-                        disabled={likingPosts.has(post.id)}
-                        onClick={() => toggleLike(post.id)}
+                        className={`flex items-center gap-xs transition-colors ${openComments[post.id] ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}
+                        onClick={() => toggleComments(post.id)}
                       >
-                        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: liked[post.id] ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                        <span className="text-label-md">{post.likes}</span>
-                      </button>
-                      <button className="flex items-center gap-xs text-on-surface-variant">
-                        <span className="material-symbols-outlined text-[20px]">chat_bubble</span>
-                        <span className="text-label-md">{post.comments}</span>
+                        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: openComments[post.id] ? "'FILL' 1" : "'FILL' 0" }}>comment</span>
+                        <span className="text-label-sm">{post.comments}</span>
                       </button>
                     </div>
+
+                    {/* ── COMMENTS SECTION ── */}
+                    {openComments[post.id] && (
+                      <div className="pt-sm space-y-sm border-t border-outline-variant mt-sm">
+                        {!postComments[post.id] && (
+                          <div className="flex justify-center py-sm">
+                            <span className="material-symbols-outlined animate-spin text-primary text-[20px]">progress_activity</span>
+                          </div>
+                        )}
+                        {(postComments[post.id] || []).length === 0 && postComments[post.id] && (
+                          <p className="text-center font-label-sm text-label-sm text-on-surface-variant py-sm">No comments yet. Be the first!</p>
+                        )}
+                        {(postComments[post.id] || []).map((c) => (
+                          <div key={c.id} className="flex gap-sm">
+                            <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                              {c.avatar
+                                ? <img src={c.avatar} className="w-full h-full object-cover" alt={c.author} />
+                                : <span className="material-symbols-outlined text-primary" style={{ fontSize: '16px' }}>person</span>
+                              }
+                            </div>
+                            <div className="flex-1">
+                              <div className="bg-surface-container-low rounded-xl px-sm py-xs">
+                                <p className="font-label-sm text-label-sm font-bold text-on-surface">{c.author}</p>
+                                <p className="font-body-md text-on-surface" style={{ fontSize: '14px' }}>{c.content}</p>
+                              </div>
+                              <div className="flex items-center gap-sm mt-xs ml-sm">
+                                <p className="font-label-sm text-label-sm text-on-surface-variant">{c.time}</p>
+                                <button
+                                  className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors font-medium"
+                                  onClick={() => setReplyingTo((prev) => ({ ...prev, [c.id]: !prev[c.id] }))}
+                                >Reply</button>
+                                {((c.replyCount || 0) > 0 || (commentReplies[c.id]?.length || 0) > 0) && (
+                                  <button
+                                    className="font-label-sm text-label-sm text-primary hover:underline transition-colors"
+                                    onClick={() => loadReplies(post.id, c.id)}
+                                  >
+                                    {expandedReplies[c.id] ? 'Hide replies' : `View ${c.replyCount || commentReplies[c.id]?.length || ''} replies`}
+                                  </button>
+                                )}
+                              </div>
+                              {replyingTo[c.id] && (
+                                <div className="flex gap-xs items-center mt-xs">
+                                  <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                                    {avatarUrl
+                                      ? <img src={avatarUrl} className="w-full h-full object-cover" alt="" />
+                                      : <span className="material-symbols-outlined text-primary" style={{ fontSize: '12px' }}>person</span>
+                                    }
+                                  </div>
+                                  <div className="flex-1 flex gap-xs">
+                                    <input
+                                      value={replyText[c.id] || ''}
+                                      onChange={(e) => setReplyText((prev) => ({ ...prev, [c.id]: e.target.value }))}
+                                      onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitReply(post.id, c.id); } }}
+                                      placeholder={`Reply to ${c.author}…`}
+                                      className="flex-1 bg-surface-container-low rounded-full px-sm py-xs outline-none border border-outline-variant focus:border-primary transition-colors"
+                                      style={{ fontSize: '13px' }}
+                                    />
+                                    <button
+                                      onClick={() => submitReply(post.id, c.id)}
+                                      disabled={sendingReply[c.id] || !replyText[c.id]?.trim()}
+                                      className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors disabled:opacity-40"
+                                    >
+                                      <span className="material-symbols-outlined text-[18px]">send</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                              {expandedReplies[c.id] && (
+                                <div className="mt-xs ml-sm space-y-xs border-l-2 border-outline-variant pl-sm">
+                                  {commentReplies[c.id] === undefined ? (
+                                    <div className="flex justify-center py-xs">
+                                      <span className="material-symbols-outlined animate-spin text-primary text-[16px]">progress_activity</span>
+                                    </div>
+                                  ) : commentReplies[c.id].length === 0 ? (
+                                    <p className="text-center font-label-sm text-label-sm text-on-surface-variant py-xs">No replies yet</p>
+                                  ) : (
+                                    commentReplies[c.id].map((reply) => (
+                                      <div key={reply.id} className="flex gap-xs">
+                                        <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                                          {reply.avatar
+                                            ? <img src={reply.avatar} className="w-full h-full object-cover" alt={reply.author} />
+                                            : <span className="material-symbols-outlined text-primary" style={{ fontSize: '14px' }}>person</span>
+                                          }
+                                        </div>
+                                        <div>
+                                          <div className="bg-surface-container-low rounded-xl px-sm py-xs">
+                                            <p className="font-label-sm text-label-sm font-bold text-on-surface">{reply.author}</p>
+                                            <p className="font-body-md text-on-surface" style={{ fontSize: '13px' }}>{reply.content}</p>
+                                          </div>
+                                          <p className="font-label-sm text-on-surface-variant mt-xs ml-xs" style={{ fontSize: '11px' }}>{reply.time}</p>
+                                        </div>
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        <div className="flex gap-sm items-center pt-xs">
+                          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-surface-container-low flex items-center justify-center">
+                            {avatarUrl
+                              ? <img src={avatarUrl} className="w-full h-full object-cover" alt="" />
+                              : <span className="material-symbols-outlined text-primary" style={{ fontSize: '16px' }}>person</span>
+                            }
+                          </div>
+                          <div className="flex-1 flex gap-xs">
+                            <input
+                              value={commentText[post.id] || ''}
+                              onChange={(e) => setCommentText((prev) => ({ ...prev, [post.id]: e.target.value }))}
+                              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitComment(post.id); } }}
+                              placeholder="Write a comment..."
+                              className="flex-1 bg-surface-container-low rounded-full px-md py-xs font-body-md outline-none border border-outline-variant focus:border-primary transition-colors"
+                              style={{ fontSize: '14px' }}
+                            />
+                            <button
+                              onClick={() => submitComment(post.id)}
+                              disabled={sendingComment[post.id] || !commentText[post.id]?.trim()}
+                              className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors disabled:opacity-40"
+                            >
+                              <span className="material-symbols-outlined text-[20px]">send</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </>
@@ -777,7 +1073,7 @@ export default function ProfilePage() {
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
             <span className="text-label-sm font-label-sm">Profile</span>
           </Link>
-          <button onClick={handleLogout} className="flex flex-col items-center text-on-surface-variant transition-all active:scale-95">
+          <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="flex flex-col items-center text-on-surface-variant transition-all active:scale-95 disabled:opacity-50">
             <span className="material-symbols-outlined">logout</span>
             <span className="text-label-sm font-label-sm">Logout</span>
           </button>

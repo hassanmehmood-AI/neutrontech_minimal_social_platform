@@ -35,10 +35,12 @@ export default function UserProfilePage() {
   const params = useParams();
   const userId = params.id as string;
 
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'posts' | 'media'>('posts');
+  const [profile, setProfile]         = useState<Profile | null>(null);
+  const [posts, setPosts]             = useState<Post[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [activeTab, setActiveTab]     = useState<'posts' | 'media'>('posts');
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   const mediaPosts = posts.filter((p) => p.images.length > 0 || p.videoUrl);
 
@@ -49,15 +51,54 @@ export default function UserProfilePage() {
       // If this is the current user's own profile, redirect to /profile
       if (session.user.id === userId) { router.replace('/profile'); return; }
 
-      const res = await fetch(`/api/users/${userId}`);
-      if (res.ok) {
-        const { user, posts: userPosts } = await res.json();
+      const [profileRes, followRes] = await Promise.all([
+        fetch(`/api/users/${userId}`),
+        fetch(`/api/users/${userId}/follow`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` },
+        }),
+      ]);
+
+      if (profileRes.ok) {
+        const { user, posts: userPosts } = await profileRes.json();
         setProfile(user);
         setPosts(userPosts);
+      }
+      if (followRes.ok) {
+        const { following } = await followRes.json();
+        setIsFollowing(following);
       }
       setLoading(false);
     });
   }, [router, userId]);
+
+  const handleFollow = async () => {
+    if (followLoading) return;
+    setFollowLoading(true);
+    const wasFollowing = isFollowing;
+    setIsFollowing(!wasFollowing);
+    setProfile((prev) => prev ? { ...prev, followers: Math.max(0, prev.followers + (wasFollowing ? -1 : 1)) } : prev);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token ?? '';
+      const res = await fetch(`/api/users/${userId}/follow`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const { following, followers } = await res.json();
+        setIsFollowing(following);
+        setProfile((prev) => prev ? { ...prev, followers } : prev);
+      } else {
+        setIsFollowing(wasFollowing);
+        setProfile((prev) => prev ? { ...prev, followers: Math.max(0, prev.followers + (wasFollowing ? 1 : -1)) } : prev);
+      }
+    } catch {
+      setIsFollowing(wasFollowing);
+      setProfile((prev) => prev ? { ...prev, followers: Math.max(0, prev.followers + (wasFollowing ? 1 : -1)) } : prev);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -158,8 +199,12 @@ export default function UserProfilePage() {
                 <span className="font-label-md text-label-md">{profile.role}</span>
               </div>
             )}
-            <button className="mt-md w-full max-w-[24rem] h-12 rounded-xl bg-primary text-on-primary font-label-md text-label-md active:scale-95 transition-transform">
-              Follow
+            <button
+              onClick={handleFollow}
+              disabled={followLoading}
+              className={`mt-md w-full max-w-[24rem] h-12 rounded-xl font-label-md text-label-md active:scale-95 transition-transform disabled:opacity-60 ${isFollowing ? 'bg-surface border border-outline-variant text-on-surface' : 'bg-primary text-on-primary'}`}
+            >
+              {followLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}
             </button>
           </div>
         </div>
@@ -185,8 +230,12 @@ export default function UserProfilePage() {
                   )}
                 </div>
               </div>
-              <button className="border-0 bg-primary text-on-primary px-xl py-sm rounded-xl font-label-md text-label-md active:scale-95 transition-transform">
-                Follow
+              <button
+                onClick={handleFollow}
+                disabled={followLoading}
+                className={`px-xl py-sm rounded-xl font-label-md text-label-md active:scale-95 transition-transform disabled:opacity-60 ${isFollowing ? 'border border-outline-variant text-on-surface bg-surface' : 'bg-primary text-on-primary border-0'}`}
+              >
+                {followLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}
               </button>
             </div>
             {bio && (

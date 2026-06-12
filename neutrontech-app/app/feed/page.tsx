@@ -36,6 +36,14 @@ type LikerUser = { id: string; name: string; avatar: string };
 
 type CurrentUser = { id: string; email: string; name: string; avatar: string };
 
+type Notification = {
+  id: string;
+  type: string;
+  read: boolean;
+  time: string;
+  actor: { id: string; name: string; avatar: string };
+};
+
 export default function FeedPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
@@ -50,6 +58,7 @@ export default function FeedPage() {
   const [likingPosts, setLikingPosts] = useState<Set<number>>(new Set());
   const likingPostsRef = useRef<Set<number>>(new Set());
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [commentText, setCommentText] = useState<Record<number, string>>({});
   const [sendingComment, setSendingComment] = useState<Record<number, boolean>>({});
@@ -59,6 +68,9 @@ export default function FeedPage() {
   const [sendingReply, setSendingReply] = useState<Record<number, boolean>>({});
   const [commentReplies, setCommentReplies] = useState<Record<number, Comment[]>>({});
   const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -88,17 +100,20 @@ export default function FeedPage() {
         avatar: profile?.avatar_url || '',
       });
 
-      fetch('/api/posts', { headers: { 'Authorization': `Bearer ${session.access_token}` } })
-        .then((r) => r.json())
-        .then((data: Post[]) => {
-          if (!cancelled) {
-            const likedMap: Record<number, boolean> = {};
-            data.forEach((p) => { if (p.likedByMe) likedMap[p.id] = true; });
-            setPosts(data);
-            setLiked(likedMap);
-          }
-        })
-        .finally(() => { if (!cancelled) setAuthLoading(false); });
+      const authHeader = { 'Authorization': `Bearer ${session.access_token}` };
+
+      Promise.all([
+        fetch('/api/posts', { headers: authHeader }).then((r) => r.json()),
+        fetch('/api/notifications', { headers: authHeader }).then((r) => r.json()),
+      ]).then(([postsData, notifsData]: [Post[], Notification[]]) => {
+        if (!cancelled) {
+          const likedMap: Record<number, boolean> = {};
+          postsData.forEach((p) => { if (p.likedByMe) likedMap[p.id] = true; });
+          setPosts(postsData);
+          setLiked(likedMap);
+          if (Array.isArray(notifsData)) setNotifications(notifsData);
+        }
+      }).finally(() => { if (!cancelled) setAuthLoading(false); });
     });
 
     return () => { cancelled = true; };
@@ -109,6 +124,30 @@ export default function FeedPage() {
     if (session?.access_token) tokenRef.current = session.access_token;
     return tokenRef.current;
   };
+
+  const openNotifications = () => setNotifOpen((prev) => !prev);
+
+  const markNotifRead = async (id: string) => {
+    setNotifications((ns) => ns.map((n) => n.id === id ? { ...n, read: true } : n));
+    const token = await getToken();
+    fetch('/api/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ id }),
+    });
+  };
+
+  // Close notification panel on outside click
+  useEffect(() => {
+    if (!notifOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [notifOpen]);
 
   const toggleComments = async (postId: number) => {
     if (openComments[postId]) {
@@ -236,6 +275,8 @@ export default function FeedPage() {
   };
 
   const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
     await supabase.auth.signOut();
     router.replace('/login');
   };
@@ -427,10 +468,93 @@ export default function FeedPage() {
           </div>
           {/* Right: actions */}
           <div className="flex items-center justify-end gap-sm">
-            <div className="hidden lg:flex items-center gap-xs">
-              <button className="p-xs rounded-full hover:bg-surface-container-high transition-colors">
-                <span className="material-symbols-outlined text-secondary">notifications</span>
+            <div className="hidden lg:flex items-center gap-xs" ref={notifRef}>
+              {/* Bell button */}
+              <button
+                onClick={openNotifications}
+                style={{ touchAction: 'manipulation' }}
+                className="relative p-xs rounded-full hover:bg-surface-container-high transition-colors"
+              >
+                <span
+                  className="material-symbols-outlined text-secondary"
+                  style={{ fontVariationSettings: notifOpen ? "'FILL' 1" : "'FILL' 0" }}
+                >notifications</span>
+                {(() => {
+                  const unread = notifications.filter((n) => !n.read).length;
+                  return unread > 0 ? (
+                    <span
+                      className="absolute -top-1 -right-1 flex items-center justify-center bg-error text-white font-bold rounded-full border-2 border-surface"
+                      style={{ fontSize: '10px', minWidth: '18px', height: '18px', padding: '0 3px' }}
+                    >
+                      {unread > 9 ? '9+' : unread}
+                    </span>
+                  ) : null;
+                })()}
               </button>
+
+              {/* ── NOTIFICATION PANEL (fixed so it breaks out of header) ── */}
+              {notifOpen && (
+                <div
+                  style={{ position: 'fixed', top: '68px', right: '16px', zIndex: 200, width: '340px' }}
+                  className="bg-surface rounded-2xl shadow-2xl border border-outline-variant overflow-hidden"
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between px-md py-sm border-b border-outline-variant">
+                    <span className="font-label-md text-label-md font-bold text-on-surface">Notifications</span>
+                    <span className="text-label-sm text-on-surface-variant">
+                      {notifications.filter((n) => !n.read).length === 0 ? 'All caught up ✓' : `${notifications.filter((n) => !n.read).length} new`}
+                    </span>
+                  </div>
+
+                  {/* List */}
+                  <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    {notifications.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-10 gap-sm text-on-surface-variant">
+                        <span className="material-symbols-outlined text-[40px]">notifications_none</span>
+                        <p className="font-label-sm text-label-sm">No notifications yet</p>
+                      </div>
+                    ) : (
+                      notifications.map((n) => (
+                        <div
+                          key={n.id}
+                          onClick={async () => {
+                            if (!n.read) await markNotifRead(n.id);
+                            setNotifOpen(false);
+                            router.push(n.actor.id === currentUser?.id ? '/profile' : `/profile/${n.actor.id}`);
+                          }}
+                          className={`flex items-center gap-sm px-md py-sm cursor-pointer hover:bg-surface-container-low transition-colors border-b border-outline-variant/40 last:border-0 ${!n.read ? 'bg-primary/5' : ''}`}
+                        >
+                          {/* Actor avatar + type badge */}
+                          <div className="relative shrink-0">
+                            <div className="w-11 h-11 rounded-full overflow-hidden bg-surface-container-low flex items-center justify-center">
+                              {n.actor.avatar
+                                ? <img src={n.actor.avatar} className="w-full h-full object-cover" alt={n.actor.name} />
+                                : <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>person</span>
+                              }
+                            </div>
+                            <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary rounded-full flex items-center justify-center border-2 border-surface">
+                              <span className="material-symbols-outlined text-on-primary" style={{ fontSize: '11px', fontVariationSettings: "'FILL' 1" }}>person_add</span>
+                            </div>
+                          </div>
+
+                          {/* Text */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-on-surface leading-snug" style={{ fontSize: '13px' }}>
+                              <span className="font-bold">{n.actor.name}</span> started following you
+                            </p>
+                            <p className="text-on-surface-variant mt-0.5" style={{ fontSize: '12px' }}>{n.time}</p>
+                          </div>
+
+                          {/* Unread dot */}
+                          {!n.read && (
+                            <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <Link href="/profile" className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-fixed block shrink-0 bg-surface-container-low flex items-center justify-center">
               {composerAvatar
@@ -471,9 +595,9 @@ export default function FeedPage() {
             </Link>
           </nav>
           <div className="pt-md border-t border-outline-variant flex flex-col space-y-xs">
-            <button onClick={handleLogout} className="text-on-surface-variant flex items-center gap-sm p-sm hover:bg-surface-container-high rounded-xl transition-all text-left w-full">
+            <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="text-on-surface-variant flex items-center gap-sm p-sm hover:bg-surface-container-high rounded-xl transition-all text-left w-full disabled:opacity-50">
               <span className="material-symbols-outlined">logout</span>
-              <span className="font-label-md text-label-md">Logout</span>
+              <span className="font-label-md text-label-md">{loggingOut ? 'Logging out…' : 'Logout'}</span>
             </button>
           </div>
         </aside>
@@ -851,7 +975,7 @@ export default function FeedPage() {
               <a className="hover:underline" href="#">About</a>
               <a className="hover:underline" href="#">Privacy</a>
               <a className="hover:underline" href="#">Terms</a>
-              <span>© 2024 Neutron Tech Inc.</span>
+              <span>© 2026 Neutron Tech Inc.</span>
             </div>
           </footer>
         </aside>
@@ -873,7 +997,7 @@ export default function FeedPage() {
             <span className="material-symbols-outlined">person</span>
             <span className="font-label-sm text-[10px]">Profile</span>
           </Link>
-          <button onClick={handleLogout} className="flex flex-col items-center justify-center gap-1 text-on-surface-variant">
+          <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="flex flex-col items-center justify-center gap-1 text-on-surface-variant disabled:opacity-50">
             <span className="material-symbols-outlined">logout</span>
             <span className="font-label-sm text-[10px]">Logout</span>
           </button>
