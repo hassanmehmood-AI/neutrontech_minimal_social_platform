@@ -1048,7 +1048,7 @@ export default function ProfilePage() {
         <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto lg:ml-64">
           <div className="flex items-center space-x-sm">
             <img src="/logo.png" alt="Neutron Tech" className="h-8 w-auto drop-shadow-sm" />
-            <span className="font-label-sm text-label-sm text-secondary">© 2024 Neutron Tech Inc.</span>
+            <span className="font-label-sm text-label-sm text-secondary">© 2026 Neutron Tech Inc.</span>
           </div>
           <div className="flex space-x-md">
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">About</a>

@@ -17,11 +17,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Neutron Tech | Innovation at its Forefront",
   description: "The future of social innovation.",
-  icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png",
-  },
 };
 
 export default function RootLayout({
