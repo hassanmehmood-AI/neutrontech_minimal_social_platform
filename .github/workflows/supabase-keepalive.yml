@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Ping Supabase REST API
         run: |
-          curl -sf "${SUPABASE_URL}/rest/v1/" \
+          curl -sf "${SUPABASE_URL}/rest/v1/profiles?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
             -o /dev/null
