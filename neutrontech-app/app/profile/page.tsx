@@ -1051,9 +1051,9 @@ export default function ProfilePage() {
             <span className="font-label-sm text-label-sm text-secondary">© 2026 Neutron Tech Inc.</span>
           </div>
           <div className="flex space-x-md">
-            <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">About</a>
-            <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">Privacy</a>
-            <a className="font-label-sm text-label-sm text-secondary hover:text-primary" href="#">Terms</a>
+            <Link className="font-label-sm text-label-sm text-secondary hover:text-primary" href="/about">About</Link>
+            <Link className="font-label-sm text-label-sm text-secondary hover:text-primary" href="/privacy">Privacy</Link>
+            <Link className="font-label-sm text-label-sm text-secondary hover:text-primary" href="/terms">Terms</Link>
           </div>
         </div>
       </footer>

@@ -972,9 +972,9 @@ export default function FeedPage() {
           </div>
           <footer className="px-md py-sm">
             <div className="flex flex-wrap gap-sm text-outline font-label-sm text-label-sm">
-              <a className="hover:underline" href="#">About</a>
-              <a className="hover:underline" href="#">Privacy</a>
-              <a className="hover:underline" href="#">Terms</a>
+              <Link className="hover:underline" href="/about">About</Link>
+              <Link className="hover:underline" href="/privacy">Privacy</Link>
+              <Link className="hover:underline" href="/terms">Terms</Link>
               <span>© 2026 Neutron Tech Inc.</span>
             </div>
           </footer>
