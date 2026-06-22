@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 export default function PortfolioPage() {
   const projects = [
-    { name: 'SwapFuser.com', url: 'https://www.swapfuser.com' },
-    { name: 'PetalBird.com', url: 'https://www.petalbird.com' },
+    { name: 'SwapFuser.com', url: 'https://www.swapfuser.com', favicon: 'https://www.swapfuser.com/icon.png' },
+    { name: 'PetalBird.com', url: 'https://www.petalbird.com', favicon: 'https://www.petalbird.com/favicon.ico' },
   ];
 
   return (
@@ -27,8 +27,15 @@ export default function PortfolioPage() {
               className="group flex items-center justify-between bg-surface-container-lowest border border-outline-variant rounded-2xl px-lg py-md hover:shadow-md hover:border-primary/30 transition-all duration-200"
             >
               <div className="flex items-center gap-md">
-                <div className="w-10 h-10 rounded-xl bg-primary-container/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">language</span>
+                <div className="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={project.favicon}
+                    alt={project.name}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 object-contain"
+                  />
                 </div>
                 <span className="font-label-md text-label-md text-on-surface font-bold group-hover:text-primary transition-colors">
                   {project.name}
