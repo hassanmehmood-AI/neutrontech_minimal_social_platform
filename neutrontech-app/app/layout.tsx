@@ -33,20 +33,20 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-RZZ9BX12GW"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-RZZ9BX12GW');
-        `}
-      </Script>
       <body className={`${geistSans.variable} ${inter.variable}`}>
         {children}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-RZZ9BX12GW"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-RZZ9BX12GW');
+          `}
+        </Script>
       </body>
     </html>
   );
