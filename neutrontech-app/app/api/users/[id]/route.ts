@@ -22,6 +22,7 @@ export async function GET(
       .from('posts')
       .select('*, profiles(full_name, avatar_url)')
       .eq('user_id', id)
+      .eq('status', 'published')
       .order('created_at', { ascending: false }),
     viewer
       ? supabaseAdmin.from('likes').select('post_id').eq('user_id', viewer.id)

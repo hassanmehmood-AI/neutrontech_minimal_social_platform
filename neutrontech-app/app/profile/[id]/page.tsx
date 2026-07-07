@@ -143,9 +143,9 @@ export default function UserProfilePage() {
       </header>
 
       {/* ── LEFT SIDEBAR (lg+) ── */}
-      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant pt-20 p-md space-y-sm z-40">
-        <div className="mb-sm">
-          <Link href="/" className="inline-flex items-center gap-sm">
+      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-0 space-y-sm z-40">
+        <div className="h-16 flex items-center mb-sm">
+            <Link href="/" className="inline-flex items-center gap-sm">
             <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
             <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
           </Link>

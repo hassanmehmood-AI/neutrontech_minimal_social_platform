@@ -34,7 +34,7 @@ type Comment = {
 
 type LikerUser = { id: string; name: string; avatar: string };
 
-type CurrentUser = { id: string; email: string; name: string; avatar: string };
+type CurrentUser = { id: string; email: string; name: string; avatar: string; isAdmin: boolean };
 
 type Notification = {
   id: string;
@@ -87,7 +87,7 @@ export default function FeedPage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url')
+        .select('full_name, avatar_url, is_admin')
         .eq('id', session.user.id)
         .single();
 
@@ -98,6 +98,7 @@ export default function FeedPage() {
         email: session.user.email || '',
         name: profile?.full_name || session.user.email?.split('@')[0] || 'You',
         avatar: profile?.avatar_url || '',
+        isAdmin: !!profile?.is_admin,
       });
 
       const authHeader = { 'Authorization': `Bearer ${session.access_token}` };
@@ -569,8 +570,8 @@ export default function FeedPage() {
       <div className="flex max-w-[1280px] mx-auto pt-16">
 
         {/* ── LEFT SIDEBAR (lg+) ── */}
-        <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-20 space-y-sm z-40">
-          <div className="mb-lg">
+        <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-0 space-y-sm z-40">
+          <div className="h-16 flex items-center mb-sm">
             <Link href="/" className="inline-flex items-center gap-sm">
               <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
               <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
@@ -593,6 +594,12 @@ export default function FeedPage() {
               <span className="material-symbols-outlined">settings</span>
               <span className="font-label-md text-label-md">Settings</span>
             </Link>
+            {currentUser?.isAdmin && (
+              <Link className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all" href="/admin">
+                <span className="material-symbols-outlined">admin_panel_settings</span>
+                <span className="font-label-md text-label-md">Admin Console</span>
+              </Link>
+            )}
           </nav>
           <div className="pt-md border-t border-outline-variant flex flex-col space-y-xs">
             <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="text-on-surface-variant flex items-center gap-sm p-sm hover:bg-surface-container-high rounded-xl transition-all text-left w-full disabled:opacity-50">
@@ -970,6 +977,16 @@ export default function FeedPage() {
             </div>
             <Link href="/search" className="block mt-lg text-primary font-bold text-label-md hover:underline">Show more</Link>
           </div>
+          <Link
+            href="/contact"
+            className="flex items-center justify-between bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary transition-colors group"
+          >
+            <div className="flex items-center gap-sm">
+              <span className="material-symbols-outlined text-primary">mail</span>
+              <span className="font-label-md text-label-md font-bold text-on-surface group-hover:text-primary transition-colors">Contact Us</span>
+            </div>
+            <span className="material-symbols-outlined text-outline">chevron_right</span>
+          </Link>
           <footer className="px-md py-sm">
             <div className="flex flex-wrap gap-sm text-outline font-label-sm text-label-sm">
               <Link className="hover:underline" href="/about">About</Link>
@@ -996,6 +1013,10 @@ export default function FeedPage() {
           <Link href="/profile" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant">
             <span className="material-symbols-outlined">person</span>
             <span className="font-label-sm text-[10px]">Profile</span>
+          </Link>
+          <Link href="/contact" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant">
+            <span className="material-symbols-outlined">mail</span>
+            <span className="font-label-sm text-[10px]">Contact</span>
           </Link>
           <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="flex flex-col items-center justify-center gap-1 text-on-surface-variant disabled:opacity-50">
             <span className="material-symbols-outlined">logout</span>

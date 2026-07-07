@@ -14,14 +14,14 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
-  const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string; isAdmin: boolean } | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { router.replace('/login'); return; }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url')
+        .select('full_name, avatar_url, is_admin')
         .eq('id', session.user.id)
         .single();
 
@@ -29,7 +29,7 @@ export default function SettingsPage() {
       setUserId(session.user.id);
       setName(displayName);
       setOriginalName(displayName);
-      setCurrentUser({ name: displayName, avatar: profile?.avatar_url || '' });
+      setCurrentUser({ name: displayName, avatar: profile?.avatar_url || '', isAdmin: !!profile?.is_admin });
       setLoading(false);
     });
   }, [router]);
@@ -100,9 +100,9 @@ export default function SettingsPage() {
       </header>
 
       {/* ── LEFT SIDEBAR (lg+) ── */}
-      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant pt-20 p-md space-y-sm z-40">
-        <div className="mb-sm">
-          <Link href="/" className="inline-flex items-center gap-sm">
+      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-0 space-y-sm z-40">
+        <div className="h-16 flex items-center mb-sm">
+            <Link href="/" className="inline-flex items-center gap-sm">
             <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
             <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
           </Link>
@@ -124,6 +124,12 @@ export default function SettingsPage() {
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>settings</span>
             <span className="font-label-md text-label-md">Settings</span>
           </Link>
+          {currentUser?.isAdmin && (
+            <Link className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/admin">
+              <span className="material-symbols-outlined">admin_panel_settings</span>
+              <span className="font-label-md text-label-md">Admin Console</span>
+            </Link>
+          )}
         </nav>
         <div className="pt-md border-t border-outline-variant flex flex-col space-y-xs">
           <button onClick={handleLogout} className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full">
@@ -224,10 +230,14 @@ export default function SettingsPage() {
             <span className="material-symbols-outlined">person</span>
             <span className="text-label-sm font-label-sm">Profile</span>
           </Link>
-          <Link href="/settings" className="flex flex-col items-center text-primary font-bold active:scale-95">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>settings</span>
-            <span className="text-label-sm font-label-sm">Settings</span>
+          <Link href="/contact" className="flex flex-col items-center text-on-surface-variant active:scale-95">
+            <span className="material-symbols-outlined">mail</span>
+            <span className="text-label-sm font-label-sm">Contact</span>
           </Link>
+          <button onClick={handleLogout} style={{ touchAction: 'manipulation' }} className="flex flex-col items-center text-on-surface-variant active:scale-95">
+            <span className="material-symbols-outlined">logout</span>
+            <span className="text-label-sm font-label-sm">Logout</span>
+          </button>
         </div>
       </nav>
 

@@ -5,6 +5,10 @@ import { db } from '@/lib/mockData';
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get('q')?.toLowerCase().trim() ?? '';
 
+  if (q) {
+    supabaseAdmin.from('search_logs').insert({ query: q }).then(() => {});
+  }
+
   // People from real Supabase profiles
   let peopleQuery = supabaseAdmin
     .from('profiles')

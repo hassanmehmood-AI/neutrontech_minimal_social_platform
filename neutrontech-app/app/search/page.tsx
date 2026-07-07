@@ -11,19 +11,20 @@ export default function SearchPage() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [people, setPeople] = useState<Person[]>([]);
-  const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string; isAdmin: boolean } | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { router.replace('/login'); return; }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url')
+        .select('full_name, avatar_url, is_admin')
         .eq('id', session.user.id)
         .single();
       setCurrentUser({
         name: profile?.full_name || session.user.email?.split('@')[0] || '',
         avatar: profile?.avatar_url || '',
+        isAdmin: !!profile?.is_admin,
       });
     });
   }, [router]);
@@ -73,9 +74,9 @@ export default function SearchPage() {
       </nav>
 
       {/* ── LEFT SIDEBAR (lg+) ── */}
-      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md space-y-sm z-40">
-        <div className="pt-xl pb-lg">
-          <Link href="/" className="inline-flex items-center gap-sm">
+      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-0 space-y-sm z-40">
+        <div className="h-16 flex items-center mb-sm">
+            <Link href="/" className="inline-flex items-center gap-sm">
             <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
             <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
           </Link>
@@ -97,6 +98,12 @@ export default function SearchPage() {
             <span className="material-symbols-outlined">settings</span>
             <span className="font-label-md text-label-md">Settings</span>
           </Link>
+          {currentUser?.isAdmin && (
+            <Link className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/admin">
+              <span className="material-symbols-outlined">admin_panel_settings</span>
+              <span className="font-label-md text-label-md">Admin Console</span>
+            </Link>
+          )}
         </nav>
         <div className="border-t border-outline-variant pt-md space-y-xs">
           <Link className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/">
@@ -194,6 +201,10 @@ export default function SearchPage() {
           <Link href="/profile" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant active:scale-95 duration-150">
             <span className="material-symbols-outlined">person</span>
             <span className="font-label-sm text-[10px]">Profile</span>
+          </Link>
+          <Link href="/contact" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant active:scale-95 duration-150">
+            <span className="material-symbols-outlined">mail</span>
+            <span className="font-label-sm text-[10px]">Contact</span>
           </Link>
           <button onClick={handleLogout} className="flex flex-col items-center justify-center gap-1 text-on-surface-variant active:scale-95 duration-150">
             <span className="material-symbols-outlined">logout</span>

@@ -150,13 +150,15 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center font-label-sm text-label-sm text-on-surface-variant px-md leading-relaxed">
-            By continuing, you agree to Neutron Tech&apos;s{' '}
-            <a className="text-primary hover:underline" href="#">Terms of Service</a> and{' '}
-            <a className="text-primary hover:underline" href="#">Privacy Policy</a>.
+            © 2026 Neutron Tech Inc.
           </p>
-          <Link href="/portfolio" className="font-label-sm text-label-sm text-primary hover:underline">
-            Portfolio
-          </Link>
+          <div className="flex flex-wrap justify-center gap-md font-label-sm text-label-sm text-primary">
+            <Link href="/about" className="hover:underline">About</Link>
+            <Link href="/privacy" className="hover:underline">Privacy</Link>
+            <Link href="/terms" className="hover:underline">Terms</Link>
+            <Link href="/contact" className="hover:underline">Contact Us</Link>
+            <Link href="/portfolio" className="hover:underline">Portfolio</Link>
+          </div>
         </main>
       </div>
 
@@ -255,7 +257,7 @@ export default function LoginPage() {
                   </button>
                 </form>
                 <p className="text-center font-label-sm text-label-sm text-outline">
-                  By signing up, you agree to our <a className="text-primary hover:underline" href="#">Terms</a> and <a className="text-primary hover:underline" href="#">Privacy Policy</a>.
+                  By signing up, you agree to our <Link className="text-primary hover:underline" href="/terms">Terms</Link> and <Link className="text-primary hover:underline" href="/privacy">Privacy Policy</Link>.
                 </p>
                 <div className="flex items-center gap-sm">
                   <div className="flex-1 h-px bg-outline-variant"></div>
@@ -267,7 +269,13 @@ export default function LoginPage() {
               </div>
             )}
 
-            <p className="text-center font-label-sm text-label-sm text-outline mt-lg">© 2026 Neutron Tech. All rights reserved.</p>
+            <div className="flex flex-wrap justify-center gap-md font-label-sm text-label-sm text-primary mt-lg">
+              <Link href="/about" className="hover:underline">About</Link>
+              <Link href="/privacy" className="hover:underline">Privacy</Link>
+              <Link href="/terms" className="hover:underline">Terms</Link>
+              <Link href="/contact" className="hover:underline">Contact Us</Link>
+            </div>
+            <p className="text-center font-label-sm text-label-sm text-outline mt-sm">© 2026 Neutron Tech. All rights reserved.</p>
           </div>
         </section>
       </div>

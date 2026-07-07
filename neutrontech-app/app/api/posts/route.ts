@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     supabaseAdmin
       .from('posts')
       .select('*, profiles(full_name, avatar_url)')
+      .eq('status', 'published')
       .order('created_at', { ascending: false }),
     user
       ? supabaseAdmin.from('likes').select('post_id').eq('user_id', user.id)

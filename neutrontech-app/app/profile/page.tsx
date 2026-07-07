@@ -15,6 +15,7 @@ type Profile = {
   role: string | null;
   followers: number;
   following: number;
+  is_admin?: boolean | null;
 };
 
 type Post = {
@@ -612,15 +613,16 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-center justify-end gap-sm">
             <button className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary" onClick={() => window.location.href = '/search'}>search</button>
+            <Link href="/settings" className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary">settings</Link>
             <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="hidden lg:block font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low px-md py-xs rounded-lg transition-all active:scale-95 disabled:opacity-50">{loggingOut ? 'Logging out…' : 'Logout'}</button>
           </div>
         </div>
       </header>
 
       {/* ── LEFT SIDEBAR (lg+) ── */}
-      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant pt-20 p-md space-y-sm">
-        <div className="mb-sm">
-          <Link href="/" className="inline-flex items-center gap-sm">
+      <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-outline-variant p-md pt-0 space-y-sm z-40">
+        <div className="h-16 flex items-center mb-sm">
+            <Link href="/" className="inline-flex items-center gap-sm">
             <img src="/brand-logo.png" alt="" className="h-8 w-8 object-contain brightness-0" />
             <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Neutron Tech</span>
           </Link>
@@ -642,6 +644,12 @@ export default function ProfilePage() {
             <span className="material-symbols-outlined">settings</span>
             <span className="font-label-md text-label-md">Settings</span>
           </Link>
+          {profile?.is_admin && (
+            <Link className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl" href="/admin">
+              <span className="material-symbols-outlined">admin_panel_settings</span>
+              <span className="font-label-md text-label-md">Admin Console</span>
+            </Link>
+          )}
         </nav>
         <div className="pt-sm border-t border-outline-variant flex flex-col space-y-xs">
           <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full disabled:opacity-50">
@@ -1072,6 +1080,10 @@ export default function ProfilePage() {
           <Link href="/profile" className="flex flex-col items-center text-primary font-bold transition-all active:scale-95">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
             <span className="text-label-sm font-label-sm">Profile</span>
+          </Link>
+          <Link href="/contact" className="flex flex-col items-center text-on-surface-variant transition-all active:scale-95">
+            <span className="material-symbols-outlined">mail</span>
+            <span className="text-label-sm font-label-sm">Contact</span>
           </Link>
           <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="flex flex-col items-center text-on-surface-variant transition-all active:scale-95 disabled:opacity-50">
             <span className="material-symbols-outlined">logout</span>
