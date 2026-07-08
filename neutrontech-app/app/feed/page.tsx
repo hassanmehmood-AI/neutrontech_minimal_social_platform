@@ -71,6 +71,7 @@ export default function FeedPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
+  const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -455,7 +456,17 @@ export default function FeedPage() {
       <header className="fixed top-0 w-full z-50 glass-effect border-b border-outline-variant shadow-sm h-16">
         <div className="grid grid-cols-3 items-center px-margin-mobile md:px-margin-desktop h-full max-w-[1280px] mx-auto">
           {/* Left spacer */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-xs">
+            {currentUser?.isAdmin && (
+              <button
+                onClick={() => setAdminDrawerOpen(true)}
+                style={{ touchAction: 'manipulation' }}
+                className="lg:hidden p-xs rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150"
+                aria-label="Open menu"
+              >
+                <span className="material-symbols-outlined text-secondary">menu</span>
+              </button>
+            )}
             <Link href="/search" className="lg:hidden p-xs rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
               <span className="material-symbols-outlined text-primary">search</span>
             </Link>
@@ -566,6 +577,42 @@ export default function FeedPage() {
           </div>
         </div>
       </header>
+
+      {/* ── ADMIN SLIDE-OUT DRAWER (mobile) ── */}
+      {currentUser?.isAdmin && (
+        <>
+          <div
+            onClick={() => setAdminDrawerOpen(false)}
+            className={`fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm transition-opacity lg:hidden ${
+              adminDrawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            }`}
+          />
+          <div
+            className={`fixed inset-y-0 left-0 z-[101] w-72 max-w-[80%] bg-surface border-r border-outline-variant p-md flex flex-col space-y-xs transition-transform duration-300 lg:hidden ${
+              adminDrawerOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            <div className="h-16 flex items-center justify-between mb-sm">
+              <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Menu</span>
+              <button
+                onClick={() => setAdminDrawerOpen(false)}
+                className="p-xs rounded-full hover:bg-surface-container-high transition-colors text-secondary"
+                aria-label="Close menu"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <Link
+              href="/admin"
+              onClick={() => setAdminDrawerOpen(false)}
+              className="flex items-center space-x-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl"
+            >
+              <span className="material-symbols-outlined">admin_panel_settings</span>
+              <span className="font-label-md text-label-md">Admin Console</span>
+            </Link>
+          </div>
+        </>
+      )}
 
       <div className="flex max-w-[1280px] mx-auto pt-16">
 

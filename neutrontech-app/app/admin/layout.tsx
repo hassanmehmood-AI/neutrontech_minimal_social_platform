@@ -58,6 +58,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       });
       setStatus('allowed');
     });
+
+    // Supabase refreshes the underlying session token in the background;
+    // keep the context in sync so admin API calls never use a stale/expired JWT.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        router.replace('/login');
+        return;
+      }
+      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        setCtx((prev) => (prev ? { ...prev, accessToken: session.access_token } : prev));
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [router]);
 
   const handleLogout = async () => {
@@ -137,8 +153,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </aside>
 
         <div className="lg:ml-64 flex flex-col min-h-screen">
-          <header className="flex justify-between items-center h-16 px-xl bg-surface-container-lowest shadow-sm sticky top-0 z-30">
-            <div className="flex items-center gap-lg flex-1">
+          <header className="flex justify-between items-center h-16 px-margin-mobile lg:px-xl bg-surface-container-lowest shadow-sm sticky top-0 z-30">
+            <div className="flex items-center gap-sm lg:gap-lg flex-1 min-w-0">
               <button
                 onClick={() => setMobileNavOpen((v) => !v)}
                 className="lg:hidden p-xs -ml-xs rounded-full hover:bg-surface-container-high transition-colors"
@@ -146,10 +162,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               >
                 <span className="material-symbols-outlined">{mobileNavOpen ? 'close' : 'menu'}</span>
               </button>
-              <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface">Admin Dashboard</h2>
+              <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Admin Dashboard</h2>
             </div>
-            <div className="flex items-center gap-xl">
-              <div className="flex items-center gap-md border-l border-outline-variant pl-xl">
+            <div className="flex items-center gap-md lg:gap-xl">
+              <div className="flex items-center gap-md border-l border-outline-variant pl-md lg:pl-xl">
                 {ctx.adminAvatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img className="w-10 h-10 rounded-full object-cover" src={ctx.adminAvatar} alt={ctx.adminName} />
@@ -166,57 +182,87 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </header>
 
-          {mobileNavOpen && (
-            <nav className="lg:hidden sticky top-16 z-20 bg-surface border-b border-outline-variant p-md space-y-xs">
-              <Link href="/feed" className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all">
-                <span className="material-symbols-outlined">home</span>
-                <span className="font-label-md text-label-md">Home</span>
-              </Link>
-              <Link
-                className={
-                  pathname === '/admin'
-                    ? 'bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center gap-sm p-sm transition-all'
-                    : 'text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all'
-                }
-                href="/admin"
+          {/* ── MOBILE SLIDE-OUT NAV ── */}
+          <div
+            onClick={() => setMobileNavOpen(false)}
+            className={`fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm transition-opacity lg:hidden ${
+              mobileNavOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            }`}
+          />
+          <nav
+            className={`fixed inset-y-0 left-0 z-[101] w-72 max-w-[80%] bg-surface border-r border-outline-variant p-md flex flex-col space-y-xs transition-transform duration-300 lg:hidden ${
+              mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            <div className="h-16 flex items-center justify-between mb-sm">
+              <span className="font-display text-headline-sm text-on-surface font-bold tracking-tight">Menu</span>
+              <button
+                onClick={() => setMobileNavOpen(false)}
+                className="p-xs rounded-full hover:bg-surface-container-high transition-colors text-secondary"
+                aria-label="Close menu"
               >
-                <span className="material-symbols-outlined">admin_panel_settings</span>
-                <span className="font-label-md text-label-md">Admin Console</span>
-              </Link>
-              <div className="pl-lg space-y-xs">
-                {ADMIN_NAV.map((item) => {
-                  const active = pathname.startsWith(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={
-                        active
-                          ? 'bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center gap-sm p-sm text-sm transition-all'
-                          : 'text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl text-sm transition-all'
-                      }
-                    >
-                      <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
-                      <span className="font-label-md text-label-md">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-              <div className="pt-xs border-t border-outline-variant">
-                <button
-                  onClick={handleLogout}
-                  disabled={loggingOut}
-                  style={{ touchAction: 'manipulation' }}
-                  className="flex items-center gap-sm p-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined">logout</span>
-                  <span className="font-label-md text-label-md">{loggingOut ? 'Logging out…' : 'Logout'}</span>
-                </button>
-              </div>
-            </nav>
-          )}
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <Link
+              href="/feed"
+              onClick={() => setMobileNavOpen(false)}
+              className="text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all"
+            >
+              <span className="material-symbols-outlined">home</span>
+              <span className="font-label-md text-label-md">Home</span>
+            </Link>
+            <Link
+              onClick={() => setMobileNavOpen(false)}
+              className={
+                pathname === '/admin'
+                  ? 'bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center gap-sm p-sm transition-all'
+                  : 'text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl transition-all'
+              }
+              href="/admin"
+            >
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: pathname === '/admin' ? "'FILL' 1" : undefined }}>admin_panel_settings</span>
+              <span className="font-label-md text-label-md">Admin Console</span>
+            </Link>
+            <div className="pl-lg space-y-xs">
+              {ADMIN_NAV.map((item) => {
+                const active = pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileNavOpen(false)}
+                    className={
+                      active
+                        ? 'bg-secondary-container text-on-secondary-container rounded-xl font-bold flex items-center gap-sm p-sm text-sm transition-all'
+                        : 'text-on-surface-variant hover:bg-surface-container-high flex items-center gap-sm p-sm rounded-xl text-sm transition-all'
+                    }
+                  >
+                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: active ? "'FILL' 1" : undefined }}>
+                      {item.icon}
+                    </span>
+                    <span className="font-label-md text-label-md">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="mt-auto pt-md border-t border-outline-variant">
+              <button
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  handleLogout();
+                }}
+                disabled={loggingOut}
+                style={{ touchAction: 'manipulation' }}
+                className="flex items-center gap-sm p-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-xl text-left w-full disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined">logout</span>
+                <span className="font-label-md text-label-md">{loggingOut ? 'Logging out…' : 'Logout'}</span>
+              </button>
+            </div>
+          </nav>
 
-          <main className="flex-1 p-xl">{children}</main>
+          <main className="flex-1 p-margin-mobile lg:p-xl">{children}</main>
 
           <footer className="flex justify-between items-center py-md px-xl bg-transparent border-t border-outline-variant">
             <p className="font-label-sm text-label-sm font-medium text-secondary">

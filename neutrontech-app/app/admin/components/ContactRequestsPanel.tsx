@@ -21,7 +21,7 @@ export default function ContactRequestsPanel({ showMoreHref }: { showMoreHref?: 
 
   const load = () => {
     fetch('/api/admin/contact-requests', { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then(setRequests);
   };
 
@@ -37,8 +37,30 @@ export default function ContactRequestsPanel({ showMoreHref }: { showMoreHref?: 
     if (res.ok) {
       load();
       setSelected(null);
+    } else {
+      const { error } = await res.json().catch(() => ({ error: 'Request failed' }));
+      window.alert(error || 'Request failed');
     }
     setBusyId(null);
+  };
+
+  const openRequest = (req: ContactRequest) => {
+    setSelected(req);
+    if (req.status !== 'new') return;
+
+    // Viewing a query clears its "New" tag automatically — no manual action needed.
+    fetch(`/api/admin/contact-requests/${req.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ status: 'resolved' }),
+    }).then((res) => {
+      if (!res.ok) return;
+      setRequests((prev) => prev?.map((r) => (r.id === req.id ? { ...r, status: 'resolved' } : r)) ?? prev);
+      setSelected((prev) => (prev && prev.id === req.id ? { ...prev, status: 'resolved' } : prev));
+    });
   };
 
   return (
@@ -52,7 +74,7 @@ export default function ContactRequestsPanel({ showMoreHref }: { showMoreHref?: 
         {(showMoreHref ? requests?.slice(0, 5) : requests)?.map((req) => (
           <button
             key={req.id}
-            onClick={() => setSelected(req)}
+            onClick={() => openRequest(req)}
             className={
               req.status === 'new'
                 ? 'w-full flex items-center gap-md p-md rounded-lg bg-primary/5 border border-primary/10 text-left'
@@ -63,10 +85,10 @@ export default function ContactRequestsPanel({ showMoreHref }: { showMoreHref?: 
               {req.name.slice(0, 1).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex justify-between">
-                <p className="font-label-md text-label-md font-bold text-on-surface">{req.name}</p>
+              <div className="flex justify-between items-start gap-sm">
+                <p className="font-label-md text-label-md font-bold text-on-surface truncate">{req.name}</p>
                 {req.status === 'new' && (
-                  <span className="text-[10px] font-bold text-primary">New</span>
+                  <span className="shrink-0 text-[10px] font-bold text-primary">New</span>
                 )}
               </div>
               <p className="text-[12px] text-secondary truncate">{req.message}</p>
@@ -128,17 +150,15 @@ export default function ContactRequestsPanel({ showMoreHref }: { showMoreHref?: 
               </div>
             </div>
 
-            {selected.status === 'resolved' && (
-              <div className="mt-lg">
-                <button
-                  disabled={busyId === selected.id}
-                  onClick={() => deleteRequest(selected)}
-                  className="w-full py-2 rounded-md border border-red-200 text-red-600 font-label-md text-label-md hover:bg-red-50 transition-colors disabled:opacity-50"
-                >
-                  {busyId === selected.id ? 'Deleting…' : 'Delete Query'}
-                </button>
-              </div>
-            )}
+            <div className="mt-lg">
+              <button
+                disabled={busyId === selected.id}
+                onClick={() => deleteRequest(selected)}
+                className="w-full py-2 rounded-md border border-red-200 text-red-600 font-label-md text-label-md hover:bg-red-50 transition-colors disabled:opacity-50"
+              >
+                {busyId === selected.id ? 'Deleting…' : 'Delete Query'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -614,6 +614,9 @@ export default function ProfilePage() {
           <div className="flex items-center justify-end gap-sm">
             <button className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary" onClick={() => window.location.href = '/search'}>search</button>
             <Link href="/settings" className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary">settings</Link>
+            {profile?.is_admin && (
+              <Link href="/admin" className="lg:hidden material-symbols-outlined p-xs hover:bg-surface-container-high rounded-full transition-colors text-secondary">admin_panel_settings</Link>
+            )}
             <button onClick={handleLogout} disabled={loggingOut} style={{ touchAction: 'manipulation' }} className="hidden lg:block font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low px-md py-xs rounded-lg transition-all active:scale-95 disabled:opacity-50">{loggingOut ? 'Logging out…' : 'Logout'}</button>
           </div>
         </div>

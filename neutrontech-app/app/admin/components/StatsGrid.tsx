@@ -27,12 +27,12 @@ export default function StatsGrid() {
 
   useEffect(() => {
     fetch('/api/admin/stats', { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then(setStats);
   }, [accessToken]);
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
+    <section className="grid grid-cols-2 lg:grid-cols-4 gap-sm sm:gap-lg mb-xl">
       {CARDS.map((card) => (
         <div
           key={card.key}

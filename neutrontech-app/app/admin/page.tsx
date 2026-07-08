@@ -16,9 +16,12 @@ export default function AdminDashboardPage() {
         <QuickSettings />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg mb-xl">
         <UserManagementTable showMoreHref="/admin/users" />
         <PostModeration showMoreHref="/admin/posts" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
         <ContactRequestsPanel showMoreHref="/admin/contact-requests" />
         <RecentSignups showMoreHref="/admin/users" />
       </div>

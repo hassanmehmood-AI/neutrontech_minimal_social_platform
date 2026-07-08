@@ -19,7 +19,7 @@ export default function PostModeration({ showMoreHref }: { showMoreHref?: string
 
   const load = () => {
     fetch('/api/admin/posts', { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then(setPosts);
   };
 
@@ -47,20 +47,20 @@ export default function PostModeration({ showMoreHref }: { showMoreHref?: string
         {posts?.length === 0 && (
           <p className="font-body-sm text-body-sm text-secondary">No posts yet.</p>
         )}
-        {(showMoreHref ? posts?.slice(0, 5) : posts)?.map((post) => (
+        {(showMoreHref ? posts?.slice(0, 3) : posts)?.map((post) => (
           <div
             key={post.id}
             className="group p-md rounded-lg hover:bg-surface-container-low border border-transparent hover:border-surface-variant/30 transition-all"
           >
-            <div className="flex justify-between items-start mb-xs">
-              <p className="font-body-sm text-body-sm font-bold text-on-surface truncate pr-4">
+            <div className="flex justify-between items-start gap-sm mb-xs">
+              <p className="flex-1 min-w-0 font-body-sm text-body-sm font-bold text-on-surface truncate">
                 {post.title || '(no content)'}
               </p>
               <span
                 className={
                   post.status === 'pending'
-                    ? 'text-[10px] uppercase tracking-wider font-bold text-secondary-container bg-secondary-fixed-dim px-2 py-0.5 rounded'
-                    : 'text-[10px] uppercase tracking-wider font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded'
+                    ? 'shrink-0 text-[10px] uppercase tracking-wider font-bold text-secondary-container bg-secondary-fixed-dim px-2 py-0.5 rounded'
+                    : 'shrink-0 text-[10px] uppercase tracking-wider font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded'
                 }
               >
                 {post.status === 'pending' ? 'Pending' : 'Published'}

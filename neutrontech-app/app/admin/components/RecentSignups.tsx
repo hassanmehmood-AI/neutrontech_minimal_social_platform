@@ -12,8 +12,8 @@ export default function RecentSignups({ showMoreHref }: { showMoreHref?: string 
 
   useEffect(() => {
     fetch('/api/admin/users', { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.json())
-      .then((data: AdminUser[]) => setUsers(data.slice(0, 5)));
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: AdminUser[] | null) => data && setUsers(data.slice(0, 5)));
   }, [accessToken]);
 
   return (

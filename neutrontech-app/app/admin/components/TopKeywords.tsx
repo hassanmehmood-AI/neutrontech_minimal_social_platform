@@ -11,7 +11,7 @@ export default function TopKeywords() {
 
   useEffect(() => {
     fetch('/api/admin/keywords', { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then(setKeywords);
   }, [accessToken]);
 

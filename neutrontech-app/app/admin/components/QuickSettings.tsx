@@ -24,7 +24,7 @@ export default function QuickSettings() {
 
   useEffect(() => {
     fetch('/api/admin/settings', { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then(setSettings);
   }, [accessToken]);
 
@@ -47,7 +47,7 @@ export default function QuickSettings() {
   return (
     <div className="h-full flex flex-col bg-surface-container-lowest p-lg rounded-xl card-shadow border border-surface-variant/50">
       <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface mb-lg">Quick Settings</h3>
-      <div className="space-y-lg">
+      <div className="flex-1 flex flex-col justify-between">
         {TOGGLES.map((t) => (
           <div key={t.key} className="flex items-center justify-between">
             <div>
