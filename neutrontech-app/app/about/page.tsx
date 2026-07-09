@@ -29,7 +29,7 @@ export default function AboutPage() {
         <section className="bg-surface-container-lowest rounded-2xl p-8 mb-6 border border-outline-variant">
           <h2 className="font-headline-md text-headline-md text-on-surface mb-4">Our Mission</h2>
           <p className="text-on-surface-variant leading-relaxed mb-4">
-            Neutron Tech was founded in 2024 with a simple belief: people do their best work when they&apos;re connected to others who share their passion. We set out to create a minimal, fast, and respectful space for professionals, creators, and curious minds to share ideas, celebrate milestones, and grow together.
+            Neutron Tech was founded in 2026 with a simple belief: people do their best work when they&apos;re connected to others who share their passion. We set out to create a minimal, fast, and respectful space for professionals, creators, and curious minds to share ideas, celebrate milestones, and grow together.
           </p>
           <p className="text-on-surface-variant leading-relaxed">
             Unlike legacy social platforms, we don&apos;t optimise for outrage or endless scrolling. We optimise for genuine connection and meaningful content.
@@ -84,9 +84,9 @@ export default function AboutPage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { name: 'Alex Rivera', role: 'Co-founder & CEO', initials: 'AR' },
+              { name: 'Muhamme Excel', role: 'Founder and CEO', initials: 'ME' },
               { name: 'Priya Singh', role: 'Co-founder & CTO', initials: 'PS' },
-              { name: 'Jordan Kim', role: 'Head of Design', initials: 'JK' },
+              { name: 'Hassan Mehmood', role: 'Head of Design', initials: 'HM' },
             ].map(({ name, role, initials }) => (
               <div key={name} className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low">
                 <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">

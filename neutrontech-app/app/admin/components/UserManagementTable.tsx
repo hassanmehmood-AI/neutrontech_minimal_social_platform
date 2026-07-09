@@ -19,6 +19,7 @@ export default function UserManagementTable({ showMoreHref }: { showMoreHref?: s
   const { accessToken, adminId, isSuperAdmin } = useAdminContext();
   const [users, setUsers] = useState<AdminUser[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const load = () => {
     fetch('/api/admin/users', { headers: { Authorization: `Bearer ${accessToken}` } })
@@ -63,16 +64,31 @@ export default function UserManagementTable({ showMoreHref }: { showMoreHref?: s
     setBusyId(null);
   };
 
+  const filteredUsers = users?.filter((u) => u.name.toLowerCase().includes(search.trim().toLowerCase()));
+  const visibleUsers = showMoreHref ? filteredUsers?.slice(0, 5) : filteredUsers;
+
   return (
     <div className="lg:col-span-2 self-start bg-surface-container-lowest rounded-xl card-shadow border border-surface-variant/50 overflow-hidden">
-      <div className="p-lg border-b border-surface-variant/50 flex justify-between items-center">
+      <div className="p-lg border-b border-surface-variant/50 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-sm">
         <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface">User Management</h3>
+        {!showMoreHref && (
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name…"
+            className="w-full sm:w-64 px-3 py-1.5 rounded-lg border border-surface-variant/50 bg-surface-container-low font-body-sm text-body-sm text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        )}
       </div>
       {!users && <div className="p-md font-body-sm text-body-sm text-secondary">Loading…</div>}
+      {users && filteredUsers?.length === 0 && (
+        <div className="p-md font-body-sm text-body-sm text-secondary">No users found.</div>
+      )}
 
       {/* Mobile: stacked cards (a 6-column table can't fit a phone screen) */}
       <div className="sm:hidden divide-y divide-surface-variant/30">
-        {(showMoreHref ? users?.slice(0, 5) : users)?.map((u, i) => (
+        {visibleUsers?.map((u, i) => (
           <div key={u.id} className="p-md space-y-sm">
             <div className="flex items-center gap-sm">
               <span className="w-4 shrink-0 font-body-sm text-body-sm text-secondary tabular-nums">{i + 1}</span>
@@ -141,7 +157,7 @@ export default function UserManagementTable({ showMoreHref }: { showMoreHref?: s
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-variant/30">
-            {(showMoreHref ? users?.slice(0, 5) : users)?.map((u, i) => (
+            {visibleUsers?.map((u, i) => (
               <tr key={u.id} className="hover:bg-surface-container-low transition-colors">
                 <td className="p-md font-body-sm text-body-sm text-secondary tabular-nums">{i + 1}</td>
                 <td className="p-md">

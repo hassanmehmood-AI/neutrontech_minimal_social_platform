@@ -715,10 +715,10 @@ export default function FeedPage() {
                   <input ref={videoInputRef} type="file" accept="video/*" multiple className="hidden" onChange={handleVideoChange} />
                   <div className="flex justify-between items-center mt-sm pt-sm border-t border-outline-variant">
                     <div className="flex gap-sm">
-                      <button className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors" onClick={() => imageInputRef.current?.click()} title="Add image">
+                      <button className="text-primary hover:bg-surface-container-high p-xs rounded-full transition-colors" onClick={() => imageInputRef.current?.click()} title="Add image">
                         <span className="material-symbols-outlined text-[20px]">image</span>
                       </button>
-                      <button className="text-primary hover:bg-surface-container-low p-xs rounded-full transition-colors" onClick={() => videoInputRef.current?.click()} title="Add video">
+                      <button className="text-primary hover:bg-surface-container-high p-xs rounded-full transition-colors" onClick={() => videoInputRef.current?.click()} title="Add video">
                         <span className="material-symbols-outlined text-[20px]">videocam</span>
                       </button>
                     </div>
