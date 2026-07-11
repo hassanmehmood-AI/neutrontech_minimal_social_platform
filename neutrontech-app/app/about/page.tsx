@@ -84,7 +84,7 @@ export default function AboutPage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { name: 'Muhamme Excel', role: 'Founder and CEO', initials: 'ME' },
+              { name: 'Mohammed Excel', role: 'Founder and CEO', initials: 'ME' },
               { name: 'Priya Singh', role: 'Co-founder & CTO', initials: 'PS' },
               { name: 'Hassan Mehmood', role: 'Head of Design', initials: 'HM' },
             ].map(({ name, role, initials }) => (
