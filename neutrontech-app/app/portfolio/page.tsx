@@ -4,7 +4,7 @@ export default function PortfolioPage() {
   const projects = [
     { name: 'SwapFuser.com', url: 'https://www.swapfuser.com', favicon: 'https://www.swapfuser.com/icon.png' },
     { name: 'PetalBird.com', url: 'https://www.petalbird.com', favicon: 'https://www.petalbird.com/favicon.ico' },
-    { name: 'PeaceGangPeaceWorld.com', url: 'https://peacegangpeaceworld.com/', favicon: 'https://peacegangpeaceworld.com/favicon.ico' },
+    { name: 'PeaceGangPeaceWorld.com', url: 'https://peacegangpeaceworld.com/', favicon: 'https://peacegangpeaceworld.com/icon.png' },
   ];
 
   return (
