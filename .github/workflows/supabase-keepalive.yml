@@ -2,8 +2,9 @@ name: Supabase Keep-Alive
 
 on:
   schedule:
-    # Runs daily at 03:00 UTC, well within Supabase's 7-day inactivity window
-    - cron: "0 3 * * *"
+    # Runs every 6 hours; Supabase's pause criteria wants "a few" requests
+    # per day, not just one, so a single daily ping sits right on the edge.
+    - cron: "0 */6 * * *"
   workflow_dispatch: {}
 
 jobs:
