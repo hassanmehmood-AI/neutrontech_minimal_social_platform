@@ -12,13 +12,19 @@ jobs:
     steps:
       - name: Write heartbeat row to Supabase
         run: |
-          curl -sf "${SUPABASE_URL}/rest/v1/heartbeat" \
+          status=$(curl -s -o response.txt -w "%{http_code}" \
+            -X POST "${SUPABASE_URL}/rest/v1/heartbeat" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
-            -d '{}' \
-            -o /dev/null
+            -d '{}')
+          echo "HTTP status: $status"
+          cat response.txt
+          if [ "$status" -ge 400 ]; then
+            echo "::error::Supabase heartbeat write failed with HTTP $status"
+            exit 1
+          fi
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
