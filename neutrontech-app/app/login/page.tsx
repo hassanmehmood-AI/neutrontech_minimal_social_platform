@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import styles from './login.module.css';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mobileTab, setMobileTab] = useState<'login' | 'signup'>('login');
-  const [desktopTab, setDesktopTab] = useState<'login' | 'signup'>('login');
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [showPwd, setShowPwd] = useState<Record<string, boolean>>({});
 
   // Shared form state
@@ -26,17 +26,34 @@ export default function LoginPage() {
   const togglePwd = (id: string) =>
     setShowPwd((prev) => ({ ...prev, [id]: !prev[id] }));
 
+  const ensureProfile = async (accessToken: string) => {
+    const response = await fetch('/api/auth/profile', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!response.ok) {
+      throw new Error('Your account exists, but your profile could not be prepared. Please try signing in again.');
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password: loginPassword,
-    });
-    setLoading(false);
-    if (error) { setLoginError(error.message); return; }
-    router.push('/feed');
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEmail.trim(),
+        password: loginPassword,
+      });
+      if (error) throw error;
+      if (!data.session) throw new Error('Unable to start your session. Please try again.');
+      await ensureProfile(data.session.access_token);
+      router.push('/feed');
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : 'Unable to sign in. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -44,36 +61,25 @@ export default function LoginPage() {
     setSignupError('');
     setSignupMsg('');
     setLoading(true);
-
-    const { data, error } = await supabase.auth.signUp({
-      email: signupEmail,
-      password: signupPassword,
-      options: { data: { full_name: signupFullName } },
-    });
-
-    if (error) { setLoading(false); setSignupError(error.message); return; }
-
-    // Create profile via API route (uses service role key — bypasses RLS)
-    if (data.user) {
-      await fetch('/api/auth/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: data.user.id,
-          fullName: signupFullName,
-          email: signupEmail,
-        }),
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: signupEmail.trim(),
+        password: signupPassword,
+        options: { data: { full_name: signupFullName.trim() } },
       });
-    }
-
-    setLoading(false);
-
-    if (data.session) {
-      router.push('/feed');
-    } else {
-      setSignupMsg('Check your email to confirm your account, then sign in.');
-      setMobileTab('login');
-      setDesktopTab('login');
+      if (error) throw error;
+      if (data.session) {
+        await ensureProfile(data.session.access_token);
+        router.push('/feed');
+      } else {
+        // Confirmation-required accounts get their profile on their first login.
+        setSignupMsg('Check your email to confirm your account, then sign in.');
+        setActiveTab('login');
+      }
+    } catch (error) {
+      setSignupError(error instanceof Error ? error.message : 'Unable to sign up. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,7 +88,7 @@ export default function LoginPage() {
       {/* ══════════════════════════════════
           MOBILE LAYOUT (hidden on lg+)
       ══════════════════════════════════ */}
-      <div className="lg:hidden h-screen flex flex-col items-center justify-center px-margin-mobile py-sm relative overflow-hidden bg-surface">
+      <div className={`${styles.mobile} flex flex-col items-center px-margin-mobile py-sm relative bg-surface`}>
         <div className="fixed -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
         <div className="fixed -bottom-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
 
@@ -99,14 +105,14 @@ export default function LoginPage() {
             )}
 
             {/* Mobile Login */}
-            {mobileTab === 'login' && (
+            {activeTab === 'login' && (
               <>
                 <form className="space-y-sm" onSubmit={handleLogin}>
                   {loginError && <p className="text-error font-label-sm text-label-sm">{loginError}</p>}
-                  <input value={loginEmail} onChange={e => setLoginEmail(e.target.value)} className="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Email address or mobile number" type="email" required />
+                  <input aria-label="Email address" autoComplete="email" autoCapitalize="none" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} className="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Email address" type="email" required />
                   <div className="relative">
-                    <input value={loginPassword} onChange={e => setLoginPassword(e.target.value)} className="w-full px-md pr-12 py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Password" type={showPwd['mob-pwd'] ? 'text' : 'password'} required />
-                    <button className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('mob-pwd')}>
+                    <input aria-label="Password" autoComplete="current-password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} className="w-full px-md pr-12 py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Password" type={showPwd['mob-pwd'] ? 'text' : 'password'} required />
+                    <button aria-label="Toggle password visibility" className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('mob-pwd')}>
                       <span className="material-symbols-outlined">{showPwd['mob-pwd'] ? 'visibility_off' : 'visibility'}</span>
                     </button>
                   </div>
@@ -118,23 +124,23 @@ export default function LoginPage() {
                   <div className="flex-1 h-px bg-outline-variant"></div>
                   <div className="flex-1 h-px bg-outline-variant"></div>
                 </div>
-                <button className="w-full py-sm border-2 border-outline-variant text-on-surface font-label-md text-label-md font-bold rounded-lg hover:bg-surface-container-low transition-all" onClick={() => setMobileTab('signup')}>
+                <button className="w-full py-sm border-2 border-outline-variant text-on-surface font-label-md text-label-md font-bold rounded-lg hover:bg-surface-container-low transition-all" onClick={() => setActiveTab('signup')}>
                   Create new account
                 </button>
               </>
             )}
 
             {/* Mobile Signup */}
-            {mobileTab === 'signup' && (
+            {activeTab === 'signup' && (
               <>
                 <h3 className="font-headline-md text-headline-md text-on-surface font-bold">Create a new account</h3>
                 <form className="space-y-sm" onSubmit={handleSignup}>
                   {signupError && <p className="text-error font-label-sm text-label-sm">{signupError}</p>}
-                  <input value={signupFullName} onChange={e => setSignupFullName(e.target.value)} className="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Full name" type="text" required />
-                  <input value={signupEmail} onChange={e => setSignupEmail(e.target.value)} className="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Email address" type="email" required />
+                  <input aria-label="Full name" autoComplete="name" value={signupFullName} onChange={e => setSignupFullName(e.target.value)} className="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Full name" type="text" required />
+                  <input aria-label="Email address" autoComplete="email" autoCapitalize="none" value={signupEmail} onChange={e => setSignupEmail(e.target.value)} className="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="Email address" type="email" required />
                   <div className="relative">
-                    <input value={signupPassword} onChange={e => setSignupPassword(e.target.value)} className="w-full px-md pr-12 py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="New password (min. 6 chars)" type={showPwd['mob-signup-pwd'] ? 'text' : 'password'} required minLength={6} />
-                    <button className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('mob-signup-pwd')}>
+                    <input aria-label="New password" autoComplete="new-password" value={signupPassword} onChange={e => setSignupPassword(e.target.value)} className="w-full px-md pr-12 py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" placeholder="New password (min. 6 chars)" type={showPwd['mob-signup-pwd'] ? 'text' : 'password'} required minLength={6} />
+                    <button aria-label="Toggle password visibility" className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('mob-signup-pwd')}>
                       <span className="material-symbols-outlined">{showPwd['mob-signup-pwd'] ? 'visibility_off' : 'visibility'}</span>
                     </button>
                   </div>
@@ -142,7 +148,7 @@ export default function LoginPage() {
                     {loading ? 'Creating account...' : 'Sign Up'}
                   </button>
                 </form>
-                <button type="button" className="w-full text-center font-label-sm text-label-sm text-primary hover:underline" onClick={() => setMobileTab('login')}>
+                <button type="button" className="w-full text-center font-label-sm text-label-sm text-primary hover:underline" onClick={() => setActiveTab('login')}>
                   Already have an account?
                 </button>
               </>
@@ -165,16 +171,16 @@ export default function LoginPage() {
       {/* ══════════════════════════════════
           DESKTOP LAYOUT (hidden on mobile)
       ══════════════════════════════════ */}
-      <div className="hidden lg:flex h-screen overflow-hidden">
+      <div className={styles.desktop}>
 
         {/* Left branding panel */}
-        <section className="w-1/2 bg-primary-container relative overflow-hidden flex items-center justify-center p-xl">
+        <section className={`${styles.branding} bg-primary-container relative overflow-hidden flex items-center justify-center p-xl`}>
           <div className="absolute inset-0 z-0">
-            <img className="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000&auto=format&fit=crop" alt="Tech background" />
+            {/* <img className="w-full h-full object-cover opacity-30 mix-blend-overlay" src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000&auto=format&fit=crop" alt="Tech background" /> */}
           </div>
           <div className="relative z-10 max-w-[32rem] text-left">
             <Link href="/" className="inline-flex items-center gap-sm mb-md">
-              <img src="/brand-logo.png" alt="Neutron Tech logo" className="h-10 w-10 object-contain brightness-0 invert opacity-80" />
+              {/* <img src="/brand-logo.png" alt="Neutron Tech logo" className="h-10 w-10 object-contain brightness-0 invert opacity-80" /> */}
               <span className="font-display text-headline-lg text-white/80 tracking-tight font-bold">Neutron Tech</span>
             </Link>
             <h1 className="font-display text-display text-on-primary mb-md leading-tight">
@@ -201,7 +207,7 @@ export default function LoginPage() {
         </section>
 
         {/* Right form panel */}
-        <section className="w-1/2 bg-surface-container-lowest flex flex-col items-center justify-center px-10 overflow-hidden">
+        <section className={`${styles.formPanel} bg-surface-container-lowest flex flex-col items-center justify-center px-10`}>
           <div className="w-full max-w-[396px]">
 
             {signupMsg && (
@@ -209,15 +215,15 @@ export default function LoginPage() {
             )}
 
             {/* Desktop Login */}
-            {desktopTab === 'login' && (
+            {activeTab === 'login' && (
               <div className="space-y-sm">
                 <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold mb-md">Log in to Neutron Tech</h2>
                 <form className="space-y-sm" onSubmit={handleLogin}>
                   {loginError && <p className="text-error font-label-sm text-label-sm">{loginError}</p>}
-                  <input value={loginEmail} onChange={e => setLoginEmail(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Email address or mobile number" type="email" required />
+                  <input aria-label="Email address" autoComplete="email" autoCapitalize="none" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Email address" type="email" required />
                   <div className="relative">
-                    <input value={loginPassword} onChange={e => setLoginPassword(e.target.value)} className="w-full px-md pr-12 py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Password" type={showPwd['desk-pwd'] ? 'text' : 'password'} required />
-                    <button className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('desk-pwd')}>
+                    <input aria-label="Password" autoComplete="current-password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} className="w-full px-md pr-12 py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Password" type={showPwd['desk-pwd'] ? 'text' : 'password'} required />
+                    <button aria-label="Toggle password visibility" className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('desk-pwd')}>
                       <span className="material-symbols-outlined">{showPwd['desk-pwd'] ? 'visibility_off' : 'visibility'}</span>
                     </button>
                   </div>
@@ -229,14 +235,14 @@ export default function LoginPage() {
                   <div className="flex-1 h-px bg-outline-variant"></div>
                   <div className="flex-1 h-px bg-outline-variant"></div>
                 </div>
-                <button className="w-full py-sm border-2 border-outline-variant text-on-surface font-label-md text-label-md font-bold rounded-xl hover:bg-surface-container-low transition-all" onClick={() => setDesktopTab('signup')}>
+                <button className="w-full py-sm border-2 border-outline-variant text-on-surface font-label-md text-label-md font-bold rounded-xl hover:bg-surface-container-low transition-all" onClick={() => setActiveTab('signup')}>
                   Create new account
                 </button>
               </div>
             )}
 
             {/* Desktop Signup */}
-            {desktopTab === 'signup' && (
+            {activeTab === 'signup' && (
               <div className="space-y-sm">
                 <div className="mb-md">
                   <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">Create a new account</h2>
@@ -244,11 +250,11 @@ export default function LoginPage() {
                 </div>
                 <form className="space-y-sm" onSubmit={handleSignup}>
                   {signupError && <p className="text-error font-label-sm text-label-sm">{signupError}</p>}
-                  <input value={signupFullName} onChange={e => setSignupFullName(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Full name" type="text" required />
-                  <input value={signupEmail} onChange={e => setSignupEmail(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Email address" type="email" required />
+                  <input aria-label="Full name" autoComplete="name" value={signupFullName} onChange={e => setSignupFullName(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Full name" type="text" required />
+                  <input aria-label="Email address" autoComplete="email" autoCapitalize="none" value={signupEmail} onChange={e => setSignupEmail(e.target.value)} className="w-full px-md py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Email address" type="email" required />
                   <div className="relative">
-                    <input value={signupPassword} onChange={e => setSignupPassword(e.target.value)} className="w-full px-md pr-12 py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="New password (min. 6 chars)" type={showPwd['desk-signup-pwd'] ? 'text' : 'password'} required minLength={6} />
-                    <button className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('desk-signup-pwd')}>
+                    <input aria-label="New password" autoComplete="new-password" value={signupPassword} onChange={e => setSignupPassword(e.target.value)} className="w-full px-md pr-12 py-sm rounded-xl border border-outline-variant bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="New password (min. 6 chars)" type={showPwd['desk-signup-pwd'] ? 'text' : 'password'} required minLength={6} />
+                    <button aria-label="Toggle password visibility" className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onClick={() => togglePwd('desk-signup-pwd')}>
                       <span className="material-symbols-outlined">{showPwd['desk-signup-pwd'] ? 'visibility_off' : 'visibility'}</span>
                     </button>
                   </div>
@@ -263,7 +269,7 @@ export default function LoginPage() {
                   <div className="flex-1 h-px bg-outline-variant"></div>
                   <div className="flex-1 h-px bg-outline-variant"></div>
                 </div>
-                <button className="w-full py-sm border border-outline-variant text-on-surface font-label-md text-label-md rounded-xl hover:bg-surface-container-low transition-all" onClick={() => setDesktopTab('login')}>
+                <button className="w-full py-sm border border-outline-variant text-on-surface font-label-md text-label-md rounded-xl hover:bg-surface-container-low transition-all" onClick={() => setActiveTab('login')}>
                   Already have an account?
                 </button>
               </div>
