@@ -1,5 +1,21 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Supabase configuration
+
+The app requires a Supabase project. Copy `.env.example` to `.env.local` and
+replace the placeholders with the project URL, anon key, and service-role key
+from the Supabase dashboard's API settings. Keep `SUPABASE_SERVICE_ROLE_KEY`
+server-only; do not rename it with a `NEXT_PUBLIC_` prefix or commit `.env.local`.
+Restart the development server after changing environment variables.
+
+Profiles are created through an authenticated API request after signup when a
+session is available, or on the first login after email confirmation. Repeated
+logins preserve existing profiles. Configure the Supabase Site URL and allowed
+redirect URLs for your deployment so confirmation emails return to your app.
+
+Set the same environment variables in your hosting provider before building.
+`NEXT_PUBLIC_` values are bundled at build time; changing them requires a rebuild.
+
 ## Getting Started
 
 First, run the development server:
