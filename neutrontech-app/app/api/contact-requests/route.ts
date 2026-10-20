@@ -1,6 +1,5 @@
 import { type NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { sendContactEmail } from '@/lib/contactMail';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -34,9 +33,6 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
-
-  // The message is saved either way; this only notifies the shared support inbox.
-  await sendContactEmail({ name, email, message });
 
   return Response.json(data, { status: 201 });
 }

@@ -1,4 +1,3 @@
-import { SUPPORT_EMAIL } from "@/lib/site";
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -93,12 +92,12 @@ export default function PrivacyPage() {
             <li>Restrict or object to certain processing activities.</li>
             <li>Data portability — receive your data in a machine-readable format.</li>
           </ul>
-          <p className="mt-3">To exercise any of these rights, email us at <strong className="text-on-surface">{SUPPORT_EMAIL}</strong>. We respond within 30 days.</p>
+          <p className="mt-3">To exercise any of these rights, email us at <strong className="text-on-surface">privacy@neutrontech.io</strong>. We respond within 30 days.</p>
         </Section>
 
         <Section title="7. Security">
           <p>We implement industry-standard security measures including TLS encryption in transit, encrypted storage at rest, and regular third-party security audits. Access to production data is restricted to essential personnel only.</p>
-          <p>If you discover a security vulnerability, please report it responsibly to <strong className="text-on-surface">{SUPPORT_EMAIL}</strong>.</p>
+          <p>If you discover a security vulnerability, please report it responsibly to <strong className="text-on-surface">security@neutrontech.io</strong>.</p>
         </Section>
 
         <Section title="8. Children's Privacy">
@@ -112,7 +111,7 @@ export default function PrivacyPage() {
         <Section title="10. Contact">
           <p>Questions about this policy? Reach our Data Protection Officer at:</p>
           <div className="mt-3 space-y-2">
-            <p><strong className="text-on-surface">Email:</strong> {SUPPORT_EMAIL}</p>
+            <p><strong className="text-on-surface">Email:</strong> privacy@neutrontech.io</p>
             <p><strong className="text-on-surface">Postal:</strong> Neutron Tech Inc., 350 Mission Street, San Francisco, CA 94105, USA</p>
           </div>
         </Section>

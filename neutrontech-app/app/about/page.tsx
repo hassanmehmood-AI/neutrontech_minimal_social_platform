@@ -1,4 +1,3 @@
-import { SUPPORT_EMAIL } from "@/lib/site";
 import Link from 'next/link';
 
 export default function AboutPage() {
@@ -111,7 +110,7 @@ export default function AboutPage() {
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-[20px]">mail</span>
-              <span className="text-on-surface-variant">{SUPPORT_EMAIL}</span>
+              <span className="text-on-surface-variant">hello@neutrontech.io</span>
             </div>
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-[20px]">language</span>

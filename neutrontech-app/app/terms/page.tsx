@@ -1,4 +1,3 @@
-import { SUPPORT_EMAIL } from "@/lib/site";
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -66,7 +65,7 @@ export default function TermsPage() {
         <Section title="4. Content & Intellectual Property">
           <p><strong className="text-on-surface">Your content:</strong> You retain ownership of everything you post. By posting, you grant Neutron Tech a worldwide, non-exclusive, royalty-free licence to store, display, and distribute your content solely for operating the Service. We do not claim ownership of your work.</p>
           <p><strong className="text-on-surface">Our content:</strong> The Neutron Tech name, logo, design system, and platform code are owned by Neutron Tech Inc. and protected by intellectual property law. You may not reproduce or use them without permission.</p>
-          <p><strong className="text-on-surface">DMCA:</strong> If you believe your copyrighted work has been infringed, contact us at <strong className="text-on-surface">{SUPPORT_EMAIL}</strong> with details of the content and your ownership claim.</p>
+          <p><strong className="text-on-surface">DMCA:</strong> If you believe your copyrighted work has been infringed, contact us at <strong className="text-on-surface">dmca@neutrontech.io</strong> with details of the content and your ownership claim.</p>
         </Section>
 
         <Section title="5. Privacy">
@@ -105,7 +104,7 @@ export default function TermsPage() {
         <Section title="12. Contact">
           <p>Questions about these Terms? Contact our legal team at:</p>
           <div className="mt-3 space-y-2">
-            <p><strong className="text-on-surface">Email:</strong> {SUPPORT_EMAIL}</p>
+            <p><strong className="text-on-surface">Email:</strong> legal@neutrontech.io</p>
             <p><strong className="text-on-surface">Postal:</strong> Neutron Tech Inc., 350 Mission Street, San Francisco, CA 94105, USA</p>
           </div>
         </Section>
